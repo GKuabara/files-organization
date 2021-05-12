@@ -21,7 +21,7 @@ TEST_CASE =
 
 
 clean: $(MAIN)
-$(MAIN): main.o utils.o parser.o 
+$(MAIN): main.o stream.o
 
 
 %: %.o

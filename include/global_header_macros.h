@@ -7,7 +7,9 @@
 #define g_amnt_rem_reg_t int
 
 /* Status options */
-#define INC_S '0' /* Inconsistent file */
-#define CON_S '1' /* Consistent file */
+#define INC_STAT '0' /* Inconsistent file */
+#define CON_STAT '1' /* Consistent file */
 
 #endif
+
+
