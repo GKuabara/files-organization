@@ -9,20 +9,20 @@
 #define v_code_t int
 
 #define v_model_t char *
-#define v_category_t char*
+#define v_category_t char *
 
 #define v_model_size_t int
 #define v_category_size_t int
 
+#define v_reg_static_size 36
 
-
-struct _v_reg_update {
-    g_removed_t is_removed;
-    g_reg_size_t reg_size;
-    v_model_size_t model_size;
-    v_category_size_t category_size;
+enum {
+    PREFIX=0,
+    DATE,
+    SEAT,
+    LINE,
+    MODEL,
+    CATEGORY
 };
-
-
 
 #endif

@@ -7,7 +7,7 @@ MAIN = main
 OUTPUT_OPTION = -o $@
 
 INCLUDES = -I ./include 
-CFLAGS = -O1
+CFLAGS = 
 COMPILE.c = $(CC) $(DDEBUG) $(CFLAGS) $(INCLUDES) $(CPPFLAGS) $(TARGET_ARCH) -c 
 
 LDLIBS =
@@ -19,9 +19,8 @@ DBFLAGS = --leak-check=full --show-leak-kinds=all\
 		  --track-origins=yes --verbose 
 TEST_CASE = 
 
-
 clean: $(MAIN)
-$(MAIN): main.o stream.o
+$(MAIN): main.o stream.o vehicle.o funcao-fornecida.o
 
 
 %: %.o

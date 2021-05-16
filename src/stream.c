@@ -10,7 +10,6 @@ static void *_alloc_new_page(void *__ptr, size_t __size, int amnt_pages);
 static int _delim(char *stream, const struct _delim_t d);
 static string _build_token(char **t, int t_size, char c);
 
-
 static int _delim(string str, const struct _delim_t d) {
     for (int i = 0; i < d.amnt_delim; ++i) {
         int delim_len = strlen(d.delim[i]);
@@ -62,7 +61,7 @@ string input_stream_read(FILE *stream, const struct _term_t t) {
 
     if (b_size < 2) {
         free(buffer);
-        return NULL;
+        return NULL; 
     }
 
     if (buffer[b_size - 2] ==  ' ') buffer[--b_size - 1] = '\0';
@@ -107,3 +106,13 @@ string readline_(FILE *stream, const struct _term_t t) {
     return input_stream_read(stream, t);
 }
 
+FILE* open_file(const char *file_path, const char *flag) {
+    FILE *fp = fopen(file_path, flag);
+
+    if (fp == NULL) { 
+        perror("Error");
+        exit(EXIT_FAILURE);
+    }
+
+    return fp;
+}   

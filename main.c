@@ -7,17 +7,23 @@
 #include <string.h>
 
 #include "stream.h"
+#include "funcao-fornecida.h"
+#include "vehicle.h"
 
 int main() {    
     string s = readline(stdin);
     string *tokens = str_get_tokens(s,  
-        (struct _delim_t) {.amnt_delim=2, .delim=csv_delim});
+        (struct _delim_t) {.amnt_delim=1, .delim=(char *[]){" "}});
 
     for(string *t = tokens; *t; ++t) {
         printf("%s\n", *t);
-        free(*t);
-    }  
+    }
 
+    vehicle_create_table(tokens[1], tokens[2]);
+    
+    binarioNaTela(tokens[2]);
+
+    for (string *aux = tokens; *aux; aux++) free(*aux);
     free(tokens);
     free(s);
     return 0;

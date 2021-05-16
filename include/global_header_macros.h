@@ -2,7 +2,7 @@
 #define _GLOBAL_HEADER_MACROS_H
 
 #define g_status_t char
-#define g_off_next_reg int8_t
+#define g_off_next_reg_t long
 #define g_amnt_reg_t int
 #define g_amnt_rem_reg_t int
 
