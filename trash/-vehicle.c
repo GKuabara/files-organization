@@ -15,8 +15,8 @@ struct _v_files {
 };
 
 struct _v_reg_update {
-    g_removed_t is_removed;
-    g_reg_size_t reg_size;
+    char is_removed;
+    int reg_size;
 };
 
 #define _vdr_is_null(token) (strcmp(token, "NULO") == 0 ? 1 : 0)
@@ -38,17 +38,17 @@ static struct _v_files *_v_open_files(string csv_name, string bin_name) {
 }
 
 static void _vh_global_init(struct _v_files *files) {
-    g_status_t stats = INC_STAT;
-    fwrite(&stats, sizeof(g_status_t), 1, files->bin);
+    char stats = INC_STAT;
+    fwrite(&stats, sizeof(char), 1, files->bin);
 
-    g_offset_t off_next_reg = V_HEADER_SIZE;
-    fwrite(&off_next_reg, sizeof(g_offset_t), 1, files->bin);
+    long off_next_reg = V_HEADER_SIZE;
+    fwrite(&off_next_reg, sizeof(long), 1, files->bin);
 
-    g_amnt_reg_t n_reg = 0;
-    fwrite(&n_reg, sizeof(g_amnt_reg_t), 1, files->bin);
+    int n_reg = 0;
+    fwrite(&n_reg, sizeof(int), 1, files->bin);
 
-    g_amnt_rmv_t amnt_removed_reg = 0;
-    fwrite(&amnt_removed_reg, sizeof(g_amnt_rmv_t), 1, files->bin);
+    int amnt_removed_reg = 0;
+    fwrite(&amnt_removed_reg, sizeof(int), 1, files->bin);
 }
 
 static void _vh_desc_init(struct _v_files *files) {
@@ -76,10 +76,10 @@ int _reg_get_size(string *tokens, string model, string category) {
     int model_len = strlen(model);
     int category_len = strlen(category);
 
-    return model_len + category_len + v_reg_static_size;
+    return model_len + category_len + V_CONST_REG_SIZE;
 }
 
-static struct _v_reg_update *vdr_write_new_reg(FILE *bin, g_offset_t offset, string *tokens) {
+static struct _v_reg_update *vdr_write_new_reg(FILE *bin, long offset, string *tokens) {
     fseek(bin, offset, SEEK_SET);
     struct _v_reg_update *update = malloc(sizeof(*update));
     assert(update);
@@ -97,41 +97,41 @@ static struct _v_reg_update *vdr_write_new_reg(FILE *bin, g_offset_t offset, str
     update->is_removed = _vdr_is_removed(tokens[PREFIX]);
     update->reg_size = _reg_get_size(tokens, model, category);
    
-    fwrite(&(update->is_removed), sizeof(g_removed_t), 1, bin);
-    fwrite(&(update->reg_size), sizeof(g_reg_size_t), 1, bin);
+    fwrite(&(update->is_removed), sizeof(char), 1, bin);
+    fwrite(&(update->reg_size), sizeof(int), 1, bin);
     
     fwrite(tokens[PREFIX], sizeof(v_prefix_t), 1, bin);
     fwrite(date, sizeof(v_date_t), 1, bin);
-    fwrite(&amnt_seats, sizeof(v_amnt_seats_t), 1, bin);
-    fwrite(&line_code, sizeof(v_code_t), 1, bin);
+    fwrite(&amnt_seats, sizeof(int), 1, bin);
+    fwrite(&line_code, sizeof(int), 1, bin);
     
-    fwrite(&model_len, sizeof(v_model_size_t), 1, bin);
+    fwrite(&model_len, sizeof(int), 1, bin);
     fwrite(model, sizeof(char), model_len, bin);
     
-    fwrite(&category_len, sizeof(v_category_size_t), 1, bin);
+    fwrite(&category_len, sizeof(int), 1, bin);
     fwrite(category, sizeof(char), category_len, bin);
 
     return update;
 }
 
-static g_offset_t _vh_update(FILE *bin, g_status_t stats, struct _v_reg_update *update, g_offset_t l_offset, int amnt_reg, int amnt_rmv) {
+static long _vh_update(FILE *bin, char stats, struct _v_reg_update *update, long l_offset, int amnt_reg, int amnt_rmv) {
     fseek(bin, 0, SEEK_SET);
 
-    fwrite(&stats, sizeof(g_status_t), 1, bin);
+    fwrite(&stats, sizeof(char), 1, bin);
     if (stats == CON_STAT) return 0; 
 
-    g_offset_t next_reg = l_offset + update->reg_size + v_reg_info_size;
-    fwrite(&next_reg, sizeof(g_offset_t), 1, bin);
+    long next_reg = l_offset + update->reg_size + v_reg_info_size;
+    fwrite(&next_reg, sizeof(long), 1, bin);
 
-    fwrite(&amnt_reg, sizeof(g_amnt_reg_t), 1, bin);
+    fwrite(&amnt_reg, sizeof(int), 1, bin);
 
-    fwrite(&amnt_rmv, sizeof(g_amnt_rmv_t), 1, bin);
+    fwrite(&amnt_rmv, sizeof(int), 1, bin);
 
     return next_reg;
 }
 
 static void _vdr_insert_regs_from_csv(struct _v_files *files) {
-    g_offset_t offset = V_HEADER_SIZE; 
+    long offset = V_HEADER_SIZE; 
     int amnt_reg = 0;
     int amnt_rmv = 0;
 

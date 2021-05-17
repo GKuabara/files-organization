@@ -16,8 +16,8 @@ struct _g_files { // global.c
 };
 
 struct _reg_update {
-    g_removed_t is_removed;
-    g_reg_size_t reg_size;
+    char is_removed;
+    int reg_size;
 };
 
 // global.c
@@ -36,16 +36,16 @@ struct _g_files *g_open_files(string csv_name, string bin_name) {
 }
 
 // global.c
-void g_header_init(FILE *bin, g_offset_t header_size) {
-    g_status_t stats = INC_STAT;
-    g_amnt_reg_t n_reg = 0;
-    g_amnt_rmv_t amnt_removed_reg = 0;
+void g_header_init(FILE *bin, long header_size) {
+    char stats = INC_STAT;
+    int n_reg = 0;
+    int amnt_removed_reg = 0;
 
     /* Error handling */
-    if (fwrite(&stats, sizeof(g_status_t), 1, bin) != 1);
-    if (fwrite(&header_size, sizeof(g_offset_t), 1, bin) != 1);
-    if (fwrite(&stats, sizeof(g_amnt_reg_t), 1, bin) != 1);
-    if (fwrite(&stats, sizeof(g_amnt_rmv_t), 1, bin) != 1);
+    if (fwrite(&stats, sizeof(char), 1, bin) != 1);
+    if (fwrite(&header_size, sizeof(long), 1, bin) != 1);
+    if (fwrite(&stats, sizeof(int), 1, bin) != 1);
+    if (fwrite(&stats, sizeof(int), 1, bin) != 1);
 }
 
 // vehicle.c
@@ -68,13 +68,13 @@ void v_header_init(struct _g_files *files) {
 }
 
 // operations.c
-static void _header_init(struct _g_files *files, g_offset_t header_size, void (*header_funct)(struct _g_files *)) {
+static void _header_init(struct _g_files *files, long header_size, void (*header_funct)(struct _g_files *)) {
     g_header_init(files->bin, header_size);
     header_funct(files);
 }
 
 // global.c
-static g_reg_size_t _g_reg_get_size(string *var_fields, g_reg_size_t const_size) {
+static int _g_reg_get_size(string *var_fields, int const_size) {
     int size = 0;
     for (string *aux = var_fields; *aux; ++aux) 
         size += strlen(*aux);
@@ -83,15 +83,15 @@ static g_reg_size_t _g_reg_get_size(string *var_fields, g_reg_size_t const_size)
 }
 
 // global.c 
-struct _reg_update *g_insert_datareg(FILE *bin, string *tokens, int amnt_const, g_reg_size_t const_size) {
+struct _reg_update *g_insert_datareg(FILE *bin, string *tokens, int amnt_const, int const_size) {
     struct _reg_update *update = malloc(sizeof(*update));
     assert(update);
     
     update->is_removed = _g_is_rmv((*tokens));
     update->reg_size = _g_reg_get_size(tokens + amnt_const, const_size);
 
-    if (fwrite(&(update->is_removed), sizeof(g_removed_t), 1, bin) != 1);
-    if (fwrite(&(update->reg_size), sizeof(g_reg_size_t), 1, bin) != 1);    
+    if (fwrite(&(update->is_removed), sizeof(char), 1, bin) != 1);
+    if (fwrite(&(update->reg_size), sizeof(int), 1, bin) != 1);    
 
     return update;
 }
@@ -130,14 +130,14 @@ static void _v_write_var_fields(FILE *bin, string field) {
 void v_insert_datareg(FILE *bin, string *tokens) {
     _v_write_prefix(bin, tokens[PREFIX]);
     _v_write_date(bin, tokens[DATE]);
-    _v_reg_write_num_fields(bin, tokens[SEAT], sizeof(v_amnt_seats_t));
-    _v_reg_write_num_fields(bin, tokens[LINE], sizeof(v_code_t));
+    _v_reg_write_num_fields(bin, tokens[SEAT], sizeof(int));
+    _v_reg_write_num_fields(bin, tokens[LINE], sizeof(int));
     _v_write_var_fields(bin, tokens[MODEL]);
     _v_write_var_fields(bin, tokens[CATEGORY]);
 }
 
 // operations.c
-static struct _reg_update *_insert_datareg(FILE *bin, g_offset_t offset,  string *tokens, int amnt_const, int const_size, void (*insert_funct)(FILE *, string *)) {
+static struct _reg_update *_insert_datareg(FILE *bin, long offset,  string *tokens, int amnt_const, int const_size, void (*insert_funct)(FILE *, string *)) {
     fseek(bin, offset, SEEK_SET);
    
     struct _reg_update *update = g_insert_datareg(bin, tokens, amnt_const, const_size);
@@ -147,17 +147,17 @@ static struct _reg_update *_insert_datareg(FILE *bin, g_offset_t offset,  string
 }
 
 // global.c
-g_offset_t g_header_update(FILE *bin, g_status_t stats, struct _reg_update *update, g_offset_t offset, int amnt_reg, int amnt_rmv, int reg_info_size) {
+long g_header_update(FILE *bin, char stats, struct _reg_update *update, long offset, int amnt_reg, int amnt_rmv, int reg_info_size) {
     fseek(bin, 0, SEEK_SET);
 
-    if (fwrite(&stats, sizeof(g_status_t), 1, bin) != 1);
+    if (fwrite(&stats, sizeof(char), 1, bin) != 1);
     if (stats == CON_STAT) return 0; 
 
-    g_offset_t next_reg = update->reg_size + reg_info_size;
-    if (fwrite(&next_reg, sizeof(g_offset_t), 1, bin) != 1);
+    long next_reg = update->reg_size + reg_info_size;
+    if (fwrite(&next_reg, sizeof(long), 1, bin) != 1);
     
-    if (fwrite(&amnt_reg, sizeof(g_amnt_reg_t), 1, bin) != 1);
-    if (fwrite(&amnt_rmv, sizeof(g_amnt_rmv_t), 1, bin) != 1);
+    if (fwrite(&amnt_reg, sizeof(int), 1, bin) != 1);
+    if (fwrite(&amnt_rmv, sizeof(int), 1, bin) != 1);
 
     return next_reg;
 }

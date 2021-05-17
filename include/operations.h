@@ -3,14 +3,13 @@
 
 #include <stdio.h>
 
-#include "global_header_macros.h"
-#include "vehicle_header_macros.h"
-#include "global_datareg_macros.h"
-#include "vehicle_datareg_macros.h"
 #include "stream.h"
 #include "global.h"
 #include "vehicle.h"
 
+/*
+    Creates a vehicle table
+*/
 void vehicle_create_table(string csv_name, string bin_name);
 
 #endif
