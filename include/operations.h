@@ -1,5 +1,5 @@
-#ifndef _VEHICLE_H
-#define _VEHICLE_H
+#ifndef _OPERATIONS_H
+#define _OPERATIONS_H
 
 #include <stdio.h>
 
@@ -9,8 +9,8 @@
 #include "vehicle_datareg_macros.h"
 #include "stream.h"
 #include "global.h"
+#include "vehicle.h"
 
-void v_header_init(struct _g_files *files);
-void v_insert_datareg(FILE *bin, string *tokens);
+void vehicle_create_table(string csv_name, string bin_name);
 
 #endif

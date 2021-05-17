@@ -7,8 +7,8 @@
 #include <string.h>
 
 #include "stream.h"
+#include "operations.h"
 #include "funcao-fornecida.h"
-#include "vehicle.h"
 
 int main() {    
     string s = readline(stdin);
