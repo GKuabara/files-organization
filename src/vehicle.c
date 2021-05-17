@@ -72,9 +72,9 @@ static void _vh_init(struct _v_files *files) {
     _vh_desc_init(files);
 }
 
-int _reg_get_size(string *tokens) {
-    int model_len = strlen(tokens[MODEL]);
-    int category_len = strlen(tokens[CATEGORY]);
+int _reg_get_size(string *tokens, string model, string category) {
+    int model_len = strlen(model);
+    int category_len = strlen(category);
 
     return model_len + category_len + v_reg_static_size;
 }
@@ -84,19 +84,18 @@ static struct _v_reg_update *vdr_write_new_reg(FILE *bin, g_off_next_reg_t offse
     struct _v_reg_update *update = malloc(sizeof(*update));
     assert(update);
 
-    update->is_removed = _vdr_is_removed(tokens[PREFIX]);
-    update->reg_size = _reg_get_size(tokens);
-    
-    char *date = _vdr_is_null(tokens[DATE]) ? "\0@@@@@@@@@" : tokens[DATE];
+    string date = _vdr_is_null(tokens[DATE]) ? "\0@@@@@@@@@" : tokens[DATE];
     int amnt_seats = _vdr_is_null(tokens[SEAT]) ? -1 : atoi(tokens[SEAT]);
     int line_code = _vdr_is_null(tokens[LINE]) ? -1 : atoi(tokens[LINE]);
     
     int model_len = _vdr_is_null(tokens[MODEL]) ? 0 : strlen(tokens[MODEL]);
-    char *model = (model_len == 0) ? "" : tokens[MODEL];
+    string model = (model_len == 0) ? "" : tokens[MODEL];
     
     int category_len = _vdr_is_null(tokens[CATEGORY]) ? 0 : strlen(tokens[CATEGORY]);
-    char *category = (category_len) == 0 ? "" : tokens[CATEGORY];
+    string category = (category_len) == 0 ? "" : tokens[CATEGORY];
      
+    update->is_removed = _vdr_is_removed(tokens[PREFIX]);
+    update->reg_size = _reg_get_size(tokens, model, category);
    
     fwrite(&(update->is_removed), sizeof(g_removed_t), 1, bin);
     fwrite(&(update->reg_size), sizeof(g_reg_size_t), 1, bin);
@@ -107,7 +106,7 @@ static struct _v_reg_update *vdr_write_new_reg(FILE *bin, g_off_next_reg_t offse
     fwrite(&line_code, sizeof(v_code_t), 1, bin);
     
     fwrite(&model_len, sizeof(v_model_size_t), 1, bin);
-    fwrite(model, sizeof(char) , model_len, bin);
+    fwrite(model, sizeof(char), model_len, bin);
     
     fwrite(&category_len, sizeof(v_category_size_t), 1, bin);
     fwrite(category, sizeof(char), category_len, bin);
@@ -121,7 +120,7 @@ static g_off_next_reg_t _vh_update(FILE *bin, g_status_t stats, struct _v_reg_up
     fwrite(&stats, sizeof(g_status_t), 1, bin);
     if (stats == CON_STAT) return 0; 
 
-    g_off_next_reg_t next_reg = l_offset + update->reg_size;
+    g_off_next_reg_t next_reg = l_offset + update->reg_size + v_reg_info_size;
     fwrite(&next_reg, sizeof(g_off_next_reg_t), 1, bin);
 
     fwrite(&amnt_reg, sizeof(g_amnt_reg_t), 1, bin);

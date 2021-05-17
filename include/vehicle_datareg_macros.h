@@ -14,7 +14,8 @@
 #define v_model_size_t int
 #define v_category_size_t int
 
-#define v_reg_static_size 36
+#define v_reg_static_size 31
+#define v_reg_info_size 5
 
 enum {
     PREFIX=0,
