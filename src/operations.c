@@ -77,3 +77,26 @@ void vehicle_create_table(string csv_name, string bin_name) {
     fclose(files->csv);
     free(files);  
 }
+
+/*
+    Creates a line table
+*/
+void line_create_table(string csv_name, string bin_name) {
+    struct _g_files *files = g_open_files(csv_name, bin_name);
+    struct _finfo linfo = {.amnt_const = 2, 
+                           .amnt_reg = 0,
+                           .amnt_rmv = 0,
+                           .next_reg_offset = L_HEADER_SIZE,
+                           .const_size = L_CONST_REG_SIZE, 
+                           .header_funct = l_header_init, 
+                           .header_size = L_HEADER_SIZE, 
+                           .insert_funct = l_insert_datareg};
+
+    
+    _header_init(files, &linfo);
+    _insert_dataregs_from_csv(files, &linfo);
+
+    fclose(files->bin); //TODO: Make a function for this
+    fclose(files->csv);
+    free(files);  
+}

@@ -19,7 +19,7 @@ int main() {
         printf("%s\n", *t);
     }
 
-    vehicle_create_table(tokens[1], tokens[2]);
+    line_create_table(tokens[1], tokens[2]);
     
     binarioNaTela(tokens[2]);
 
