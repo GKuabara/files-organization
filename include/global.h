@@ -11,6 +11,7 @@ struct _g_files {
     FILE *csv;
 };
 
+
 struct _reg_update {
     char is_removed;
     int reg_size;
@@ -74,6 +75,9 @@ int g_read_reg_rmv_stats(FILE *bin);
     Reads the reg_size byte of a reg.
 */
 int g_read_reg_size(FILE *bin);
+
+
+void g_read_header(FILE *bin, struct _finfo *finfo);
 
 
 #endif

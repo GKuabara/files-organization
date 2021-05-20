@@ -19,12 +19,14 @@ int main() {
         printf("%s\n", *t);
     }
 
-    line_create_table(tokens[1], tokens[2]);
+    line_insert_into(tokens[1], atoi(tokens[2]));
     
-    binarioNaTela(tokens[2]);
+    binarioNaTela(tokens[1]);
 
     for (string *aux = tokens; *aux; aux++) free(*aux);
     free(tokens);
     free(s);
+
+
     return 0;
 }

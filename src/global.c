@@ -25,8 +25,8 @@ struct _g_files *g_open_files(string csv_name, string bin_name) {
     struct _g_files *files = malloc(sizeof(*files));
     assert(files); // In case of error
 
-    files->csv = open_file(csv_name, "r");
-    files->bin = open_file(bin_name, "w+b");
+    if (csv_name != NULL) files->csv = open_file(csv_name, "r");
+    if (bin_name != NULL) files->bin = open_file(bin_name, "w+b");
 
     return files;
 }
@@ -101,4 +101,13 @@ int g_read_reg_size(FILE *bin) {
     if (fread(&reg_size, sizeof(char), 1, bin) != 1);
     
     return reg_size;
+}
+
+
+void g_read_header(FILE *bin, struct _finfo *finfo) {
+    fseek(bin, 1, SEEK_SET);
+
+    if (fread(&finfo->next_reg_offset, sizeof(long), 1, bin) != 1);
+    if (fread(&finfo->amnt_reg, sizeof(int), 1, bin) != 1);
+    if (fread(&finfo->amnt_rmv, sizeof(int), 1, bin) != 1);
 }

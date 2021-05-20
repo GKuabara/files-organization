@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "vehicle.h"
+#include "funcao-fornecida.h"
 
 static void _v_write_prefix(FILE *bin, string prefix);
 static void _v_write_date(FILE *bin, string date);
@@ -86,69 +87,69 @@ void v_header_init(struct _g_files *files) {
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-static char* _read_prefix(FILE *bin, int offset) {
-    // TODO: check if its at the right posix
+// static char* _read_prefix(FILE *bin, int offset) {
+//     // TODO: check if its at the right posix
 
-    char prefix[sizeof(v_prefix_t) + 1] = {0};
-    if (fread(prefix, sizeof(v_prefix_t), 1, bin) != 1);
+//     char prefix[sizeof(v_prefix_t) + 1] = {0};
+//     if (fread(prefix, sizeof(v_prefix_t), 1, bin) != 1);
 
-    return prefix;
-}
+//     return prefix;
+// }
 
-static char* _read_date(FILE *bin, int offset) {
-    // TODO: check if its at the right posix
+// static char* _read_date(FILE *bin, int offset) {
+//     // TODO: check if its at the right posix
 
-    char date[sizeof(v_date_t) + 1] = {0};
-    if (fread(date, sizeof(v_date_t), 1, bin) != 1);
+//     char date[sizeof(v_date_t) + 1] = {0};
+//     if (fread(date, sizeof(v_date_t), 1, bin) != 1);
 
-    return date;
-}
+//     return date;
+// }
 
-static int _read_seats(FILE *bin, int offset) {
-    // TODO: check if its at the right posix
+// static int _read_seats(FILE *bin, int offset) {
+//     // TODO: check if its at the right posix
 
-    int seats;
-    if (fread(&seats, sizeof(int), 1, bin) != 1);
+//     int seats;
+//     if (fread(&seats, sizeof(int), 1, bin) != 1);
     
-    return seats;
-}
+//     return seats;
+// }
 
-static int *_read_line(FILE *bin, int offset) {
-    // TODO: check if its at the right posix
+// static int *_read_line(FILE *bin, int offset) {
+//     // TODO: check if its at the right posix
 
-    int line;
-    if (fread(&line, sizeof(int), 1, bin) != 1);
+//     int line;
+//     if (fread(&line, sizeof(int), 1, bin) != 1);
     
-    return line;
-}
+//     return line;
+// }
 
-static char* _read_model(FILE *bin, int offset) {
-    // TODO: check if its at the right posix
+// static char* _read_model(FILE *bin, int offset) {
+//     // TODO: check if its at the right posix
 
-    int model_size = 0;
-    if (fread(&model_size, sizeof(int), 1, bin) != 1); // Error handling
+//     int model_size = 0;
+//     if (fread(&model_size, sizeof(int), 1, bin) != 1); // Error handling
     
-    char model[model_size + 1];
-    memset(model, 0, model_size + 1);
+//     char model[model_size + 1];
+//     memset(model, 0, model_size + 1);
 
-    if (fread(model, sizeof(char), model_size, bin) != model_size);
+//     if (fread(model, sizeof(char), model_size, bin) != model_size);
 
-    return model;
-}
+//     return model;
+// }
 
-static char * _read_category(FILE *bin, int offset) {
-    // TODO: check if its at the right posix
+// static char * _read_category(FILE *bin, int offset) {
+//     // TODO: check if its at the right posix
 
-    int category_size = 0;
-    if (fread(&category_size, sizeof(int), 1, bin) != 1); // Error handling
+//     int category_size = 0;
+//     if (fread(&category_size, sizeof(int), 1, bin) != 1); // Error handling
     
-    char category[category_size + 1];
-    memset(category, 0, category_size + 1);
+//     char category[category_size + 1];
+//     memset(category, 0, category_size + 1);
 
-    if (fread(category, sizeof(char), category_size, bin) != category_size);
+//     if (fread(category, sizeof(char), category_size, bin) != category_size);
 
-    return category;
-}
+//     return category;
+// }
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -166,41 +167,55 @@ static int _v_which_selected_field(FILE *bin, string field, int offset) {
     return -1; // Error handling
 }
 
-struct _vehicle_reg *v_select_where(FILE *bin, int offset, string field, string value) {
-    ////////////////////////////////////////////////////////////////////////////
-    // if (g_read_rmv_field(bin, offset) == RMV) return NULL;
-    // 
-    // fseek(bin, V_REG_INFO_SIZE, offset);
-    // // struct _vehicle_reg *vehicle = malloc(sizeof(*vehicle)); // This is the 'select' part 
-    // vehicle->prefix = strdup(_read_prefix(bin, offset));
-    // vehicle->date = strdup(_read_date(bin, offset));
-    // vehicle->seats = _read_seats(bin, offset);
-    // vehicle->line = _read_line(bin, offset);
-    // vehicle->model = strdup(_read_model(bin, offset));
-    // vehicle->category = strdup(_read_category(bin, offset));
-    ////////////////////////////////////////////////////////////////////////////
+// struct _vehicle_reg *v_select_where(FILE *bin, int offset, string field, string value) {
+//     ////////////////////////////////////////////////////////////////////////////
+//     // if (g_read_rmv_field(bin, offset) == RMV) return NULL;
+//     // 
+//     // fseek(bin, V_REG_INFO_SIZE, offset);
+//     // // struct _vehicle_reg *vehicle = malloc(sizeof(*vehicle)); // This is the 'select' part 
+//     // vehicle->prefix = strdup(_read_prefix(bin, offset));
+//     // vehicle->date = strdup(_read_date(bin, offset));
+//     // vehicle->seats = _read_seats(bin, offset);
+//     // vehicle->line = _read_line(bin, offset);
+//     // vehicle->model = strdup(_read_model(bin, offset));
+//     // vehicle->category = strdup(_read_category(bin, offset));
+//     ////////////////////////////////////////////////////////////////////////////
 
-    switch (_which_selected_field(bin, field, offset)) {
-    case PREFIX:
-        if (strcmp(value, vehicle->prefix) == 0) return vehicle;
-        break;
-    case DATE:
-        if (strcmp(value, vehicle->date) == 0) return vehicle;
-        break;
-    case SEAT:
-        if (vehicle->seats == atoi(value)) return vehicle;
-        break;
-    case MODEL:
-        if (strcmp(value, vehicle->model) == 0) return vehicle;
-        break;
-    case CATEGORY:
-        if (strcmp(value, vehicle->category) == 0) return vehicle;
-        break;
-    default:
-        printf("Campo inexistente\n"); // Error handling
-        break;
+//     switch (_which_selected_field(bin, field, offset)) {
+//     case PREFIX:
+//         if (strcmp(value, vehicle->prefix) == 0) return vehicle;
+//         break;
+//     case DATE:
+//         if (strcmp(value, vehicle->date) == 0) return vehicle;
+//         break;
+//     case SEAT:
+//         if (vehicle->seats == atoi(value)) return vehicle;
+//         break;
+//     case MODEL:
+//         if (strcmp(value, vehicle->model) == 0) return vehicle;
+//         break;
+//     case CATEGORY:
+//         if (strcmp(value, vehicle->category) == 0) return vehicle;
+//         break;
+//     default:
+//         printf("Campo inexistente\n"); // Error handling
+//         break;
+//     }
+
+//     // free(vehicle);
+//     return NULL;
+// }
+
+
+// TODO: WTF IS THIS
+string *v_read_tokens_from_terminal() {
+    string *tokens = malloc(sizeof(*tokens) * V_AMNT_TOKENS);
+
+    for (int i = 0; i < V_AMNT_TOKENS; ++i) {
+        tokens[i] = calloc(sizeof(char), PAGE_SIZE);
+        scan_quote_string(tokens[i]);
+        tokens[i] = realloc(tokens[i], strlen(tokens[i]) + 1);
     }
-
-    // free(vehicle);
-    return NULL;
+    
+    return tokens;
 }
