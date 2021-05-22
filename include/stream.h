@@ -42,6 +42,8 @@ FILE* open_file(const char *file_path, const char *flag);
 string str_add_terminator(string str, int len);
 
 
+string str_add_terminator(string str, int len);
+
 #define csv_delim \
     (char *[]) {", ", ","}
 

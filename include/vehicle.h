@@ -68,8 +68,8 @@ void v_insert_datareg(FILE *bin, string *tokens);
 /* 'SELECT WHERE' VEHICLE FUNCTIONS */
 vehicle *v_select_where(FILE *bin, int offset, string field, string value);
 
-string *v_read_tokens_from_terminal();
-
 void vehicle_select(FILE *fp, int last_byte);
+
+string *v_read_tokens_from_terminal();
 
 #endif

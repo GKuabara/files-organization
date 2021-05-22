@@ -7,6 +7,7 @@
 #include "global.h"
 
 /* LINE BINARY CONST CHAR FIELDS */
+
 #define l_code_desc_t char[15]
 #define l_card_desc_t char[13]
 #define l_name_desc_t char[13]
@@ -58,6 +59,19 @@ void l_header_init(struct _g_files *files);
 struct _line_reg *l_select_where(FILE *bin, int offset, string field, string value);
 
 string *l_read_tokens_from_terminal();
+
+void line_select(FILE *fp, int last_byte);
+
+#define L_HEADER_SIZE 82
+
+typedef struct{
+    int code;
+    char card;
+    int name_size;
+    char *line_name;
+    int color_size;
+    char *color;
+} line;
 
 void line_select(FILE *fp, int last_byte);
 

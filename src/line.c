@@ -139,8 +139,6 @@ void line_select(FILE *fp, int last_byte) {
     }
 }
 
-
-
 // struct _line_reg *l_select_where(FILE *bin, int offset, string field, string value) {
 //     ////////////////////////////////////////////////////////////////////////////
 //     // if (g_read_reg_rmv_stats(bin, offset) == RMV) return NULL;
@@ -176,7 +174,6 @@ void line_select(FILE *fp, int last_byte) {
 //     // free(vehicle);
 //     return NULL;
 // }
-
 
 string *l_read_tokens_from_terminal() {
     string *tokens = malloc(sizeof(*tokens) * L_AMNT_TOKENS);

@@ -173,7 +173,6 @@ void vehicle_select(FILE *fp, int last_byte) {
     }
 }
 
-
 /*
     Reads the num of the field to be select
 */

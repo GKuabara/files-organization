@@ -55,8 +55,6 @@ static void _insert_dataregs_from_csv(struct _g_files *files, struct _finfo *fin
     g_header_update(files->bin, CON_STAT, NULL, finfo); // Update header status only
 }
 
-
-
 static void _insert_dataregs_from_terminal(FILE *bin, struct _finfo *finfo, int amnt_regs, string *(*read_terminal_tokens)(void)) {
     for (int i = 0; i < amnt_regs; ++i) {
         string *tokens = read_terminal_tokens();

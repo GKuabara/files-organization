@@ -11,22 +11,5 @@
 #include "funcao-fornecida.h"
 
 int main() {    
-    string s = readline(stdin);
-    string *tokens = str_get_tokens(s,  
-        (struct _delim_t) {.amnt_delim=1, .delim=(char *[]){" "}});
 
-    for(string *t = tokens; *t; ++t) {
-        printf("%s\n", *t);
-    }
-
-    line_insert_into(tokens[1], atoi(tokens[2]));
-    
-    binarioNaTela(tokens[1]);
-
-    for (string *aux = tokens; *aux; aux++) free(*aux);
-    free(tokens);
-    free(s);
-
-
-    return 0;
 }
