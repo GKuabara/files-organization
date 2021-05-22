@@ -116,3 +116,10 @@ FILE* open_file(const char *file_path, const char *flag) {
 
     return fp;
 }   
+
+string str_add_terminator(string str, int len) {
+
+    string new = malloc(sizeof(char) * (len + 1));
+    new[len] = '\0';
+    return new;
+}

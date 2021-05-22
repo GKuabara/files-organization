@@ -30,6 +30,21 @@ enum {
     CATEGORY
 };
 
+typedef struct {
+    string *names;
+    string *numbers;
+} months;
+
+typedef struct{
+    char *prefix;
+    char *date;
+    int seats;
+    int line;
+    int model_size;
+    char *model;
+    int category_size;
+    char *category;
+} vehicle;
 
 /*
     Initializes all 'vehicle only' info of a vehicle header
@@ -40,5 +55,7 @@ void v_header_init(struct _g_files *files);
     Inserts all 'vehicle only' info of a new vehicle datareg
 */
 void v_insert_datareg(FILE *bin, string *tokens);
+
+void vehicle_select(FILE *fp, int last_byte);
 
 #endif

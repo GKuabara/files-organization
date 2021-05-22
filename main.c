@@ -19,9 +19,11 @@ int main() {
         printf("%s\n", *t);
     }
 
-    vehicle_create_table(tokens[1], tokens[2]);
+    // vehicle_create_table(tokens[1], tokens[2]);
     
-    binarioNaTela(tokens[2]);
+    // binarioNaTela(tokens[2]);
+
+    func_select(tokens[0], 2);
 
     for (string *aux = tokens; *aux; aux++) free(*aux);
     free(tokens);

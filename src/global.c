@@ -82,3 +82,36 @@ struct _reg_update *g_insert_datareg(FILE *bin, string *tokens, struct _finfo *f
     return update;
 }
 
+/*
+    Reads first two fields of a register that starts at position pointed by fp
+*/
+data_header *_g_read_reg_header(FILE *fp) {
+    
+    data_header *header = malloc(sizeof(*header));
+
+    fread(&header->removed, sizeof(char), 1, fp);
+    fread(&header->reg_size, sizeof(int), 1, fp);
+
+    return header;
+}
+
+string g_read_var_field(FILE *fp, int field_size) {
+    string str = NULL;
+
+    if(field_size == 0) {
+        str = realloc(str, sizeof(char) * NULL_FIELD_ERROR_SIZE);
+        strcpy(str, "campo com valor nulo");
+    }
+    else {
+        str = realloc(str, sizeof(char) * (field_size + 1));
+
+        fread(str, sizeof(char), field_size, fp);
+        // if(str[0] == '\0') {
+        //     str = realloc(str, sizeof(char) * NULL_FIELD_ERROR_SIZE);
+        //     strcpy(str, "campo com valor nulo");
+        // }
+
+        str[field_size] = '\0';
+    }
+    return str;
+}

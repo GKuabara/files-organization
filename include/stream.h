@@ -40,6 +40,8 @@ string input_stream_read(FILE *stream, const struct _term_t t);
 
 FILE* open_file(const char *file_path, const char *flag);
 
+string str_add_terminator(string str, int len);
+
 #define csv_delim \
     (char *[]) {", ", ","}
 

@@ -77,3 +77,33 @@ void vehicle_create_table(string csv_name, string bin_name) {
     fclose(files->csv);
     free(files);  
 }
+
+void func_select(string bin_name, int select) {
+    FILE *fp = open_file(bin_name, "rb");
+
+    // getting the last file's byte
+    fseek(fp, 0, SEEK_END);
+    int last_byte = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+
+    if(select == VEHICLE_FILE){
+        fseek(fp, V_HEADER_SIZE, SEEK_SET);
+        vehicle_select(fp, last_byte);
+    }
+    else if(select == LINE_FILE){
+        fseek(fp, L_HEADER_SIZE, SEEK_SET);
+        line_select(fp, last_byte);
+    }
+
+    fclose(fp);
+}
+
+void v_print_reg_data(vehicle *data) {
+    printf("Prefixo do veiculo: %s\n", data->prefix);
+    printf("Modelo do veiculo: %s\n", data->model);
+    printf("Categoria do veiculo: %s\n", data->category);
+    
+    print_date(data->date);
+    print_seats(data->seats);
+    printf("\n");
+}
