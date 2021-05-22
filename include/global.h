@@ -11,6 +11,7 @@ struct _g_files {
     FILE *csv;
 };
 
+
 struct _reg_update {
     char is_removed;
     int reg_size;
@@ -49,6 +50,7 @@ struct _finfo {
 
 #define NULL_FIELD_ERROR_SIZE 21
 
+/* GLOBAL GENERATE BINARY FILE FUNCTIONS */
 /*
     Opens both files. TODO: Maybe put in a file handler module (?)
 */
@@ -69,6 +71,20 @@ void g_header_update(FILE *bin, char stats, struct _reg_update *, struct _finfo 
     Global part of a new datareg insertion. Can be user for both vehicle and line files given `finfo`.
 */
 struct _reg_update *g_insert_datareg(FILE *bin, string *tokens, struct _finfo *);
+
+/* GLOBAL READ BINARY FUNCTIONS */
+/*
+    Reads the first byte (rmv status) of a reg. 
+*/ 
+int g_read_reg_rmv_stats(FILE *bin);
+
+/*
+    Reads the reg_size byte of a reg.
+*/
+int g_read_reg_size(FILE *bin);
+
+
+void g_read_header(FILE *bin, struct _finfo *finfo);
 
 data_header *_g_read_reg_header(FILE *fp);
 

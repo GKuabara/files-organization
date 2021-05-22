@@ -6,7 +6,7 @@
 #include "stream.h"
 #include "global.h"
 
-/* Vehicle const char fields */
+/* VEHICLE BINARY CONST CHAR FIELDS */
 #define v_prefix_t char[5]
 #define v_date_t char[10]
 #define v_prefix_desc_t char[18]
@@ -16,11 +16,18 @@
 #define v_model_desc_t char[17]
 #define v_category_desc_t char[20]
 
-/* Const size 'vehicle only' */
+/* CONST 'VEHICLE ONLY' BINARY SIZE REFERENCES */
 #define V_CONST_REG_SIZE 31
 #define V_HEADER_SIZE 175
+#define V_REG_INFO_SIZE 5 
+#define V_AMNT_TOKENS 6
+// #define V_REG_PREFIX_OFFSET 5
+// #define V_REG_DATE_OFFSET 10
+// #define V_REG_SEAT_OFFSET 20
+// #define V_REG_LINE_OFFSET 24
+// #define V_REG_VAR_FIELDS_OFFSET 28
 
-/* vehicle.csv fields */
+/* VEHICLE CSV TOKEN INDEXES */
 enum {
     PREFIX=0,
     DATE,
@@ -35,6 +42,7 @@ typedef struct {
     string *numbers;
 } months;
 
+/* VEHICLE REG STRUCTURE */
 typedef struct{
     char *prefix;
     char *date;
@@ -46,6 +54,7 @@ typedef struct{
     char *category;
 } vehicle;
 
+/* GENERATE BINARY VEHICLE FILE FUNCTIONS */
 /*
     Initializes all 'vehicle only' info of a vehicle header
 */
@@ -56,6 +65,11 @@ void v_header_init(struct _g_files *files);
 */
 void v_insert_datareg(FILE *bin, string *tokens);
 
+/* 'SELECT WHERE' VEHICLE FUNCTIONS */
+vehicle *v_select_where(FILE *bin, int offset, string field, string value);
+
 void vehicle_select(FILE *fp, int last_byte);
+
+string *v_read_tokens_from_terminal();
 
 #endif

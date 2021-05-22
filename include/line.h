@@ -1,18 +1,66 @@
 #ifndef _LINE_H
 #define _LINE_H
 
+#include <stdio.h>
+
 #include "stream.h"
 #include "global.h"
+
+/* LINE BINARY CONST CHAR FIELDS */
 
 #define l_code_desc_t char[15]
 #define l_card_desc_t char[13]
 #define l_name_desc_t char[13]
 #define l_color_desc_t char [24]
 
-/* Card options */
-#define S 'S' /* no payment */
-#define N 'N' /* also accepts money */
-#define F 'F' /* only card on weekends */
+/* CARD OPTIONS */
+#define S 'S' 
+#define N 'N' 
+#define F 'F' 
+
+/* CONST 'LINE ONLY' BINARY SIZE REFERENCES */
+#define L_HEADER_SIZE 82
+#define L_CONST_REG_SIZE 13
+#define L_AMNT_TOKENS 4
+
+
+
+/* LINE CSV TOKEN INDEXES */
+enum {
+    CODE,
+    CARD,
+    NAME,
+    COLOR
+};
+
+/* LINE REG STRUCTURE */
+typedef struct{
+    int code;
+    char card;
+    int name_size;
+    char *line_name;
+    int color_size;
+    char *color;
+} line;
+
+/* GENERATE BINARY LINE FILE FUNCTIONS */
+/*
+    Inserts all 'line only' info of a new line datareg
+*/
+void l_insert_datareg(FILE *bin, string *tokens);
+
+/*
+    Initializes all ' only' info of a vehicle header
+*/
+void l_header_init(struct _g_files *files);
+
+
+/* 'SELECT WHERE' LINE FUNCTIONS */
+struct _line_reg *l_select_where(FILE *bin, int offset, string field, string value);
+
+string *l_read_tokens_from_terminal();
+
+void line_select(FILE *fp, int last_byte);
 
 #define L_HEADER_SIZE 82
 

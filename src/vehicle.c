@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "vehicle.h"
+#include "funcao-fornecida.h"
 
 static void _v_write_prefix(FILE *bin, string prefix);
 static void _v_write_date(FILE *bin, string date);
@@ -170,4 +171,71 @@ void vehicle_select(FILE *fp, int last_byte) {
         free(data->category);
         free(data);
     }
+}
+
+/*
+    Reads the num of the field to be select
+*/
+static int _v_which_selected_field(FILE *bin, string field, int offset) {
+    if (strcmp(field, "prefixo") == 0) return PREFIX;
+    if (strcmp(field, "data") == 0) return DATE;
+    if (strcmp(field, "quantidadeLugares") == 0) return SEAT; 
+    if (strcmp(field, "linha") == 0) return SEAT; 
+    if (strcmp(field, "modelo") == 0) return MODEL;
+    if (strcmp(field, "categoria") == 0) return CATEGORY;
+
+    return -1; // Error handling
+}
+
+// struct _vehicle_reg *v_select_where(FILE *bin, int offset, string field, string value) {
+//     ////////////////////////////////////////////////////////////////////////////
+//     // if (g_read_rmv_field(bin, offset) == RMV) return NULL;
+//     // 
+//     // fseek(bin, V_REG_INFO_SIZE, offset);
+//     // // struct _vehicle_reg *vehicle = malloc(sizeof(*vehicle)); // This is the 'select' part 
+//     // vehicle->prefix = strdup(_read_prefix(bin, offset));
+//     // vehicle->date = strdup(_read_date(bin, offset));
+//     // vehicle->seats = _read_seats(bin, offset);
+//     // vehicle->line = _read_line(bin, offset);
+//     // vehicle->model = strdup(_read_model(bin, offset));
+//     // vehicle->category = strdup(_read_category(bin, offset));
+//     ////////////////////////////////////////////////////////////////////////////
+
+//     switch (_which_selected_field(bin, field, offset)) {
+//     case PREFIX:
+//         if (strcmp(value, vehicle->prefix) == 0) return vehicle;
+//         break;
+//     case DATE:
+//         if (strcmp(value, vehicle->date) == 0) return vehicle;
+//         break;
+//     case SEAT:
+//         if (vehicle->seats == atoi(value)) return vehicle;
+//         break;
+//     case MODEL:
+//         if (strcmp(value, vehicle->model) == 0) return vehicle;
+//         break;
+//     case CATEGORY:
+//         if (strcmp(value, vehicle->category) == 0) return vehicle;
+//         break;
+//     default:
+//         printf("Campo inexistente\n"); // Error handling
+//         break;
+//     }
+
+//     // free(vehicle);
+//     return NULL;
+// }
+
+
+// TODO: WTF IS THIS
+string *v_read_tokens_from_terminal() {
+    string *tokens = malloc(sizeof(*tokens) * V_AMNT_TOKENS);
+
+    for (int i = 0; i < V_AMNT_TOKENS; ++i) {
+        tokens[i] = calloc(sizeof(char), PAGE_SIZE);
+        scan_quote_string(tokens[i]);
+        tokens[i] = realloc(tokens[i], strlen(tokens[i]) + 1);
+    }
+    
+    return tokens;
 }
