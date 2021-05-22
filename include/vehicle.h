@@ -21,6 +21,8 @@
 #define V_HEADER_SIZE 175
 #define V_REG_INFO_SIZE 5 
 
+#define V_AMNT_TOKENS 6
+
 // #define V_REG_PREFIX_OFFSET 5
 // #define V_REG_DATE_OFFSET 10
 // #define V_REG_SEAT_OFFSET 20
@@ -64,5 +66,7 @@ void v_insert_datareg(FILE *bin, string *tokens);
 
 /* 'SELECT WHERE' VEHICLE FUNCTIONS */
 struct _vehicle_reg *v_select_where(FILE *bin, int offset, string field, string value);
+
+string *v_read_tokens_from_terminal();
 
 #endif

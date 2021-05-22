@@ -15,7 +15,7 @@
 /* CONST 'LINE ONLY' BINARY SIZE REFERENCES */
 #define L_HEADER_SIZE 82
 #define L_CONST_REG_SIZE 13
-
+#define L_AMNT_TOKENS 4
 
 /* CARD OPTIONS */
 #define S 'S' 
@@ -55,5 +55,6 @@ void l_header_init(struct _g_files *files);
 /* 'SELECT WHERE' LINE FUNCTIONS */
 struct _line_reg *l_select_where(FILE *bin, int offset, string field, string value);
 
+string *l_read_tokens_from_terminal();
 
 #endif

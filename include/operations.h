@@ -18,4 +18,9 @@ void vehicle_create_table(string csv_name, string bin_name);
 */
 void line_create_table(string csv_name, string bin_name);
 
+
+void vehicle_insert_into(string bin_name, int amnt_regs);
+void line_insert_into(string bin_name, int amnt_regs);
+
+
 #endif
