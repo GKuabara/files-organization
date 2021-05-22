@@ -12,15 +12,17 @@
 #define l_name_desc_t char[13]
 #define l_color_desc_t char [24]
 
+/* CARD OPTIONS */
+#define S 'S' 
+#define N 'N' 
+#define F 'F' 
+
 /* CONST 'LINE ONLY' BINARY SIZE REFERENCES */
 #define L_HEADER_SIZE 82
 #define L_CONST_REG_SIZE 13
 #define L_AMNT_TOKENS 4
 
-/* CARD OPTIONS */
-#define S 'S' 
-#define N 'N' 
-#define F 'F' 
+
 
 /* LINE CSV TOKEN INDEXES */
 enum {
@@ -31,14 +33,14 @@ enum {
 };
 
 /* LINE REG STRUCTURE */
-struct _line_reg {
-    int reg_size;
+typedef struct{
     int code;
-    char card_opt;
-    char *name;
+    char card;
+    int name_size;
+    char *line_name;
+    int color_size;
     char *color;
-};
-
+} line;
 
 /* GENERATE BINARY LINE FILE FUNCTIONS */
 /*
@@ -56,5 +58,7 @@ void l_header_init(struct _g_files *files);
 struct _line_reg *l_select_where(FILE *bin, int offset, string field, string value);
 
 string *l_read_tokens_from_terminal();
+
+void line_select(FILE *fp, int last_byte);
 
 #endif

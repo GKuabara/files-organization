@@ -85,73 +85,94 @@ void v_header_init(struct _g_files *files) {
     free(header);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-// static char* _read_prefix(FILE *bin, int offset) {
-//     // TODO: check if its at the right posix
+static vehicle *_v_read_reg_data(FILE *fp) {
 
-//     char prefix[sizeof(v_prefix_t) + 1] = {0};
-//     if (fread(prefix, sizeof(v_prefix_t), 1, bin) != 1);
+    vehicle *data = malloc(sizeof(*data));
 
-//     return prefix;
-// }
+    data->prefix = g_read_var_field(fp, 5);
+    data->date = g_read_var_field(fp, 10);
 
-// static char* _read_date(FILE *bin, int offset) {
-//     // TODO: check if its at the right posix
-
-//     char date[sizeof(v_date_t) + 1] = {0};
-//     if (fread(date, sizeof(v_date_t), 1, bin) != 1);
-
-//     return date;
-// }
-
-// static int _read_seats(FILE *bin, int offset) {
-//     // TODO: check if its at the right posix
-
-//     int seats;
-//     if (fread(&seats, sizeof(int), 1, bin) != 1);
+    fread(&data->seats, sizeof(int), 1, fp);
+    fread(&data->line, sizeof(int), 1, fp);
     
-//     return seats;
-// }
+    fread(&data->model_size, sizeof(int), 1, fp);
+    data->model = g_read_var_field(fp, data->model_size);
 
-// static int *_read_line(FILE *bin, int offset) {
-//     // TODO: check if its at the right posix
+    fread(&data->category_size, sizeof(int), 1, fp);
+    data->category = g_read_var_field(fp, data->category_size);
 
-//     int line;
-//     if (fread(&line, sizeof(int), 1, bin) != 1);
-    
-//     return line;
-// }
+    return data;
+}
 
-// static char* _read_model(FILE *bin, int offset) {
-//     // TODO: check if its at the right posix
+static string get_month_name(string str) {
+    months month = {.names = (char *[]) {"janeiro", "fevereiro", "março", "abril", "maio", \
+                "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}, \
+                .numbers = (char *[]) {"01", "02", "03", "04", "05", "06", "07", "08", \
+                "09", "10", "11", "12"}};
 
-//     int model_size = 0;
-//     if (fread(&model_size, sizeof(int), 1, bin) != 1); // Error handling
-    
-//     char model[model_size + 1];
-//     memset(model, 0, model_size + 1);
+    string month_name = NULL;
 
-//     if (fread(model, sizeof(char), model_size, bin) != model_size);
+    for (int i = 0; i < 12; i++) {
+        if (strcmp(str, month.numbers[i]) == 0) {
+            month_name = realloc(month_name, strlen(month.names[i]) + 1);
+            strcpy(month_name, month.names[i]);
+        }
+    }
 
-//     return model;
-// }
+    return month_name;
+}
 
-// static char * _read_category(FILE *bin, int offset) {
-//     // TODO: check if its at the right posix
+static void print_date(string date) {
+    if(date[0] == '\0'){
+        printf("Data de entrada do veiculo na frota: campo com valor nulo\n");
+        return;
+    }
 
-//     int category_size = 0;
-//     if (fread(&category_size, sizeof(int), 1, bin) != 1); // Error handling
-    
-//     char category[category_size + 1];
-//     memset(category, 0, category_size + 1);
+    string *tokens = str_get_tokens(date, (struct _delim_t) {.amnt_delim=1,.delim=(char *[]){"-"}});
 
-//     if (fread(category, sizeof(char), category_size, bin) != category_size);
+    string month_name = get_month_name(tokens[1]);
+    printf("Data de entrada do veiculo na frota: %s de %s de %s\n", tokens[2], month_name, tokens[0]);
 
-//     return category;
-// }
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+    for (string *aux = tokens; *aux; aux++) free(*aux);
+    free(tokens);
+    free(month_name);
+}
+
+static void print_seats(int seats) {
+    if(seats == -1)
+        printf("Quantidade de lugares sentados disponiveis: campo com valor nulo\n");
+    else
+        printf("Quantidade de lugares sentados disponiveis: %d\n", seats);
+
+    return;
+}
+
+void vehicle_select(FILE *fp, int last_byte) {
+    while(ftell(fp) < last_byte) {
+
+        data_header *header = _g_read_reg_header(fp);
+        //printf("removed: %c regsize: %d\n", header->removed, header->reg_size);
+
+        if(header->removed == RMV) {
+            int next_reg = ftell(fp) + header->reg_size;
+            fseek(fp, next_reg, SEEK_SET);
+            free(header);
+            continue;
+        }
+
+        vehicle *data = _v_read_reg_data(fp);
+
+        v_print_reg_data(data);
+
+        free(header);
+        free(data->date);
+        free(data->prefix);
+        free(data->model);
+        free(data->category);
+        free(data);
+    }
+}
+
 
 /*
     Reads the num of the field to be select

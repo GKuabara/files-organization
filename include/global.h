@@ -17,6 +17,11 @@ struct _reg_update {
     int reg_size;
 };
 
+typedef struct {
+    char removed;
+    int reg_size;
+} data_header;
+
 struct _finfo {
     int amnt_const;
     int const_size;
@@ -37,9 +42,13 @@ struct _finfo {
 #define INC_STAT '0' /* Inconsistent file */
 #define CON_STAT '1' /* Consistent file */
 
+#define VEHICLE_FILE 1
+#define LINE_FILE 2
 
 #define _g_is_null(token) (strcmp(token, "NULO") == 0 ? 1 : 0)
 #define _g_is_rmv(prefix) (prefix[0] == '*' ? RMV : NRM)
+
+#define NULL_FIELD_ERROR_SIZE 21
 
 /* GLOBAL GENERATE BINARY FILE FUNCTIONS */
 /*
@@ -63,8 +72,6 @@ void g_header_update(FILE *bin, char stats, struct _reg_update *, struct _finfo 
 */
 struct _reg_update *g_insert_datareg(FILE *bin, string *tokens, struct _finfo *);
 
-
-
 /* GLOBAL READ BINARY FUNCTIONS */
 /*
     Reads the first byte (rmv status) of a reg. 
@@ -78,6 +85,10 @@ int g_read_reg_size(FILE *bin);
 
 
 void g_read_header(FILE *bin, struct _finfo *finfo);
+
+data_header *_g_read_reg_header(FILE *fp);
+
+string g_read_var_field(FILE *fp, int field_size);
 
 
 #endif
