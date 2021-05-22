@@ -82,3 +82,23 @@ struct _reg_update *g_insert_datareg(FILE *bin, string *tokens, struct _finfo *f
     return update;
 }
 
+
+/*
+    Reads the first byte (rmv status) of a reg. 
+*/ 
+int g_read_reg_rmv_stats(FILE *bin) {
+    char is_removed;
+    if (fread(&is_removed, sizeof(char), 1, bin) != 1);
+    
+    return is_removed;
+}
+
+/*
+    Reads the reg_size byte of a reg.
+*/
+int g_read_reg_size(FILE *bin) {
+    int reg_size;
+    if (fread(&reg_size, sizeof(char), 1, bin) != 1);
+    
+    return reg_size;
+}
