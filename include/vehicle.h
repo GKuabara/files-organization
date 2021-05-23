@@ -21,11 +21,11 @@
 #define V_HEADER_SIZE 175
 #define V_REG_INFO_SIZE 5 
 #define V_AMNT_TOKENS 6
-// #define V_REG_PREFIX_OFFSET 5
-// #define V_REG_DATE_OFFSET 10
-// #define V_REG_SEAT_OFFSET 20
-// #define V_REG_LINE_OFFSET 24
-// #define V_REG_VAR_FIELDS_OFFSET 28
+#define V_REG_PREFIX_OFFSET 5
+#define V_REG_DATE_OFFSET 10
+#define V_REG_SEAT_OFFSET 20
+#define V_REG_LINE_OFFSET 24
+#define V_REG_VAR_FIELDS_OFFSET 28
 
 /* VEHICLE CSV TOKEN INDEXES */
 enum {
@@ -66,9 +66,9 @@ void v_header_init(struct _g_files *files);
 void v_insert_datareg(FILE *bin, string *tokens);
 
 /* 'SELECT WHERE' VEHICLE FUNCTIONS */
-vehicle *v_select_where(FILE *bin, int offset, string field, string value);
+void v_select_where(FILE *bin, string field, string value);
 
-void vehicle_select(FILE *fp, int last_byte);
+void v_select(FILE *fp, int last_byte);
 
 string *v_read_tokens_from_terminal();
 

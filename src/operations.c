@@ -70,6 +70,14 @@ static void _insert_dataregs_from_terminal(FILE *bin, struct _finfo *finfo, int 
     g_header_update(bin, CON_STAT, NULL, finfo); // Update header status only
 }
 
+static void _select_where(FILE *bin, int ftype, string field, string value) {
+    if (ftype == VEHICLE_FILE) 
+        v_select_where(bin, field, value);
+    else if (ftype == LINE_FILE)
+        l_select_where(bin, field, value);
+
+}
+
 
 /*
     Creates a vehicle table
@@ -161,11 +169,11 @@ void func_select(string bin_name, int select) {
     int last_byte = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-    if(select == VEHICLE_FILE){
+    if (select == VEHICLE_FILE){
         fseek(fp, V_HEADER_SIZE, SEEK_SET);
-        vehicle_select(fp, last_byte);
+        v_select(fp, last_byte);
     }
-    else if(select == LINE_FILE){
+    else if (select == LINE_FILE) {
         fseek(fp, L_HEADER_SIZE, SEEK_SET);
         line_select(fp, last_byte);
     }
@@ -173,12 +181,16 @@ void func_select(string bin_name, int select) {
     fclose(fp);
 }
 
-void v_print_reg_data(vehicle *data) {
-    printf("Prefixo do veiculo: %s\n", data->prefix);
-    printf("Modelo do veiculo: %s\n", data->model);
-    printf("Categoria do veiculo: %s\n", data->category);
-    
-    print_date(data->date);
-    print_seats(data->seats);
-    printf("\n");
+void vehicle_select_where(string bin_name, string field, string value) {
+    FILE *bin = open_file(bin_name, "rb");
+
+    _select_where(bin, VEHICLE_FILE, field, value);
+    fclose(bin);
+}
+
+void line_select_where(string bin_name, string field, string value) {
+    FILE *bin = open_file(bin_name, "rb");
+
+    _select_where(bin, LINE_FILE, field, value);
+    fclose(bin);
 }

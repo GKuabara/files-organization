@@ -23,6 +23,7 @@
 #define L_CONST_REG_SIZE 13
 #define L_AMNT_TOKENS 4
 
+#define L_REG_CODE_OFFSET 5
 
 
 /* LINE CSV TOKEN INDEXES */
@@ -56,23 +57,12 @@ void l_header_init(struct _g_files *files);
 
 
 /* 'SELECT WHERE' LINE FUNCTIONS */
-struct _line_reg *l_select_where(FILE *bin, int offset, string field, string value);
 
 string *l_read_tokens_from_terminal();
 
 void line_select(FILE *fp, int last_byte);
 
-#define L_HEADER_SIZE 82
+void l_select_where(FILE *bin, string field, string value);
 
-typedef struct{
-    int code;
-    char card;
-    int name_size;
-    char *line_name;
-    int color_size;
-    char *color;
-} line;
-
-void line_select(FILE *fp, int last_byte);
 
 #endif

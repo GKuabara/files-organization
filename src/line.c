@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "line.h"
+#include "funcao-fornecida.h"
 
 /* GENERATE BINARY FILE AUX FUNCTIONS */
 static void _l_write_code(FILE *bin, string code);
@@ -107,7 +108,7 @@ static void print_card(char card) {
     else if (card == F) printf("Aceita cartao: PAGAMENTO EM CARTAO SOMENTE NO FINAL DE SEMANA\n");
 }
 
-static void l_print_reg_data(line *data) {
+static void _l_print_reg_data(line *data) {
     printf("Codigo da linha: %d\n", data->code);
     printf("Nome da linha: %s\n", data->line_name);
     printf("Cor que descreve a linha: %s\n", data->color);
@@ -130,7 +131,7 @@ void line_select(FILE *fp, int last_byte) {
 
         line *data = _l_read_reg_data(fp);
 
-        l_print_reg_data(data);
+        _l_print_reg_data(data);
 
         free(header);
         free(data->line_name);
@@ -138,42 +139,6 @@ void line_select(FILE *fp, int last_byte) {
         free(data);
     }
 }
-
-// struct _line_reg *l_select_where(FILE *bin, int offset, string field, string value) {
-//     ////////////////////////////////////////////////////////////////////////////
-//     // if (g_read_reg_rmv_stats(bin, offset) == RMV) return NULL;
-//     // 
-//     // fseek(bin, V_REG_INFO_SIZE, offset);
-//     // struct _vehicle_reg *vehicle = malloc(sizeof(*vehicle)); // This is the 'select' part 
-//     // vehicle->prefix = strdup(_get_prefix(bin, offset));
-//     // vehicle->date = strdup(_get_date(bin, offset));
-//     // vehicle->seats = _get_seats(bin, offset);
-//     // vehicle->line = _get_line(bin, offset);
-//     // vehicle->model = strdup(_get_model(bin, offset));
-//     // vehicle->category = strdup(_get_category(bin, offset));
-//     ////////////////////////////////////////////////////////////////////////////
-
-//     switch (_l_which_selected_field(bin, field, offset)) {
-//     case CODE:
-//         if (strcmp(value, vehicle->prefix) == 0) return vehicle;
-//         break;
-//     case CARD:
-//         if (strcmp(value, vehicle->date) == 0) return vehicle;
-//         break;
-//     case NAME:
-//         if (vehicle->seats == atoi(value)) return vehicle;
-//         break;
-//     case COLOR:
-//         if (strcmp(value, vehicle->model) == 0) return vehicle;
-//         break;
-//     default:
-//         printf("Campo inexistente\n"); // Error handling
-//         break;
-//     }
-
-//     // free(vehicle);
-//     return NULL;
-// }
 
 string *l_read_tokens_from_terminal() {
     string *tokens = malloc(sizeof(*tokens) * L_AMNT_TOKENS);
@@ -185,4 +150,69 @@ string *l_read_tokens_from_terminal() {
     }
     
     return tokens;
+}
+
+
+static void _l_free_reg_data(line *data) {
+    free(data->line_name);
+    free(data->color);
+
+    free(data);    
+}
+
+static line *_l_get_selected_reg(FILE *bin, int offset, string field, string value) {
+    data_header *header = _g_read_reg_header(bin);
+
+    if (!header) return NULL;
+
+    if (header->removed == RMV) {
+        fseek(bin, header->reg_size, SEEK_CUR);
+        free(header);
+        
+        return NULL;
+    }
+    free(header);
+    
+
+    
+    fseek(bin, L_REG_CODE_OFFSET, offset);
+    line *data = _l_read_reg_data(bin);
+
+    switch (_l_which_selected_field(field)) {
+    case CODE:
+        if (atoi(value) == data->code) return data;
+        break;
+    case CARD:
+        if (data->card == value[0]) return data;
+        break;
+    case NAME:
+        if (strcmp(value, data->line_name) == 0) return data;
+        break;
+    case COLOR:
+        if (strcmp(value, data->color) == 0) return data;
+        break;
+    default:
+        printf("Campo inexistente\n"); // Error handling
+        break;
+    }
+
+    _l_free_reg_data(data);
+    return NULL;
+}
+
+void l_select_where(FILE *bin, string field, string value) {
+    fseek(bin, 0, SEEK_END);
+    long end_of_file = ftell(bin);
+    
+    fseek(bin, L_HEADER_SIZE, SEEK_SET);
+
+    long offset;
+    while ((offset = ftell(bin)) < end_of_file) {
+        line *data = _l_get_selected_reg(bin, offset, field, value);
+
+        if (data) {
+            _l_print_reg_data(data);
+            _l_free_reg_data(data);
+        }
+    }
 }

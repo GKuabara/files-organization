@@ -24,6 +24,8 @@ void line_insert_into(string bin_name, int amnt_regs);
 
 void func_select(string bin_name, int select);
 
-void v_print_reg_data(vehicle *data);
+void line_select_where(string bin_name, string field, string value);
+void vehicle_select_where(string bin_name, string field, string value);
+
 
 #endif

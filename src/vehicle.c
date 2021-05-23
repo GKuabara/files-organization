@@ -11,6 +11,7 @@ static void _v_write_date(FILE *bin, string date);
 static void _v_write_int_fields(FILE *bin, string num_field);
 static void _v_write_var_fields(FILE *bin, string field);
 
+
 /*
     Writes the prefix of a new vehicle reg
 */
@@ -53,6 +54,187 @@ static void _v_write_var_fields(FILE *bin, string field) {
 }
 
 /*
+    Reads/Loads to memory a vehicle reg
+*/
+static vehicle *_v_read_reg_data(FILE *bin) {
+    vehicle *data = malloc(sizeof(*data));
+
+    data->prefix = g_read_var_field(bin, 5);
+    data->date = g_read_var_field(bin, 10);
+
+    if (fread(&data->seats, sizeof(int), 1, bin) != 1);
+    if (fread(&data->line, sizeof(int), 1, bin) != 1);
+    
+    if (fread(&data->model_size, sizeof(int), 1, bin) != 1);
+    data->model = g_read_var_field(bin, data->model_size);
+
+    if (fread(&data->category_size, sizeof(int), 1, bin) != 1);
+    data->category = g_read_var_field(bin, data->category_size);
+
+    return data;
+}
+
+/*
+    Converts the month's number to the month's name 
+*/
+static string _v_get_month_name(string str) {
+    struct {
+        char *names[12];
+        char *numbers[12];
+    } munt = {{"janeiro", "fevereiro", "março", "abril", "maio", \
+                "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}, \
+                {"01", "02", "03", "04", "05", "06", "07", "08", \
+                "09", "10", "11", "12"}};
+
+    months month = {.names = (char *[]) {"janeiro", "fevereiro", "março", "abril", "maio", \
+                "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}, \
+                .numbers = (char *[]) {"01", "02", "03", "04", "05", "06", "07", "08", \
+                "09", "10", "11", "12"}};
+
+    string month_name = NULL;
+    for (int i = 0; i < 12; i++) {
+        if (strcmp(str, month.numbers[i]) == 0) {
+            month_name = realloc(month_name, strlen(month.names[i]) + 1);
+            strcpy(month_name, month.names[i]);
+        }
+    }
+
+    return month_name;
+}
+
+/*
+    Prints the date vehicle reg
+*/
+static void _v_print_date(string date) {
+    if (date[0] == '\0' ){
+        printf("Data de entrada do veiculo na frota: campo com valor nulo\n");
+        return;
+    }
+
+    string *tokens = str_get_tokens(date, (struct _delim_t) {.amnt_delim=1,.delim=(char *[]){"-"}});
+
+    string month_name = _v_get_month_name(tokens[1]);
+    printf("Data de entrada do veiculo na frota: %s de %s de %s\n", tokens[2], month_name, tokens[0]);
+
+    for (string *aux = tokens; *aux; aux++) free(*aux);
+    free(tokens);
+    free(month_name);
+}
+
+/*
+    Prints the amount of seats
+*/
+static void _v_print_seats(int seats) {
+    if (seats == -1)
+        printf("Quantidade de lugares sentados disponiveis: campo com valor nulo\n");
+    else
+        printf("Quantidade de lugares sentados disponiveis: %d\n", seats);
+
+    return;
+}
+
+/*
+  
+*/
+static int _v_which_selected_field(FILE *bin, string field) {
+    if (strcmp(field, "prefixo") == 0) return PREFIX;
+    if (strcmp(field, "data") == 0) return DATE;
+    if (strcmp(field, "quantidadeLugares") == 0) return SEAT; 
+    if (strcmp(field, "linha") == 0) return SEAT; 
+    if (strcmp(field, "modelo") == 0) return MODEL;
+    if (strcmp(field, "categoria") == 0) return CATEGORY;
+
+    return -1; // Error handling
+}
+
+void v_free_reg(vehicle *data) {
+    free(data->date);
+    free(data->prefix);
+    free(data->model);
+    free(data->category);
+    
+    free(data);
+}
+
+static void _v_free_reg_data(vehicle *data) {
+    free(data->prefix);
+    free(data->date);
+    free(data->model);
+    free(data->category);
+
+    free(data);    
+}
+
+static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string value) {
+    data_header *header = _g_read_reg_header(bin);
+
+    if (!header) return NULL;
+
+    if (header->removed == RMV) {
+        fseek(bin, header->reg_size, SEEK_CUR);
+        free(header);
+        
+        return NULL;
+    }
+    free(header);
+    
+    
+    vehicle *data = _v_read_reg_data(bin);
+
+    switch (_v_which_selected_field(bin, field)) {
+    case PREFIX:
+        if (strcmp(value, data->prefix) == 0) return data;
+        break;
+    case DATE:
+        if (strcmp(value, data->date) == 0) return data;
+        break;
+    case SEAT:
+        if (data->seats == atoi(value)) return data;
+        break;
+    case MODEL:
+        if (strcmp(value, data->model) == 0) return data;
+        break;
+    case CATEGORY:
+        if (strcmp(value, data->category) == 0) return data;
+        break;
+    default:
+        printf("Campo inexistente\n"); // Error handling
+        break;
+    }
+
+    v_free_reg(data);
+    return NULL;
+}
+
+static void _v_print_reg_data(vehicle *data) {
+    printf("Prefixo do veiculo: %s\n", data->prefix);
+    printf("Modelo do veiculo: %s\n", data->model);
+    printf("Categoria do veiculo: %s\n", data->category);
+    
+    _v_print_date(data->date);
+    _v_print_seats(data->seats);
+    printf("\n");
+}
+
+void v_select_where(FILE *bin, string field, string value) {
+    fseek(bin, 0, SEEK_END);
+    long end_of_file = ftell(bin);
+
+    fseek(bin, V_HEADER_SIZE, SEEK_SET);
+
+    long offset;
+    while ((offset = ftell(bin)) < end_of_file) {
+        vehicle *data = _v_get_selected_reg(bin, offset, field, value);
+
+        if (data) {
+            _v_print_reg_data(data);
+            _v_free_reg_data(data);
+        }
+    }
+    
+}
+
+/*
     Inserts all 'vehicle only' info of a new vehicle datareg
 */
 void v_insert_datareg(FILE *bin, string *tokens) {
@@ -85,149 +267,27 @@ void v_header_init(struct _g_files *files) {
     free(header);
 }
 
-static vehicle *_v_read_reg_data(FILE *fp) {
+/*
+    Selects/prints all non removed vehicle regs from a bin file
+*/
+void v_select(FILE *bin, int last_byte) {
+    while (ftell(bin) < last_byte) {
+        data_header *header = _g_read_reg_header(bin);
 
-    vehicle *data = malloc(sizeof(*data));
-
-    data->prefix = g_read_var_field(fp, 5);
-    data->date = g_read_var_field(fp, 10);
-
-    fread(&data->seats, sizeof(int), 1, fp);
-    fread(&data->line, sizeof(int), 1, fp);
-    
-    fread(&data->model_size, sizeof(int), 1, fp);
-    data->model = g_read_var_field(fp, data->model_size);
-
-    fread(&data->category_size, sizeof(int), 1, fp);
-    data->category = g_read_var_field(fp, data->category_size);
-
-    return data;
-}
-
-static string get_month_name(string str) {
-    months month = {.names = (char *[]) {"janeiro", "fevereiro", "março", "abril", "maio", \
-                "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}, \
-                .numbers = (char *[]) {"01", "02", "03", "04", "05", "06", "07", "08", \
-                "09", "10", "11", "12"}};
-
-    string month_name = NULL;
-
-    for (int i = 0; i < 12; i++) {
-        if (strcmp(str, month.numbers[i]) == 0) {
-            month_name = realloc(month_name, strlen(month.names[i]) + 1);
-            strcpy(month_name, month.names[i]);
-        }
-    }
-
-    return month_name;
-}
-
-static void print_date(string date) {
-    if(date[0] == '\0'){
-        printf("Data de entrada do veiculo na frota: campo com valor nulo\n");
-        return;
-    }
-
-    string *tokens = str_get_tokens(date, (struct _delim_t) {.amnt_delim=1,.delim=(char *[]){"-"}});
-
-    string month_name = get_month_name(tokens[1]);
-    printf("Data de entrada do veiculo na frota: %s de %s de %s\n", tokens[2], month_name, tokens[0]);
-
-    for (string *aux = tokens; *aux; aux++) free(*aux);
-    free(tokens);
-    free(month_name);
-}
-
-static void print_seats(int seats) {
-    if(seats == -1)
-        printf("Quantidade de lugares sentados disponiveis: campo com valor nulo\n");
-    else
-        printf("Quantidade de lugares sentados disponiveis: %d\n", seats);
-
-    return;
-}
-
-void vehicle_select(FILE *fp, int last_byte) {
-    while(ftell(fp) < last_byte) {
-
-        data_header *header = _g_read_reg_header(fp);
-        //printf("removed: %c regsize: %d\n", header->removed, header->reg_size);
-
-        if(header->removed == RMV) {
-            int next_reg = ftell(fp) + header->reg_size;
-            fseek(fp, next_reg, SEEK_SET);
+        if (header->removed == RMV) {
+            fseek(bin, header->reg_size, SEEK_CUR);
             free(header);
             continue;
         }
 
-        vehicle *data = _v_read_reg_data(fp);
-
-        v_print_reg_data(data);
+        vehicle *data = _v_read_reg_data(bin);
+        _v_print_reg_data(data);
 
         free(header);
-        free(data->date);
-        free(data->prefix);
-        free(data->model);
-        free(data->category);
-        free(data);
+        v_free_reg(data);
     }
 }
 
-/*
-    Reads the num of the field to be select
-*/
-static int _v_which_selected_field(FILE *bin, string field, int offset) {
-    if (strcmp(field, "prefixo") == 0) return PREFIX;
-    if (strcmp(field, "data") == 0) return DATE;
-    if (strcmp(field, "quantidadeLugares") == 0) return SEAT; 
-    if (strcmp(field, "linha") == 0) return SEAT; 
-    if (strcmp(field, "modelo") == 0) return MODEL;
-    if (strcmp(field, "categoria") == 0) return CATEGORY;
-
-    return -1; // Error handling
-}
-
-// struct _vehicle_reg *v_select_where(FILE *bin, int offset, string field, string value) {
-//     ////////////////////////////////////////////////////////////////////////////
-//     // if (g_read_rmv_field(bin, offset) == RMV) return NULL;
-//     // 
-//     // fseek(bin, V_REG_INFO_SIZE, offset);
-//     // // struct _vehicle_reg *vehicle = malloc(sizeof(*vehicle)); // This is the 'select' part 
-//     // vehicle->prefix = strdup(_read_prefix(bin, offset));
-//     // vehicle->date = strdup(_read_date(bin, offset));
-//     // vehicle->seats = _read_seats(bin, offset);
-//     // vehicle->line = _read_line(bin, offset);
-//     // vehicle->model = strdup(_read_model(bin, offset));
-//     // vehicle->category = strdup(_read_category(bin, offset));
-//     ////////////////////////////////////////////////////////////////////////////
-
-//     switch (_which_selected_field(bin, field, offset)) {
-//     case PREFIX:
-//         if (strcmp(value, vehicle->prefix) == 0) return vehicle;
-//         break;
-//     case DATE:
-//         if (strcmp(value, vehicle->date) == 0) return vehicle;
-//         break;
-//     case SEAT:
-//         if (vehicle->seats == atoi(value)) return vehicle;
-//         break;
-//     case MODEL:
-//         if (strcmp(value, vehicle->model) == 0) return vehicle;
-//         break;
-//     case CATEGORY:
-//         if (strcmp(value, vehicle->category) == 0) return vehicle;
-//         break;
-//     default:
-//         printf("Campo inexistente\n"); // Error handling
-//         break;
-//     }
-
-//     // free(vehicle);
-//     return NULL;
-// }
-
-
-// TODO: WTF IS THIS
 string *v_read_tokens_from_terminal() {
     string *tokens = malloc(sizeof(*tokens) * V_AMNT_TOKENS);
 
