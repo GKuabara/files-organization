@@ -57,19 +57,24 @@ static void _insert_dataregs_from_csv(struct _g_files *files, struct _finfo *fin
 /*
     Reads new regs from terminal to insert in the end of the binary files
 */
-static void _insert_dataregs_from_terminal(FILE *bin, struct _finfo *finfo, int amnt_regs, string *(*read_terminal_tokens)(void)) {
+static void _insert_dataregs_from_terminal(FILE *bin, struct _finfo *finfo, int amnt_regs) {
     
+
     for (int i = 0; i < amnt_regs; ++i) {
-        
         // Gets line from terminal
-        string *tokens = read_terminal_tokens();
+        string line = readline(stdin);
+        string *tokens = str_get_tokens(line, (struct _delim_t) {.amnt_delim=1, .delim=(char *[]){" "}});
 
         struct _reg_update *update = _insert_datareg(bin, tokens, finfo);
-        finfo->amnt_reg++;
+
+        if (update->is_removed == RMV) finfo->amnt_rmv++;
+        else finfo->amnt_reg++;
+
         g_header_update(bin, INC_STAT, update, finfo); // Updates the header
 
         /* Frees all aux structures */
         str_free_tokens(tokens);
+        free(line);
     }
 
     g_header_update(bin, CON_STAT, NULL, finfo); // Update header status only
@@ -164,9 +169,9 @@ void vehicle_insert_into(string bin_name, int amnt_regs) {
         printf("Arquivo inconsistente\n");
     }
     g_read_header(bin, &vinfo);
-    _insert_dataregs_from_terminal(bin, &vinfo, amnt_regs, v_read_tokens_from_terminal);
+    _insert_dataregs_from_terminal(bin, &vinfo, amnt_regs);
     
-    fclose(bin); //TODO: Make a function for this
+    fclose(bin);
 }
 
 
@@ -179,7 +184,6 @@ void line_insert_into(string bin_name, int amnt_regs) {
     struct _finfo linfo = {.amnt_const = 2, 
                            .amnt_reg = 0,
                            .amnt_rmv = 0,
-                           .next_reg_offset = L_HEADER_SIZE,
                            .const_size = L_CONST_REG_SIZE, 
                            .header_funct = l_header_init, 
                            .header_size = L_HEADER_SIZE, 
@@ -189,11 +193,11 @@ void line_insert_into(string bin_name, int amnt_regs) {
         fclose(bin);
         printf("Arquivo inconsistente\n");
     }
-    g_read_header(bin, &linfo);
-    _insert_dataregs_from_terminal(bin, &linfo, amnt_regs, l_read_tokens_from_terminal);
-    
-    fclose(bin); //TODO: Make a function for this
 
+    g_read_header(bin, &linfo);
+    _insert_dataregs_from_terminal(bin, &linfo, amnt_regs);
+    
+    fclose(bin); 
 }
 
 /*

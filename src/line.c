@@ -51,7 +51,8 @@ static void _l_write_code(FILE *bin, string code) {
     Writes the card option of a new line reg
 */
 static void _l_write_card_opt(FILE *bin, string card_opt) {
-    char opt = *card_opt;
+    char opt = (_g_is_null(card_opt))? '\0': *card_opt;
+
 
     /* fwrite Error Handling */
     if (fwrite(&opt, sizeof(char), 1, bin) != 1);
@@ -157,20 +158,6 @@ boolean line_select(FILE *fp, int last_byte) {
     }
 }
 
-/*
-    Reads information from terminal to insert in binary file
-*/
-string *l_read_tokens_from_terminal() {
-    string *tokens = malloc(sizeof(*tokens) * L_AMNT_TOKENS);
-
-    for (int i = 0; i < L_AMNT_TOKENS; ++i) {
-        tokens[i] = calloc(sizeof(char), PAGE_SIZE);
-        scan_quote_string(tokens[i]);
-        tokens[i] = realloc(tokens[i], strlen(tokens[i]) + 1);
-    }
-    
-    return tokens;
-}
 
 /* free struct and its elements */
 static void _l_free_reg_data(line *data) {

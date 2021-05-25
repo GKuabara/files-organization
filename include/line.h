@@ -56,10 +56,6 @@ void l_insert_datareg(FILE *bin, string *tokens);
 void l_header_init(struct _g_files *files);
 
 
-/* 'SELECT WHERE' LINE FUNCTIONS */
-
-string *l_read_tokens_from_terminal();
-
 /*
     Fourth functionality, prints every valid register
 */

@@ -295,17 +295,3 @@ boolean v_select(FILE *bin, int last_byte) {
     }
 }
 
-/*
-    Reads information from terminal to insert in binary file
-*/
-string *v_read_tokens_from_terminal() {
-    string *tokens = malloc(sizeof(*tokens) * V_AMNT_TOKENS);
-
-    for (int i = 0; i < V_AMNT_TOKENS; ++i) {
-        tokens[i] = calloc(sizeof(char), PAGE_SIZE);
-        scan_quote_string(tokens[i]);
-        tokens[i] = realloc(tokens[i], strlen(tokens[i]) + 1);
-    }
-    
-    return tokens;
-}

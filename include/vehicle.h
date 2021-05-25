@@ -74,9 +74,4 @@ boolean v_select_where(FILE *bin, string field, string value);
 */
 boolean v_select(FILE *fp, int last_byte);
 
-/*
-    Reads information from terminal to insert in binary file
-*/
-string *v_read_tokens_from_terminal();
-
 #endif
