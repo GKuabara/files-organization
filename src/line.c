@@ -216,7 +216,6 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
         if (strcmp(value, data->color) == 0) return data;
         break;
     default:
-        printf("Campo inexistente\n"); // Error handling
         break;
     }
 
@@ -227,11 +226,15 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
 /*
     Print registers containing 'value' in the requested 'field'
 */
-boolean l_select_where(FILE *bin, string field, string value) {
+void l_select_where(FILE *bin, string field, string value) {
     fseek(bin, 0, SEEK_END);
     long end_of_file = ftell(bin);
     
-    if (check_bin_consistency(bin) == False) return False;
+    if (check_bin_consistency(bin) == False) return;
+    if (_l_which_selected_field(field) == -1) {
+        printf("Não existe esse campo no arquivo\n");
+        return;
+    }
 
     fseek(bin, L_HEADER_SIZE, SEEK_SET);
 
@@ -249,5 +252,5 @@ boolean l_select_where(FILE *bin, string field, string value) {
         }
     }
 
-    return found_reg;
+    if (found_reg == False) printf("Registro inexistente.\n");
 }

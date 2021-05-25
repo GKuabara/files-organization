@@ -106,4 +106,9 @@ string g_read_var_field(FILE *fp, int field_size);
 */
 boolean check_bin_consistency(FILE *fp);
 
+/*
+    Checks of parameters from terminal are correctly formatted 
+*/
+boolean check_terminal_parameters(string field, string value) ;
+
 #endif

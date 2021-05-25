@@ -67,7 +67,7 @@ void v_header_init(struct _g_files *files);
 void v_insert_datareg(FILE *bin, string *tokens);
 
 /* 'SELECT WHERE' VEHICLE FUNCTIONS */
-boolean v_select_where(FILE *bin, string field, string value);
+void v_select_where(FILE *bin, string field, string value);
 
 /*
     Selects/prints all non removed vehicle regs from a bin file

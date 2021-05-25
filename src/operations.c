@@ -76,18 +76,15 @@ static void _insert_dataregs_from_terminal(FILE *bin, struct _finfo *finfo, int 
 }
 
 static void _select_where(FILE *bin, int ftype, string field, string value) {
-    boolean status;
-    if (ftype == VEHICLE_FILE) {
-        status = v_select_where(bin, field, value);
-        if (status == False) printf("Registro inexistente.\n");
+
+    if (check_terminal_parameters(field, value) == False) return;
+    else if (ftype == VEHICLE_FILE) {
+        v_select_where(bin, field, value);
     }
     else if (ftype == LINE_FILE) {
-        status = l_select_where(bin, field, value);
-        if (status == False) printf("Registro inexistente.\n");
+        l_select_where(bin, field, value);
     }
-
 }
-
 
 /*
     Creates a vehicle table
@@ -232,7 +229,7 @@ boolean func_select(string bin_name, int select) {
 */
 void vehicle_select_where(string bin_name, string field, string value) {
     FILE *bin = open_file(bin_name, "rb");
-
+    if (bin == NULL) return;
     _select_where(bin, VEHICLE_FILE, field, value);
     fclose(bin);
 }
@@ -242,7 +239,7 @@ void vehicle_select_where(string bin_name, string field, string value) {
 */
 void line_select_where(string bin_name, string field, string value) {
     FILE *bin = open_file(bin_name, "rb");
-
+    if (bin == NULL) return;
     _select_where(bin, LINE_FILE, field, value);
     fclose(bin);
 }

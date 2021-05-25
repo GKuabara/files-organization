@@ -68,7 +68,7 @@ boolean line_select(FILE *fp, int last_byte);
 /*
     Print registers containing 'value' in the requested 'field'
 */
-boolean l_select_where(FILE *bin, string field, string value);
+void l_select_where(FILE *bin, string field, string value);
 
 
 #endif

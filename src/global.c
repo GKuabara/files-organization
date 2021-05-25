@@ -154,9 +154,22 @@ string g_read_var_field(FILE *fp, int field_size) {
     return str;
 }
 
+/*
+    Checks if file is consistent or not
+*/
 boolean check_bin_consistency(FILE *fp) {
     char status;
     fseek(fp, 0, SEEK_SET);
     fread(&status, sizeof(char), 1, fp);
     return (status == CON_STAT) ? True : False;     
+}
+
+/*
+    Checks of parameters from terminal are correctly formatted 
+*/
+boolean check_terminal_parameters(string field, string value) {
+    if (field == NULL || value == NULL) {
+        printf("Quantidade de parâmetros inválida\n");
+        return False;
+    }
 }

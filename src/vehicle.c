@@ -128,7 +128,7 @@ static void _v_print_seats(int seats) {
 /*
     Selects what field was requested and return its number identifier
 */
-static int _v_which_selected_field(FILE *bin, string field) {
+static int _v_which_selected_field(string field) {
     if (strcmp(field, "prefixo") == 0) return PREFIX;
     if (strcmp(field, "data") == 0) return DATE;
     if (strcmp(field, "quantidadeLugares") == 0) return SEAT; 
@@ -170,7 +170,7 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
 
     // Gets the field we need to search for 'value', if the
     // register contains 'value', return struct with all reg data
-    switch (_v_which_selected_field(bin, field)) {
+    switch (_v_which_selected_field(field)) {
     case PREFIX:
         if (strcmp(value, data->prefix) == 0) return data;
         break;
@@ -187,7 +187,6 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
         if (strcmp(value, data->category) == 0) return data;
         break;
     default:
-        printf("Campo inexistente\n"); // Error handling
         break;
     }
 
@@ -211,11 +210,15 @@ static void _v_print_reg_data(vehicle *data) {
 /*
     Print registers containing 'value' in the requested 'field'
 */
-boolean v_select_where(FILE *bin, string field, string value) {
+void v_select_where(FILE *bin, string field, string value) {
     fseek(bin, 0, SEEK_END);
     long end_of_file = ftell(bin);
 
-    if (check_bin_consistency(bin) == False) return False;
+    if (check_bin_consistency(bin) == False) return;
+    if (_v_which_selected_field(field) == -1) {
+        printf("Não existe esse campo no arquivo\n");
+        return;
+    }
 
     fseek(bin, V_HEADER_SIZE, SEEK_SET);
 
@@ -223,7 +226,7 @@ boolean v_select_where(FILE *bin, string field, string value) {
     long offset;
     while ((offset = ftell(bin)) < end_of_file) {
 
-        // Checks if register contain 'value' inf 'field'
+        // Checks if register contain 'value' in 'field'
         vehicle *data = _v_get_selected_reg(bin, offset, field, value);
 
         if (data) {
@@ -232,7 +235,8 @@ boolean v_select_where(FILE *bin, string field, string value) {
             found_reg = True;
         }
     }
-    return found_reg;
+
+    if (found_reg == False) printf("Registro inexistente.\n");
 }
 
 /*
