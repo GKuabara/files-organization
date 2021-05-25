@@ -1,1 +1,5 @@
 .vscode/*
+*.out
+*.in
+*.csv
+*.bin

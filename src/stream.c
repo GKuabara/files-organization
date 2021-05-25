@@ -94,9 +94,17 @@ string *str_get_tokens(string str, const struct _delim_t d) {
     string *tokens = calloc(PAGE_SIZE, sizeof(*tokens));
     int i = 0;
     int token_size = 0;
+    int buffered_quote = 0;
     while (*str != '\0') {        
         int off;
-        if ((off = _delim(str, d))) {
+
+        if (*str == '"') {
+            buffered_quote = !buffered_quote;
+            str += 1;
+            continue;
+        }
+
+        if ((off = _delim(str, d)) && !buffered_quote) {
             tokens[i] = _build_token(&tokens[i], token_size, '\0');
             token_size = 0;
             i++;

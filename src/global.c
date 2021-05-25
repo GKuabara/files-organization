@@ -113,9 +113,9 @@ int g_read_reg_size(FILE *bin) {
 void g_read_header(FILE *bin, struct _finfo *finfo) {
     fseek(bin, 1, SEEK_SET);
 
-    if (fread(&finfo->next_reg_offset, sizeof(long), 1, bin) != 1);
-    if (fread(&finfo->amnt_reg, sizeof(int), 1, bin) != 1);
-    if (fread(&finfo->amnt_rmv, sizeof(int), 1, bin) != 1);
+    fread(&finfo->next_reg_offset, sizeof(long), 1, bin);
+    fread(&finfo->amnt_reg, sizeof(int), 1, bin);
+    fread(&finfo->amnt_rmv, sizeof(int), 1, bin);
 }
 
 /*
