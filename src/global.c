@@ -19,15 +19,20 @@ static int _g_reg_get_size(string *var_fields, int const_size) {
 }
 
 /*
-    Opens both files. TODO: Maybe put in a file handler module (?)
+    Opens both files.
 */
 struct _g_files *g_open_files(string csv_name, string bin_name) {
     struct _g_files *files = malloc(sizeof(*files));
     assert(files); // In case of error
 
-    if (csv_name != NULL) files->csv = open_file(csv_name, "r");
-    if (bin_name != NULL) files->bin = open_file(bin_name, "w+b");
-
+    if (csv_name == NULL || !(files->csv = open_file(csv_name, "r"))) {
+        free(files);
+        return NULL;
+    }
+    if (bin_name == NULL || !(files->bin = open_file(bin_name, "w+b"))) {
+        free(files);
+        return NULL;
+    }
     return files;
 }
 
@@ -102,7 +107,9 @@ int g_read_reg_size(FILE *bin) {
     return reg_size;
 }
 
-
+/*
+    Reads file's header fields: offset of next reg, #valid and #removed regs
+*/
 void g_read_header(FILE *bin, struct _finfo *finfo) {
     fseek(bin, 1, SEEK_SET);
 
@@ -114,10 +121,10 @@ void g_read_header(FILE *bin, struct _finfo *finfo) {
 /*
     Reads first two fields of a register that starts at position pointed by fp
 */
-data_header *_g_read_reg_header(FILE *fp) {
-    data_header *header = malloc(sizeof(*header));
+struct _reg_update *_g_read_reg_header(FILE *fp) {
+    struct _reg_update *header = malloc(sizeof(*header));
 
-    if (fread(&header->removed, sizeof(char), 1, fp) == EOF) {
+    if (fread(&header->is_removed, sizeof(char), 1, fp) == 0) {
         free(header);
         return NULL;
     }
@@ -127,6 +134,10 @@ data_header *_g_read_reg_header(FILE *fp) {
     return header;
 }
 
+/* 
+    For fields with variable size, use this funcion to read the field.
+    Also used for strings with fixed size to put "\0" to print easily
+*/
 string g_read_var_field(FILE *fp, int field_size) {
     string str = NULL;
 
@@ -141,4 +152,11 @@ string g_read_var_field(FILE *fp, int field_size) {
         str[field_size] = '\0';
     }
     return str;
+}
+
+boolean check_bin_consistency(FILE *fp) {
+    char status;
+    fseek(fp, 0, SEEK_SET);
+    fread(&status, sizeof(char), 1, fp);
+    return (status == CON_STAT) ? True : False;     
 }

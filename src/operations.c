@@ -46,8 +46,7 @@ static void _insert_dataregs_from_csv(struct _g_files *files, struct _finfo *fin
         g_header_update(files->bin, INC_STAT, update, finfo); // Updates the header
 
         /* Frees all aux structures */
-        for (string *t = tokens; *t; ++t) free(*t); //TODO: Make a function for this
-        free(tokens);       
+        str_free_tokens(tokens);       
         free(line);
         free(update);
     }
@@ -55,26 +54,37 @@ static void _insert_dataregs_from_csv(struct _g_files *files, struct _finfo *fin
     g_header_update(files->bin, CON_STAT, NULL, finfo); // Update header status only
 }
 
+/*
+    Reads new regs from terminal to insert in the end of the binary files
+*/
 static void _insert_dataregs_from_terminal(FILE *bin, struct _finfo *finfo, int amnt_regs, string *(*read_terminal_tokens)(void)) {
+    
     for (int i = 0; i < amnt_regs; ++i) {
+        
+        // Gets line from terminal
         string *tokens = read_terminal_tokens();
+
         struct _reg_update *update = _insert_datareg(bin, tokens, finfo);
         finfo->amnt_reg++;
         g_header_update(bin, INC_STAT, update, finfo); // Updates the header
 
         /* Frees all aux structures */
-        for (string *t = tokens; *t; ++t) free(*t); //TODO: Make a function for thi
-        free(update);
+        str_free_tokens(tokens);
     }
 
     g_header_update(bin, CON_STAT, NULL, finfo); // Update header status only
 }
 
 static void _select_where(FILE *bin, int ftype, string field, string value) {
-    if (ftype == VEHICLE_FILE) 
-        v_select_where(bin, field, value);
-    else if (ftype == LINE_FILE)
-        l_select_where(bin, field, value);
+    boolean status;
+    if (ftype == VEHICLE_FILE) {
+        status = v_select_where(bin, field, value);
+        if (status == False) printf("Registro inexistente.\n");
+    }
+    else if (ftype == LINE_FILE) {
+        status = l_select_where(bin, field, value);
+        if (status == False) printf("Registro inexistente.\n");
+    }
 
 }
 
@@ -82,8 +92,10 @@ static void _select_where(FILE *bin, int ftype, string field, string value) {
 /*
     Creates a vehicle table
 */
-void vehicle_create_table(string csv_name, string bin_name) {
+boolean vehicle_create_table(string csv_name, string bin_name) {
     struct _g_files *files = g_open_files(csv_name, bin_name);
+    if (files == NULL) return False;
+
     struct _finfo vinfo = {.amnt_const = 4, 
                            .amnt_reg = 0,
                            .amnt_rmv = 0,
@@ -100,13 +112,18 @@ void vehicle_create_table(string csv_name, string bin_name) {
     fclose(files->bin); //TODO: Make a function for this
     fclose(files->csv);
     free(files);  
+
+    if (vinfo.amnt_reg  == 0 && vinfo.amnt_rmv == 0) printf("Registro inexistente.\n");
+    return True;
 }
 
 /*
     Creates a line table
 */
-void line_create_table(string csv_name, string bin_name) {
+boolean line_create_table(string csv_name, string bin_name) {
     struct _g_files *files = g_open_files(csv_name, bin_name);
+    if (files == NULL) return False;
+
     struct _finfo linfo = {.amnt_const = 2, 
                            .amnt_reg = 0,
                            .amnt_rmv = 0,
@@ -122,9 +139,15 @@ void line_create_table(string csv_name, string bin_name) {
 
     fclose(files->bin); //TODO: Make a function for this
     fclose(files->csv);
-    free(files);  
+    free(files);
+    
+    if (linfo.amnt_reg  == 0 && linfo.amnt_rmv == 0) printf("Registro inexistente.\n");
+    return True;
 }
 
+/*
+    Inserts new reg into vehicle binary file
+*/
 void vehicle_insert_into(string bin_name, int amnt_regs) {
     FILE *bin = open_file(bin_name, "r+b");
     struct _finfo vinfo = {.amnt_const = 4, 
@@ -136,12 +159,20 @@ void vehicle_insert_into(string bin_name, int amnt_regs) {
                            .header_size = V_HEADER_SIZE, 
                            .insert_funct = v_insert_datareg};
     
+    if (check_bin_consistency(bin) == False) {
+        fclose(bin);
+        printf("Arquivo inconsistente\n");
+    }
     g_read_header(bin, &vinfo);
     _insert_dataregs_from_terminal(bin, &vinfo, amnt_regs, v_read_tokens_from_terminal);
     
     fclose(bin); //TODO: Make a function for this
 }
 
+
+/*
+    Inserts new reg into line binary file
+*/
 void line_insert_into(string bin_name, int amnt_regs) {
     FILE *bin = open_file(bin_name, "r+b");
 
@@ -154,6 +185,10 @@ void line_insert_into(string bin_name, int amnt_regs) {
                            .header_size = L_HEADER_SIZE, 
                            .insert_funct = l_insert_datareg};
     
+    if (check_bin_consistency(bin) == False) {
+        fclose(bin);
+        printf("Arquivo inconsistente\n");
+    }
     g_read_header(bin, &linfo);
     _insert_dataregs_from_terminal(bin, &linfo, amnt_regs, l_read_tokens_from_terminal);
     
@@ -161,26 +196,40 @@ void line_insert_into(string bin_name, int amnt_regs) {
 
 }
 
-void func_select(string bin_name, int select) {
+/*
+    Third and Fourth funcionality "SELECT WHERE"
+*/
+boolean func_select(string bin_name, int select) {
     FILE *fp = open_file(bin_name, "rb");
+    if (fp == NULL) return True;
 
     // getting the last file's byte
     fseek(fp, 0, SEEK_END);
     int last_byte = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-    if (select == VEHICLE_FILE){
+    boolean status = check_bin_consistency(fp);
+    boolean has_reg = True;
+
+    if (status == True && select == VEHICLE_FILE){
         fseek(fp, V_HEADER_SIZE, SEEK_SET);
-        v_select(fp, last_byte);
+        has_reg = v_select(fp, last_byte);
     }
-    else if (select == LINE_FILE) {
+    else if (status == True && select == LINE_FILE) {
         fseek(fp, L_HEADER_SIZE, SEEK_SET);
-        line_select(fp, last_byte);
+        has_reg = line_select(fp, last_byte);
+    }
+    else { 
+        has_reg = False;
     }
 
     fclose(fp);
+    return has_reg;
 }
 
+/*
+    Fifth funcionality "SELECT WHERE"
+*/
 void vehicle_select_where(string bin_name, string field, string value) {
     FILE *bin = open_file(bin_name, "rb");
 
@@ -188,6 +237,9 @@ void vehicle_select_where(string bin_name, string field, string value) {
     fclose(bin);
 }
 
+/*
+    Sixth funcionality "SELECT WHERE"
+*/
 void line_select_where(string bin_name, string field, string value) {
     FILE *bin = open_file(bin_name, "rb");
 

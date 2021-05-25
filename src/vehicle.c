@@ -78,13 +78,6 @@ static vehicle *_v_read_reg_data(FILE *bin) {
     Converts the month's number to the month's name 
 */
 static string _v_get_month_name(string str) {
-    struct {
-        char *names[12];
-        char *numbers[12];
-    } munt = {{"janeiro", "fevereiro", "março", "abril", "maio", \
-                "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}, \
-                {"01", "02", "03", "04", "05", "06", "07", "08", \
-                "09", "10", "11", "12"}};
 
     months month = {.names = (char *[]) {"janeiro", "fevereiro", "março", "abril", "maio", \
                 "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}, \
@@ -116,8 +109,7 @@ static void _v_print_date(string date) {
     string month_name = _v_get_month_name(tokens[1]);
     printf("Data de entrada do veiculo na frota: %s de %s de %s\n", tokens[2], month_name, tokens[0]);
 
-    for (string *aux = tokens; *aux; aux++) free(*aux);
-    free(tokens);
+    str_free_tokens(tokens);
     free(month_name);
 }
 
@@ -134,7 +126,7 @@ static void _v_print_seats(int seats) {
 }
 
 /*
-  
+    Selects what field was requested and return its number identifier
 */
 static int _v_which_selected_field(FILE *bin, string field) {
     if (strcmp(field, "prefixo") == 0) return PREFIX;
@@ -147,15 +139,9 @@ static int _v_which_selected_field(FILE *bin, string field) {
     return -1; // Error handling
 }
 
-void v_free_reg(vehicle *data) {
-    free(data->date);
-    free(data->prefix);
-    free(data->model);
-    free(data->category);
-    
-    free(data);
-}
-
+/*
+    Free reg struct pointers
+*/
 static void _v_free_reg_data(vehicle *data) {
     free(data->prefix);
     free(data->date);
@@ -166,11 +152,11 @@ static void _v_free_reg_data(vehicle *data) {
 }
 
 static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string value) {
-    data_header *header = _g_read_reg_header(bin);
-
+    struct _reg_update *header = _g_read_reg_header(bin);
+    
+    // Error and removed regs handling
     if (!header) return NULL;
-
-    if (header->removed == RMV) {
+    if (header->is_removed == RMV) {
         fseek(bin, header->reg_size, SEEK_CUR);
         free(header);
         
@@ -178,9 +164,12 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
     }
     free(header);
     
-    
+    // Struct receives register content
+    fseek(bin, V_REG_PREFIX_OFFSET, offset);
     vehicle *data = _v_read_reg_data(bin);
 
+    // Gets the field we need to search for 'value', if the
+    // register contains 'value', return struct with all reg data
     switch (_v_which_selected_field(bin, field)) {
     case PREFIX:
         if (strcmp(value, data->prefix) == 0) return data;
@@ -202,10 +191,13 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
         break;
     }
 
-    v_free_reg(data);
+    _v_free_reg_data(data);
     return NULL;
 }
 
+/*
+    Print reg information from struct
+*/
 static void _v_print_reg_data(vehicle *data) {
     printf("Prefixo do veiculo: %s\n", data->prefix);
     printf("Modelo do veiculo: %s\n", data->model);
@@ -216,22 +208,31 @@ static void _v_print_reg_data(vehicle *data) {
     printf("\n");
 }
 
-void v_select_where(FILE *bin, string field, string value) {
+/*
+    Print registers containing 'value' in the requested 'field'
+*/
+boolean v_select_where(FILE *bin, string field, string value) {
     fseek(bin, 0, SEEK_END);
     long end_of_file = ftell(bin);
 
+    if (check_bin_consistency(bin) == False) return False;
+
     fseek(bin, V_HEADER_SIZE, SEEK_SET);
 
+    boolean found_reg = False;
     long offset;
     while ((offset = ftell(bin)) < end_of_file) {
+
+        // Checks if register contain 'value' inf 'field'
         vehicle *data = _v_get_selected_reg(bin, offset, field, value);
 
         if (data) {
             _v_print_reg_data(data);
             _v_free_reg_data(data);
+            found_reg = True;
         }
     }
-    
+    return found_reg;
 }
 
 /*
@@ -262,19 +263,25 @@ void v_header_init(struct _g_files *files) {
     if (fwrite(tokens[MODEL], sizeof(v_model_desc_t), 1, files->bin) != 1);
     if (fwrite(tokens[CATEGORY], sizeof(v_category_desc_t), 1, files->bin) != 1);
     
-    for (string *t = tokens; *t; t++) free(*t); //TODO: make a function for this
-    free(tokens);
+    str_free_tokens(tokens);
     free(header);
 }
 
 /*
     Selects/prints all non removed vehicle regs from a bin file
 */
-void v_select(FILE *bin, int last_byte) {
+boolean v_select(FILE *bin, int last_byte) {
+    
     while (ftell(bin) < last_byte) {
-        data_header *header = _g_read_reg_header(bin);
+        struct _reg_update *header = _g_read_reg_header(bin);
 
-        if (header->removed == RMV) {
+        if (header == NULL) {
+            free(header);
+            return False;
+        }
+
+        // If reg is removed, jump for the next register
+        if (header->is_removed == RMV) {
             fseek(bin, header->reg_size, SEEK_CUR);
             free(header);
             continue;
@@ -284,10 +291,13 @@ void v_select(FILE *bin, int last_byte) {
         _v_print_reg_data(data);
 
         free(header);
-        v_free_reg(data);
+        _v_free_reg_data(data);
     }
 }
 
+/*
+    Reads information from terminal to insert in binary file
+*/
 string *v_read_tokens_from_terminal() {
     string *tokens = malloc(sizeof(*tokens) * V_AMNT_TOKENS);
 

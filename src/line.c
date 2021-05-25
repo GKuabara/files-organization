@@ -14,6 +14,9 @@ static void _l_write_var_field(FILE *bin, string field);
 /* 'SELECT WHERE' AUX FUNCTIONS */
 static int _l_which_selected_field(string field);
 
+/* free struct and its elements */
+static void _l_free_reg_data(line *data);
+
 
 /*
     Initializes all ' only' info of a vehicle header
@@ -29,7 +32,7 @@ void l_header_init(struct _g_files *files) {
     if (fwrite(tokens[NAME], sizeof(l_name_desc_t), 1, files->bin) != 1);
     if (fwrite(tokens[COLOR], sizeof(l_color_desc_t), 1, files->bin) != 1);
     
-    for (string *t = tokens; *t; t++) free(*t); //TODO: make a function for this
+    for (string *t = tokens; *t; t++) free(*t);
     free(tokens);
     free(header);
 }
@@ -87,6 +90,9 @@ static int _l_which_selected_field(string field) {
     return -1; // Error handling
 }
 
+/*
+    Reads register content to struct
+*/
 static line *_l_read_reg_data(FILE *fp) {
     line *data = malloc(sizeof(*data));
 
@@ -102,12 +108,18 @@ static line *_l_read_reg_data(FILE *fp) {
     return data;
 }
 
+/*
+    Print string according with card
+*/
 static void print_card(char card) {
     if (card == S) printf("Aceita cartao: PAGAMENTO SOMENTE COM CARTAO SEM PRESENCA DE COBRADOR\n");
     else if (card == N) printf("Aceita cartao: PAGAMENTO EM CARTAO E DINHEIRO\n");
     else if (card == F) printf("Aceita cartao: PAGAMENTO EM CARTAO SOMENTE NO FINAL DE SEMANA\n");
 }
 
+/*
+    Print reg information from struct
+*/
 static void _l_print_reg_data(line *data) {
     printf("Codigo da linha: %d\n", data->code);
     printf("Nome da linha: %s\n", data->line_name);
@@ -116,13 +128,21 @@ static void _l_print_reg_data(line *data) {
     printf("\n");
 }
 
-void line_select(FILE *fp, int last_byte) {
+/*
+    Fourth functionality, prints every valid register
+*/
+boolean line_select(FILE *fp, int last_byte) {
+
     while(ftell(fp) < last_byte) {
+        struct _reg_update *header = _g_read_reg_header(fp);
 
-        data_header *header = _g_read_reg_header(fp);
-        //printf("removed: %c regsize: %d\n", header->removed, header->reg_size);
+        if (header == NULL) {
+            free(header);
+            return False;
+        }
 
-        if(header->removed == RMV) {
+        // If reg is removed, jump for the next register
+        if(header->is_removed == RMV) {
             int next_reg = ftell(fp) + header->reg_size;
             fseek(fp, next_reg, SEEK_SET);
             free(header);
@@ -130,16 +150,16 @@ void line_select(FILE *fp, int last_byte) {
         }
 
         line *data = _l_read_reg_data(fp);
-
         _l_print_reg_data(data);
 
         free(header);
-        free(data->line_name);
-        free(data->color);
-        free(data);
+        _l_free_reg_data(data);
     }
 }
 
+/*
+    Reads information from terminal to insert in binary file
+*/
 string *l_read_tokens_from_terminal() {
     string *tokens = malloc(sizeof(*tokens) * L_AMNT_TOKENS);
 
@@ -152,7 +172,7 @@ string *l_read_tokens_from_terminal() {
     return tokens;
 }
 
-
+/* free struct and its elements */
 static void _l_free_reg_data(line *data) {
     free(data->line_name);
     free(data->color);
@@ -160,12 +180,15 @@ static void _l_free_reg_data(line *data) {
     free(data);    
 }
 
+/*
+    Reads reg and checks if it contains 'value' in 'field'
+*/
 static line *_l_get_selected_reg(FILE *bin, int offset, string field, string value) {
-    data_header *header = _g_read_reg_header(bin);
+    struct _reg_update *header = _g_read_reg_header(bin);
 
+    // Error and removed regs handling
     if (!header) return NULL;
-
-    if (header->removed == RMV) {
+    if (header->is_removed == RMV) {
         fseek(bin, header->reg_size, SEEK_CUR);
         free(header);
         
@@ -173,11 +196,12 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
     }
     free(header);
     
-
-    
+    // Struct receives register content
     fseek(bin, L_REG_CODE_OFFSET, offset);
     line *data = _l_read_reg_data(bin);
-
+    
+    // Gets the field we need to search for 'value', if the
+    // register contains 'value', return struct with all reg data
     switch (_l_which_selected_field(field)) {
     case CODE:
         if (atoi(value) == data->code) return data;
@@ -200,19 +224,30 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
     return NULL;
 }
 
-void l_select_where(FILE *bin, string field, string value) {
+/*
+    Print registers containing 'value' in the requested 'field'
+*/
+boolean l_select_where(FILE *bin, string field, string value) {
     fseek(bin, 0, SEEK_END);
     long end_of_file = ftell(bin);
     
+    if (check_bin_consistency(bin) == False) return False;
+
     fseek(bin, L_HEADER_SIZE, SEEK_SET);
 
+    boolean found_reg = False;
     long offset;
     while ((offset = ftell(bin)) < end_of_file) {
+
+        // Checks if register contain 'value' inf 'field'
         line *data = _l_get_selected_reg(bin, offset, field, value);
 
         if (data) {
             _l_print_reg_data(data);
             _l_free_reg_data(data);
+            found_reg = True;
         }
     }
+
+    return found_reg;
 }

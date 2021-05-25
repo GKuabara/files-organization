@@ -60,9 +60,15 @@ void l_header_init(struct _g_files *files);
 
 string *l_read_tokens_from_terminal();
 
-void line_select(FILE *fp, int last_byte);
+/*
+    Fourth functionality, prints every valid register
+*/
+boolean line_select(FILE *fp, int last_byte);
 
-void l_select_where(FILE *bin, string field, string value);
+/*
+    Print registers containing 'value' in the requested 'field'
+*/
+boolean l_select_where(FILE *bin, string field, string value);
 
 
 #endif

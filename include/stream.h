@@ -6,11 +6,13 @@
 #define string char *
 #define PAGE_SIZE 4096
 
+// Contains string terminators
 struct _term_t {
     int amnt_term;
     int *term;
 };
 
+// Contains string delemiters to form substrings
 struct _delim_t {
     int amnt_delim;
     string *delim;
@@ -19,6 +21,9 @@ struct _delim_t {
 #define default_term \
     (int[]){'\n', EOF}
 
+/*
+    Gets int from readline
+*/
 #define readnum(file, ...) \
     readnum_(file, (struct _term_t) { \
         .amnt_term=2, \
@@ -35,13 +40,23 @@ int readnum_(FILE *, const struct _term_t);
     })    
 string readline_(FILE *, const struct _term_t);
 
-string *str_get_tokens(string str, const struct _delim_t d);
 string input_stream_read(FILE *stream, const struct _term_t t);
 
+/*
+    Lexer funcion, from 'str' gets tokens divided by delimiters 'd'
+*/
+string *str_get_tokens(string str, const struct _delim_t d);
+void str_free_tokens(string *tokens);
+
+
+/*
+    Open file with 'flag' treating errors
+*/
 FILE* open_file(const char *file_path, const char *flag);
-string str_add_terminator(string str, int len);
 
-
+/*
+    Adds '\0' in the end of string
+*/
 string str_add_terminator(string str, int len);
 
 #define csv_delim \

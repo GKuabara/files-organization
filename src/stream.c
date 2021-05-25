@@ -10,6 +10,9 @@ static void *_alloc_new_page(void *__ptr, size_t __size, int amnt_pages);
 static int _delim(char *stream, const struct _delim_t d);
 static string _build_token(char **t, int t_size, char c);
 
+/*
+    Check a if string has delimiters
+*/
 static int _delim(string str, const struct _delim_t d) {
     for (int i = 0; i < d.amnt_delim; ++i) {
         int delim_len = strlen(d.delim[i]);
@@ -19,6 +22,9 @@ static int _delim(string str, const struct _delim_t d) {
     return 0;
 }
 
+/*
+    Creates token
+*/
 static string _build_token(string *t, int t_size, char c) {
     *t = realloc(*t, sizeof(char) * (t_size + 1));
     (*t)[t_size] = c;
@@ -26,11 +32,17 @@ static string _build_token(string *t, int t_size, char c) {
     return *t;
 }
 
+/*
+    Allocates more memory to Readline
+*/
 static void *_alloc_new_page(void *__ptr, size_t __size, int buffer_size) {
     int total_bytes = (buffer_size / PAGE_SIZE + 1) * PAGE_SIZE;
     return realloc(__ptr, total_bytes * __size);
 }
 
+/*
+    Gets char and checks if is '\r' or terminator
+*/
 static int _input_stream_get_char(FILE *stream, const struct _term_t t) {
     int c = fgetc(stream);
     
@@ -43,6 +55,9 @@ static int _input_stream_get_char(FILE *stream, const struct _term_t t) {
     return c;
 }
 
+/*
+    The real readline funcion
+*/
 string input_stream_read(FILE *stream, const struct _term_t t) {
     if (feof(stream)) return NULL;
     if (t.amnt_term == 0) return NULL; // Todo: printf("Erro ao ler string: nenhum caracter de terminação\n");
@@ -63,12 +78,15 @@ string input_stream_read(FILE *stream, const struct _term_t t) {
         free(buffer);
         return NULL; 
     }
-
+    
     if (buffer[b_size - 2] ==  ' ') buffer[--b_size - 1] = '\0';
 
     return realloc(buffer, sizeof(*buffer) * b_size);
 }
 
+/*
+    Lexer funcion, from 'str' gets tokens divided by delimiters 'd'
+*/
 string *str_get_tokens(string str, const struct _delim_t d) {
     if (str == NULL) return NULL;
     // if (!d.amnt_delim)
@@ -94,6 +112,14 @@ string *str_get_tokens(string str, const struct _delim_t d) {
     return tokens;
 }
 
+void str_free_tokens(string *tokens) {
+    for (string *t = tokens; *t; t++) free(*t);
+    free(tokens);
+}
+
+/*
+    Gets int from readline
+*/
 int readnum_(FILE *stream, const struct _term_t t) {
     string tmp_num = input_stream_read(stream, t);
     int num = atoi(tmp_num);
@@ -106,17 +132,22 @@ string readline_(FILE *stream, const struct _term_t t) {
     return input_stream_read(stream, t);
 }
 
+/*
+    Open file with 'flag' treating errors
+*/
 FILE* open_file(const char *file_path, const char *flag) {
     FILE *fp = fopen(file_path, flag);
 
     if (fp == NULL) { 
-        perror("Error");
-        exit(EXIT_FAILURE);
+        printf("Falha no processamento do arquivo.\n");
     }
 
     return fp;
 }   
 
+/*
+    Adds '\0' in the end of string
+*/
 string str_add_terminator(string str, int len) {
 
     string new = malloc(sizeof(char) * (len + 1));

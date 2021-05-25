@@ -37,6 +37,7 @@ enum {
     CATEGORY
 };
 
+/* USED TO FIND A MONTH NUMBER */
 typedef struct {
     string *names;
     string *numbers;
@@ -66,10 +67,16 @@ void v_header_init(struct _g_files *files);
 void v_insert_datareg(FILE *bin, string *tokens);
 
 /* 'SELECT WHERE' VEHICLE FUNCTIONS */
-void v_select_where(FILE *bin, string field, string value);
+boolean v_select_where(FILE *bin, string field, string value);
 
-void v_select(FILE *fp, int last_byte);
+/*
+    Selects/prints all non removed vehicle regs from a bin file
+*/
+boolean v_select(FILE *fp, int last_byte);
 
+/*
+    Reads information from terminal to insert in binary file
+*/
 string *v_read_tokens_from_terminal();
 
 #endif

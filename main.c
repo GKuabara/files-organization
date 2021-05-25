@@ -10,33 +10,41 @@
 #include "operations.h"
 #include "funcao-fornecida.h"
 
+/*
+    Function to select what SQL implementation we want to reproduce
+*/
 void select_funcionality(string *tokens) {
+    boolean is_correct;
 
     if(tokens[0][0] == '1') {
-        vehicle_create_table(tokens[1], tokens[2]);
-        binarioNaTela(tokens[2]);
-        return;
+        is_correct = vehicle_create_table(tokens[1], tokens[2]);
+        if(is_correct == True) binarioNaTela(tokens[2]);
     }
     else if(tokens[0][0] == '2') {
-        line_create_table(tokens[1], tokens[2]);
-        binarioNaTela(tokens[2]);
-        return;
+        is_correct = vehicle_create_table(tokens[1], tokens[2]);
+        if(is_correct == True) binarioNaTela(tokens[2]);
     }
-    else if(tokens[0][0] == '3') func_select(tokens[1], 1);
-    else if(tokens[0][0] == '4') func_select(tokens[1], 2);
-    else if(tokens[0][0] == '5') vehicle_select_where(tokens[1], tokens[2], tokens[3]);
-    else if(tokens[0][0] == '6') line_select_where(tokens[1], tokens[2], tokens[3]);
+    else if(tokens[0][0] == '3') {
+        is_correct = func_select(tokens[1], 1);
+        if (is_correct == False) printf("Registro inexistente.\n");
+    }
+    else if(tokens[0][0] == '4') {
+        is_correct = func_select(tokens[1], 2);
+        if (is_correct == False) printf("Registro inexistente.\n");
+    }    
+    else if(tokens[0][0] == '5') {
+        vehicle_select_where(tokens[1], tokens[2], tokens[3]);
+    }
+    else if(tokens[0][0] == '6') {
+        line_select_where(tokens[1], tokens[2], tokens[3]);
+    }
     else if(tokens[0][0] == '7') {
         vehicle_insert_into(tokens[1], atoi(tokens[2]));
         binarioNaTela(tokens[1]);
-        
-        return;
     }
     else if(tokens[0][0] == '8') {
-        vehicle_insert_into(tokens[1], atoi(tokens[2]));
+        line_insert_into(tokens[1], atoi(tokens[2]));
         binarioNaTela(tokens[1]);
-
-        return;
     }
     else {
         printf("Please select a valid funcionality\n");
@@ -52,8 +60,7 @@ int main() {
         
     select_funcionality(tokens);
 
-    for (string *aux = tokens; *aux; aux++) free(*aux);
-    free(tokens);
+    str_free_tokens(tokens);
     free(s);
     return 0;
 }
