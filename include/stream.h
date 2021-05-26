@@ -45,8 +45,16 @@ string input_stream_read(FILE *stream, const struct _term_t t);
 /*
     Lexer funcion, from 'str' gets tokens divided by delimiters 'd'
 */
-string *str_get_tokens(string str, const struct _delim_t d);
+
+#define str_get_tokens(file, ...) \
+    str_get_tokens_(file, (struct _delim_t) { \
+        __VA_ARGS__\
+    }) 
+    
+string *str_get_tokens_(string str, const struct _delim_t d);
 void str_free_tokens(string *tokens);
+
+
 
 
 /*
@@ -61,6 +69,8 @@ string str_add_terminator(string str, int len);
 
 #define csv_delim \
     (char *[]) {", ", ","}
+
+
 
 
 #endif

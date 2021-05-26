@@ -6,36 +6,16 @@
 #include "line.h"
 #include "funcao-fornecida.h"
 
-/* GENERATE BINARY FILE AUX FUNCTIONS */
 static void _l_write_code(FILE *bin, string code);
 static void _l_write_card_opt(FILE *bin, string card_opt);
 static void _l_write_var_field(FILE *bin, string field);
-
-/* 'SELECT WHERE' AUX FUNCTIONS */
 static int _l_which_selected_field(string field);
-
-/* free struct and its elements */
+static line *_l_read_reg_data(FILE *fp);
+static void print_card(char card);
+static void _l_print_reg_data(line *data);
 static void _l_free_reg_data(line *data);
+static line *_l_get_selected_reg(FILE *bin, int offset, string field, string value);
 
-
-/*
-    Initializes all ' only' info of a vehicle header
-*/
-void l_header_init(struct _g_files *files) {
-    /* Gets the header line of the csv */
-    string header = readline(files->csv);
-    string *tokens = str_get_tokens(header, (struct _delim_t) {.amnt_delim=2,.delim=csv_delim});
-
-    /* Error handling */
-    if (fwrite(tokens[CODE], sizeof(l_code_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[CARD], sizeof(l_card_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[NAME], sizeof(l_name_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[COLOR], sizeof(l_color_desc_t), 1, files->bin) != 1);
-    
-    for (string *t = tokens; *t; t++) free(*t);
-    free(tokens);
-    free(header);
-}
 
 /*
     Writes the code of a new line reg
@@ -67,16 +47,6 @@ static void _l_write_var_field(FILE *bin, string field) {
     /* fwrite Error Handling */
     if (fwrite(&len, sizeof(int), 1, bin) != 1);
     if (fwrite(field, sizeof(*field), len, bin) != len);
-}
-
-/*
-    Inserts all 'line only' info of a new line datareg
-*/
-void l_insert_datareg(FILE *bin, string *tokens) {
-    _l_write_code(bin, tokens[CODE]);
-    _l_write_card_opt(bin, tokens[CARD]);
-    _l_write_var_field(bin, tokens[NAME]);
-    _l_write_var_field(bin, tokens[COLOR]);
 }
 
 /*
@@ -129,39 +99,6 @@ static void _l_print_reg_data(line *data) {
     printf("\n");
 }
 
-/*
-    Fourth functionality, prints every valid register
-*/
-boolean line_select(FILE *fp, int last_byte) {
-    boolean has_reg = False;
-    while(ftell(fp) < last_byte) {
-        struct _reg_update *header = _g_read_reg_header(fp);
-
-        if (header == NULL) {
-            free(header);
-            return False;
-        }
-
-        // If reg is removed, jump for the next register
-        if(header->is_removed == RMV) {
-            int next_reg = ftell(fp) + header->reg_size;
-            fseek(fp, next_reg, SEEK_SET);
-            free(header);
-            continue;
-        }
-
-        has_reg = True;
-        line *data = _l_read_reg_data(fp);
-        _l_print_reg_data(data);
-
-        free(header);
-        _l_free_reg_data(data);
-    }
-
-    return has_reg;
-}
-
-
 /* free struct and its elements */
 static void _l_free_reg_data(line *data) {
     free(data->line_name);
@@ -174,7 +111,7 @@ static void _l_free_reg_data(line *data) {
     Reads reg and checks if it contains 'value' in 'field'
 */
 static line *_l_get_selected_reg(FILE *bin, int offset, string field, string value) {
-    struct _reg_update *header = _g_read_reg_header(bin);
+    _reg_update_t *header = _g_read_reg_header(bin);
 
     // Error and removed regs handling
     if (!header) return NULL;
@@ -214,33 +151,90 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
 }
 
 /*
-    Print registers containing 'value' in the requested 'field'
+    Initializes all ' only' info of a vehicle header
 */
-void l_select_where(FILE *bin, string field, string value) {
-    fseek(bin, 0, SEEK_END);
-    long end_of_file = ftell(bin);
+void l_header_init(_files_t *files) {
+    /* Gets the header line of the csv */
+    string header = readline(files->csv);
+    string *tokens = str_get_tokens(header, .amnt_delim=2,.delim=csv_delim);
+
+    /* Error handling */
+    if (fwrite(tokens[CODE], sizeof(l_code_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[CARD], sizeof(l_card_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[NAME], sizeof(l_name_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[COLOR], sizeof(l_color_desc_t), 1, files->bin) != 1);
     
-    if (check_bin_consistency(bin) == False) return;
-    if (_l_which_selected_field(field) == -1) {
-        printf("Não existe esse campo no arquivo\n");
-        return;
+    for (string *t = tokens; *t; t++) free(*t);
+    free(tokens);
+    free(header);
+}
+
+/*
+    Inserts all 'line only' info of a new line datareg
+*/
+void l_insert_datareg(FILE *bin, string *tokens) {
+    _l_write_code(bin, tokens[CODE]);
+    _l_write_card_opt(bin, tokens[CARD]);
+    _l_write_var_field(bin, tokens[NAME]);
+    _l_write_var_field(bin, tokens[COLOR]);
+}
+
+/*
+    Fourth functionality, prints every valid register
+*/
+boolean l_select(FILE *bin, int last_byte) {
+    fseek(bin, L_HEADER_SIZE, SEEK_SET);
+    boolean has_reg = False;
+    
+    while(ftell(bin) < last_byte) {
+        _reg_update_t *header = _g_read_reg_header(bin);
+
+        if (header == NULL) {
+            free(header);
+            return False;
+        }
+
+        // If reg is removed, jump for the next register
+        if(header->is_removed == RMV) {
+            int next_reg = ftell(bin) + header->reg_size;
+            fseek(bin, next_reg, SEEK_SET);
+            free(header);
+            continue;
+        }
+
+        has_reg = True;
+        line *data = _l_read_reg_data(bin);
+        _l_print_reg_data(data);
+
+        free(header);
+        _l_free_reg_data(data);
     }
 
+    return has_reg;
+}
+
+/*
+    Print registers containing 'value' in the requested 'field'
+*/
+boolean l_select_where(FILE *bin, string field, string value, long end_of_file) {    
     fseek(bin, L_HEADER_SIZE, SEEK_SET);
 
-    boolean found_reg = False;
+    if (_l_which_selected_field(field) == -1) {
+        printf("Não existe esse campo no arquivo\n");
+        return True;
+    }
+
+    boolean has_reg = False;
     long offset;
     while ((offset = ftell(bin)) < end_of_file) {
-
-        // Checks if register contain 'value' inf 'field'
         line *data = _l_get_selected_reg(bin, offset, field, value);
 
         if (data) {
             _l_print_reg_data(data);
             _l_free_reg_data(data);
-            found_reg = True;
+            has_reg = True;
         }
     }
 
-    if (found_reg == False) printf("Registro inexistente.\n");
+    return has_reg;
 }

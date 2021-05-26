@@ -8,40 +8,19 @@
 #include "vehicle.h"
 #include "line.h"
 
-/*
-    Creates a vehicle table
-*/
-boolean vehicle_create_table(string csv_name, string bin_name);
 
-/*
-    Creates a line table
-*/
+boolean vehicle_create_table(string csv_name, string bin_name);
 boolean line_create_table(string csv_name, string bin_name);
 
-/*
-    Inserts new reg into vehicle binary file
-*/
+boolean vehicle_select(string bin_name);
+boolean line_select(string bin_name);
+
+
+boolean vehicle_select_where(string bin_name, string field, string value);
+boolean line_select_where(string bin_name, string field, string value);
+
+
 boolean vehicle_insert_into(string bin_name, int amnt_regs);
-
-/*
-    Inserts new reg into line binary file
-*/
 boolean line_insert_into(string bin_name, int amnt_regs);
-
-/*
-    Third and Fourth funcionality "SELECT WHERE"
-*/
-void func_select(string bin_name, int select);
-
-/*
-    Sixth funcionality "SELECT WHERE"
-*/
-void line_select_where(string bin_name, string field, string value);
-
-/*
-    Sixth funcionality "SELECT WHERE"
-*/
-void vehicle_select_where(string bin_name, string field, string value);
-
 
 #endif

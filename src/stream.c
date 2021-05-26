@@ -87,7 +87,7 @@ string input_stream_read(FILE *stream, const struct _term_t t) {
 /*
     Lexer funcion, from 'str' gets tokens divided by delimiters 'd'
 */
-string *str_get_tokens(string str, const struct _delim_t d) {
+string *str_get_tokens_(string str, const struct _delim_t d) {
     if (str == NULL) return NULL;
     // if (!d.amnt_delim)
 

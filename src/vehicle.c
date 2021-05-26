@@ -4,12 +4,19 @@
 #include <string.h>
 
 #include "vehicle.h"
-#include "funcao-fornecida.h"
 
 static void _v_write_prefix(FILE *bin, string prefix);
 static void _v_write_date(FILE *bin, string date);
 static void _v_write_int_fields(FILE *bin, string num_field);
 static void _v_write_var_fields(FILE *bin, string field);
+static vehicle *_v_read_reg_data(FILE *bin);
+static string _v_get_month_name(string str);
+static void _v_print_date(string date);
+static void _v_print_seats(int seats);
+static int _v_which_selected_field(string field);
+static void _v_free_reg_data(vehicle *data);
+static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string value);
+static void _v_print_reg_data(vehicle *data);
 
 
 /*
@@ -19,7 +26,8 @@ static void _v_write_prefix(FILE *bin, string prefix) {
     string aux = _g_is_rmv(prefix) == RMV ? prefix + 1 : prefix;
     
     /* fwrite Error Handling */
-    if (fwrite(aux, sizeof(*prefix), 5, bin) != 5);
+    if (fwrite(aux, sizeof(*prefix), 5, bin) != 5)
+        printf("Falha no processamento do arquivo.\n"); 
 }
 
 /*
@@ -29,7 +37,8 @@ static void _v_write_date(FILE *bin, string date) {
     string aux = _g_is_null(date) ? "\0@@@@@@@@@" : date;
     
     /* fwrite Error Handling */
-    if (fwrite(aux, sizeof(v_date_t), 1, bin) != 1);
+    if (fwrite(aux, sizeof(v_date_t), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
 }
 
 /*
@@ -39,7 +48,8 @@ static void _v_write_int_fields(FILE *bin, string num_field) {
     int num = _g_is_null(num_field) ? -1 : atoi(num_field);
 
     /* fwrite Error Handling */
-    if (fwrite(&num, sizeof(int), 1, bin) != 1);
+    if (fwrite(&num, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
 }
 
 /*
@@ -49,8 +59,10 @@ static void _v_write_var_fields(FILE *bin, string field) {
     int len = _g_is_null(field) ? 0 : strlen(field);
 
     /* fwrite Error Handling */
-    if (fwrite(&len, sizeof(int), 1, bin) != 1);
-    if (fwrite(field, sizeof(*field), len, bin) != len);
+    if (fwrite(&len, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
+    if (fwrite(field, sizeof(*field), len, bin) != len)
+        printf("Falha no processamento do arquivo.\n"); 
 }
 
 /*
@@ -62,13 +74,18 @@ static vehicle *_v_read_reg_data(FILE *bin) {
     data->prefix = g_read_var_field(bin, 5);
     data->date = g_read_var_field(bin, 10);
 
-    if (fread(&data->seats, sizeof(int), 1, bin) != 1);
-    if (fread(&data->line, sizeof(int), 1, bin) != 1);
+    if (fread(&data->seats, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
+    if (fread(&data->line, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
     
-    if (fread(&data->model_size, sizeof(int), 1, bin) != 1);
+    if (fread(&data->model_size, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
+
     data->model = g_read_var_field(bin, data->model_size);
 
-    if (fread(&data->category_size, sizeof(int), 1, bin) != 1);
+    if (fread(&data->category_size, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
     data->category = g_read_var_field(bin, data->category_size);
 
     return data;
@@ -78,7 +95,6 @@ static vehicle *_v_read_reg_data(FILE *bin) {
     Converts the month's number to the month's name 
 */
 static string _v_get_month_name(string str) {
-
     months month = {.names = (char *[]) {"janeiro", "fevereiro", "março", "abril", "maio", \
                 "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"}, \
                 .numbers = (char *[]) {"01", "02", "03", "04", "05", "06", "07", "08", \
@@ -104,7 +120,7 @@ static void _v_print_date(string date) {
         return;
     }
 
-    string *tokens = str_get_tokens(date, (struct _delim_t) {.amnt_delim=1,.delim=(char *[]){"-"}});
+    string *tokens = str_get_tokens(date, .amnt_delim=1,.delim=(char *[]){"-"});
 
     string month_name = _v_get_month_name(tokens[1]);
     printf("Data de entrada do veiculo na frota: %s de %s de %s\n", tokens[2], month_name, tokens[0]);
@@ -140,6 +156,19 @@ static int _v_which_selected_field(string field) {
 }
 
 /*
+    Print reg information from struct
+*/
+static void _v_print_reg_data(vehicle *data) {
+    printf("Prefixo do veiculo: %s\n", data->prefix);
+    printf("Modelo do veiculo: %s\n", data->model);
+    printf("Categoria do veiculo: %s\n", data->category);
+    
+    _v_print_date(data->date);
+    _v_print_seats(data->seats);
+    printf("\n");
+}
+
+/*
     Free reg struct pointers
 */
 static void _v_free_reg_data(vehicle *data) {
@@ -152,7 +181,7 @@ static void _v_free_reg_data(vehicle *data) {
 }
 
 static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string value) {
-    struct _reg_update *header = _g_read_reg_header(bin);
+    _reg_update_t *header = _g_read_reg_header(bin);
     
     // Error and removed regs handling
     if (!header) return NULL;
@@ -195,48 +224,24 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
 }
 
 /*
-    Print reg information from struct
+
+    Initializes all 'vehicle only' info of a vehicle header
 */
-static void _v_print_reg_data(vehicle *data) {
-    printf("Prefixo do veiculo: %s\n", data->prefix);
-    printf("Modelo do veiculo: %s\n", data->model);
-    printf("Categoria do veiculo: %s\n", data->category);
+void v_header_init(_files_t *files) {
+    /* Gets the header line of the csv */
+    string header = readline(files->csv);
+    string *tokens = str_get_tokens(header, .amnt_delim=2,.delim=csv_delim);
+
+    /* Error handling */
+    if (fwrite(tokens[PREFIX], sizeof(v_prefix_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[DATE], sizeof(v_date_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[SEAT], sizeof(v_seat_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[LINE], sizeof(v_line_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[MODEL], sizeof(v_model_desc_t), 1, files->bin) != 1);
+    if (fwrite(tokens[CATEGORY], sizeof(v_category_desc_t), 1, files->bin) != 1);
     
-    _v_print_date(data->date);
-    _v_print_seats(data->seats);
-    printf("\n");
-}
-
-/*
-    Print registers containing 'value' in the requested 'field'
-*/
-void v_select_where(FILE *bin, string field, string value) {
-    fseek(bin, 0, SEEK_END);
-    long end_of_file = ftell(bin);
-
-    if (check_bin_consistency(bin) == False) return;
-    if (_v_which_selected_field(field) == -1) {
-        printf("Não existe esse campo no arquivo\n");
-        return;
-    }
-
-    fseek(bin, V_HEADER_SIZE, SEEK_SET);
-
-    boolean found_reg = False;
-    long offset;
-    while ((offset = ftell(bin)) < end_of_file) {
-
-        // Checks if register contain 'value' in 'field'
-        vehicle *data = _v_get_selected_reg(bin, offset, field, value);
-
-        if (data) {
-            _v_print_reg_data(data);
-            _v_free_reg_data(data);
-            found_reg = True;
-        }
-    }
-
-    if (found_reg == False) printf("Registro inexistente.\n");
+    str_free_tokens(tokens);
+    free(header);
 }
 
 /*
@@ -252,32 +257,14 @@ void v_insert_datareg(FILE *bin, string *tokens) {
 }
 
 /*
-    Initializes all 'vehicle only' info of a vehicle header
-*/
-void v_header_init(struct _g_files *files) {
-    /* Gets the header line of the csv */
-    string header = readline(files->csv);
-    string *tokens = str_get_tokens(header, (struct _delim_t) {.amnt_delim=2,.delim=csv_delim});
-
-    /* Error handling */
-    if (fwrite(tokens[PREFIX], sizeof(v_prefix_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[DATE], sizeof(v_date_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[SEAT], sizeof(v_seat_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[LINE], sizeof(v_line_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[MODEL], sizeof(v_model_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[CATEGORY], sizeof(v_category_desc_t), 1, files->bin) != 1);
-    
-    str_free_tokens(tokens);
-    free(header);
-}
-
-/*
     Selects/prints all non removed vehicle regs from a bin file
 */
 boolean v_select(FILE *bin, int last_byte) {
+    fseek(bin, V_HEADER_SIZE, SEEK_SET);
+    
     boolean has_reg = False;
     while (ftell(bin) < last_byte) {
-        struct _reg_update *header = _g_read_reg_header(bin);
+        _reg_update_t *header = _g_read_reg_header(bin);
 
         if (header == NULL) {
             free(header);
@@ -302,3 +289,28 @@ boolean v_select(FILE *bin, int last_byte) {
     return has_reg;
 }
 
+/*
+    Print registers containing 'value' in the requested 'field'
+*/
+boolean v_select_where(FILE *bin, string field, string value, long end_of_file) {
+    fseek(bin, V_HEADER_SIZE, SEEK_SET);
+
+    if (_v_which_selected_field(field) == -1) {
+        printf("Não existe esse campo no arquivo\n");
+        return True;
+    }
+
+    long offset;
+    boolean has_reg = False;
+    while ((offset = ftell(bin)) < end_of_file) {
+        vehicle *data = _v_get_selected_reg(bin, offset, field, value);
+
+        if (data) {
+            _v_print_reg_data(data);
+            _v_free_reg_data(data);
+            has_reg = True;
+        }
+    }
+
+    return has_reg;
+}

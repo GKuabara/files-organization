@@ -25,10 +25,10 @@ void select_funcionality(string *tokens) {
         if(is_correct == True) binarioNaTela(tokens[2]);
     }
     else if(tokens[0][0] == '3') {
-        func_select(tokens[1], 1);
+        vehicle_select(tokens[1]);
     }
     else if(tokens[0][0] == '4') {
-        func_select(tokens[1], 2);
+        line_select(tokens[1]);
     }    
     else if(tokens[0][0] == '5') {
         vehicle_select_where(tokens[1], tokens[2], tokens[3]);
@@ -53,9 +53,8 @@ void select_funcionality(string *tokens) {
 
 int main() {    
     string s = readline(stdin);
-    string *tokens = str_get_tokens(s,  
-        (struct _delim_t) {.amnt_delim=1, .delim=(char *[]){" "}});
-        
+    string *tokens = str_get_tokens(s, .amnt_delim=1, .delim=(char *[]){" "});
+
     select_funcionality(tokens);
 
     str_free_tokens(tokens);

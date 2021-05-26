@@ -19,13 +19,9 @@
 /* CONST 'VEHICLE ONLY' BINARY SIZE REFERENCES */
 #define V_CONST_REG_SIZE 31
 #define V_HEADER_SIZE 175
-#define V_REG_INFO_SIZE 5 
-#define V_AMNT_TOKENS 6
 #define V_REG_PREFIX_OFFSET 5
-#define V_REG_DATE_OFFSET 10
-#define V_REG_SEAT_OFFSET 20
-#define V_REG_LINE_OFFSET 24
-#define V_REG_VAR_FIELDS_OFFSET 28
+#define V_AMNT_REG_CONST 4
+
 
 /* VEHICLE CSV TOKEN INDEXES */
 enum {
@@ -55,23 +51,26 @@ typedef struct{
     char *category;
 } vehicle;
 
-/* GENERATE BINARY VEHICLE FILE FUNCTIONS */
 /*
     Initializes all 'vehicle only' info of a vehicle header
 */
-void v_header_init(struct _g_files *files);
+void v_header_init(_files_t *files);
 
 /*
     Inserts all 'vehicle only' info of a new vehicle datareg
 */
 void v_insert_datareg(FILE *bin, string *tokens);
 
-/* 'SELECT WHERE' VEHICLE FUNCTIONS */
-void v_select_where(FILE *bin, string field, string value);
-
 /*
     Selects/prints all non removed vehicle regs from a bin file
 */
 boolean v_select(FILE *fp, int last_byte);
+
+/*
+    Print registers containing 'value' in the requested 'field'
+*/
+boolean v_select_where(FILE *bin, string field, string value, long end_of_file);
+
+
 
 #endif

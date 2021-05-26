@@ -7,7 +7,6 @@
 #include "global.h"
 
 /* LINE BINARY CONST CHAR FIELDS */
-
 #define l_code_desc_t char[15]
 #define l_card_desc_t char[13]
 #define l_name_desc_t char[13]
@@ -20,10 +19,9 @@
 
 /* CONST 'LINE ONLY' BINARY SIZE REFERENCES */
 #define L_HEADER_SIZE 82
-#define L_CONST_REG_SIZE 13
-#define L_AMNT_TOKENS 4
-
 #define L_REG_CODE_OFFSET 5
+#define L_CONST_REG_SIZE 13
+#define L_AMNT_REG_CONST 2
 
 
 /* LINE CSV TOKEN INDEXES */
@@ -44,7 +42,6 @@ typedef struct{
     char *color;
 } line;
 
-/* GENERATE BINARY LINE FILE FUNCTIONS */
 /*
     Inserts all 'line only' info of a new line datareg
 */
@@ -53,18 +50,18 @@ void l_insert_datareg(FILE *bin, string *tokens);
 /*
     Initializes all ' only' info of a vehicle header
 */
-void l_header_init(struct _g_files *files);
+void l_header_init(_files_t *files);
 
 
 /*
     Fourth functionality, prints every valid register
 */
-boolean line_select(FILE *fp, int last_byte);
+boolean l_select(FILE *fp, int last_byte);
 
 /*
     Print registers containing 'value' in the requested 'field'
 */
-void l_select_where(FILE *bin, string field, string value);
+boolean l_select_where(FILE *bin, string field, string value, long end_of_file);
 
 
 #endif

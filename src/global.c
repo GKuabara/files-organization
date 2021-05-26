@@ -5,7 +5,10 @@
 
 #include "global.h"
 
+
 static int _g_reg_get_size(string *var_fields, int const_size);
+static void _g_update_amnt_reg(FILE *bin, int new_regs);
+
 
 /*
     Gets the size of the new reg to be inserted
@@ -18,22 +21,18 @@ static int _g_reg_get_size(string *var_fields, int const_size) {
     return size + const_size;
 }
 
-/*
-    Opens both files.
-*/
-struct _g_files *g_open_files(string csv_name, string bin_name) {
-    struct _g_files *files = malloc(sizeof(*files));
-    assert(files); // In case of error
+static void _g_update_amnt_reg(FILE *bin, int new_regs) {
+    int total_amnt_reg;
 
-    if (csv_name == NULL || !(files->csv = open_file(csv_name, "r"))) {
-        free(files);
-        return NULL;
-    }
-    if (bin_name == NULL || !(files->bin = open_file(bin_name, "w+b"))) {
-        free(files);
-        return NULL;
-    }
-    return files;
+    fseek(bin, 0, SEEK_CUR);
+    if (fread(&total_amnt_reg, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n");
+    
+    total_amnt_reg += new_regs;
+    fseek(bin, -sizeof(int), SEEK_CUR);
+    if (fwrite(&total_amnt_reg, sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n");
+
 }
 
 /*
@@ -42,96 +41,74 @@ struct _g_files *g_open_files(string csv_name, string bin_name) {
 */
 void g_header_init(FILE *bin, long header_size) {
     char stats = INC_STAT;
-    int n_reg = 0;
-    int amnt_removed_reg = 0;
+    int amnt_reg = 0;
+    int amnt_rmv = 0;
 
     /* fwrite Error handling */
-    if (fwrite(&stats, sizeof(char), 1, bin) != 1);
-    if (fwrite(&header_size, sizeof(long), 1, bin) != 1);
-    if (fwrite(&stats, sizeof(int), 1, bin) != 1);
-    if (fwrite(&stats, sizeof(int), 1, bin) != 1);
+    if (fwrite(&stats, sizeof(char), 1, bin) != 1) 
+        printf("Falha no processamento do arquivo.\n");
+    if (fwrite(&header_size, sizeof(long), 1, bin) != 1) 
+        printf("Falha no processamento do arquivo.\n");
+    if (fwrite(&amnt_reg, sizeof(int), 1, bin) != 1) 
+        printf("Falha no processamento do arquivo.\n");
+    if (fwrite(&amnt_rmv, sizeof(int), 1, bin) != 1) 
+        printf("Falha no processamento do arquivo.\n");
 }
 
 /*
     Updates the 'global' part of a header. Can be used for both vehicle and line files given `finfo`.
 */
-void g_header_update(FILE *bin, char stats, struct _reg_update *update, struct _finfo *finfo) {
+void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv) {
     long next_reg = ftell(bin);
     fseek(bin, 0, SEEK_SET);
 
     /* fwrite Error handling */
-    if (fwrite(&stats, sizeof(char), 1, bin) != 1);
-    if (stats == CON_STAT) return; 
+    if (fwrite(&stats, sizeof(char), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n");
+    if (stats == INC_STAT) return; 
 
-    if (fwrite(&next_reg, sizeof(long), 1, bin) != 1);
-    if (fwrite(&(finfo->amnt_reg), sizeof(int), 1, bin) != 1);
-    if (fwrite(&(finfo->amnt_rmv), sizeof(int), 1, bin) != 1);
+    if (fwrite(&next_reg, sizeof(long), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n");
 
-    finfo->next_reg_offset = next_reg;
+    _g_update_amnt_reg(bin, amnt_reg);
+    _g_update_amnt_reg(bin, amnt_rmv);
 }
 
 /*
     Global part of a new datareg insertion. Can be user for both vehicle and line files given `finfo`.
 */
-struct _reg_update *g_insert_datareg(FILE *bin, string *tokens, struct _finfo *finfo) {
-    struct _reg_update *update = malloc(sizeof(*update));
+_reg_update_t *g_insert_datareg(FILE *bin, string *tokens, int amnt_const, int const_size) {
+    _reg_update_t *update = malloc(sizeof(*update));
     assert(update);
     
     update->is_removed = _g_is_rmv((*tokens));
-    update->reg_size = _g_reg_get_size(tokens + finfo->amnt_const, finfo->const_size);
+    update->reg_size = _g_reg_get_size(tokens + amnt_const, const_size);
 
     /* fwrite Error Handling */
-    if (fwrite(&(update->is_removed), sizeof(char), 1, bin) != 1);
-    if (fwrite(&(update->reg_size), sizeof(int), 1, bin) != 1);    
+    if (fwrite(&(update->is_removed), sizeof(char), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n");
+    if (fwrite(&(update->reg_size), sizeof(int), 1, bin) != 1)
+        printf("Falha no processamento do arquivo.\n");
 
     return update;
 }
 
-/*
-    Reads the first byte (rmv status) of a reg. 
-*/ 
-int g_read_reg_rmv_stats(FILE *bin) {
-    char is_removed;
-    if (fread(&is_removed, sizeof(char), 1, bin) != 1);
-    
-    return is_removed;
-}
-
-/*
-    Reads the reg_size byte of a reg.
-*/
-int g_read_reg_size(FILE *bin) {
-    int reg_size;
-    if (fread(&reg_size, sizeof(char), 1, bin) != 1);
-    
-    return reg_size;
-}
-
-/*
-    Reads file's header fields: offset of next reg, #valid and #removed regs
-*/
-void g_read_header(FILE *bin, struct _finfo *finfo) {
-    fseek(bin, 1, SEEK_SET);
-
-    fread(&finfo->next_reg_offset, sizeof(long), 1, bin);
-    fread(&finfo->amnt_reg, sizeof(int), 1, bin);
-    fread(&finfo->amnt_rmv, sizeof(int), 1, bin);
-}
 
 /*
     Reads first two fields of a register that starts at position pointed by fp
 */
-struct _reg_update *_g_read_reg_header(FILE *fp) {
-    struct _reg_update *header = malloc(sizeof(*header));
+_reg_update_t *_g_read_reg_header(FILE *fp) {
+    _reg_update_t *reg_header = malloc(sizeof(*reg_header));
 
-    if (fread(&header->is_removed, sizeof(char), 1, fp) == 0) {
-        free(header);
+    if (fread(&reg_header->is_removed, sizeof(char), 1, fp) != 1) {
+        free(reg_header);
         return NULL;
     }
     
-    fread(&header->reg_size, sizeof(int), 1, fp);
-
-    return header;
+    if (fread(&reg_header->reg_size, sizeof(int), 1, fp) != 1) 
+        printf("Falha no processamento do arquivo.\n"); 
+        
+    return reg_header;
 }
 
 /* 
@@ -141,7 +118,7 @@ struct _reg_update *_g_read_reg_header(FILE *fp) {
 string g_read_var_field(FILE *fp, int field_size) {
     string str = NULL;
 
-    if(field_size == 0) {
+    if (field_size == 0) {
         str = realloc(str, sizeof(char) * NULL_FIELD_ERROR_SIZE);
         strcpy(str, "campo com valor nulo");
     }
@@ -151,19 +128,20 @@ string g_read_var_field(FILE *fp, int field_size) {
         fread(str, sizeof(char), field_size, fp);
         str[field_size] = '\0';
     }
+
     return str;
 }
 
 /*
     Checks if file is consistent or not
 */
-boolean check_bin_consistency(FILE *fp) {
+boolean check_bin_consistency(FILE *bin) {
+    fseek(bin, 0, SEEK_SET);
+    
     char status;
-    fseek(fp, 0, SEEK_SET);
-    fread(&status, sizeof(char), 1, fp);
+    fread(&status, sizeof(char), 1, bin);
 
     boolean cons = (status == CON_STAT) ? True : False;
-    if (cons == False) printf("Falha no processamento do arquivo.\n");
     return cons;     
 }
 
@@ -171,8 +149,10 @@ boolean check_bin_consistency(FILE *fp) {
     Checks of parameters from terminal are correctly formatted 
 */
 boolean check_terminal_parameters(string field, string value) {
-    if (field == NULL || value == NULL) {
+    if (!field || !value) {
         printf("Quantidade de parâmetros inválida\n");
         return False;
     }
+
+    return True;
 }
