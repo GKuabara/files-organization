@@ -22,6 +22,10 @@ TEST_CASE =
 clean: $(MAIN)
 $(MAIN): main.o stream.o global.o vehicle.o line.o operations.o funcao-fornecida.o
 
+all: $(MAIN)
+
+run: 
+	./$(MAIN)
 
 %: %.o
 	$(LINK.o) $^ $(LDBIBS) $(OUTPUT_OPTION)

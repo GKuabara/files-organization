@@ -133,7 +133,7 @@ static void _l_print_reg_data(line *data) {
     Fourth functionality, prints every valid register
 */
 boolean line_select(FILE *fp, int last_byte) {
-
+    boolean has_reg = False;
     while(ftell(fp) < last_byte) {
         struct _reg_update *header = _g_read_reg_header(fp);
 
@@ -150,12 +150,15 @@ boolean line_select(FILE *fp, int last_byte) {
             continue;
         }
 
+        has_reg = True;
         line *data = _l_read_reg_data(fp);
         _l_print_reg_data(data);
 
         free(header);
         _l_free_reg_data(data);
     }
+
+    return has_reg;
 }
 
 

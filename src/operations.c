@@ -150,7 +150,7 @@ boolean line_create_table(string csv_name, string bin_name) {
 /*
     Inserts new reg into vehicle binary file
 */
-void vehicle_insert_into(string bin_name, int amnt_regs) {
+boolean vehicle_insert_into(string bin_name, int amnt_regs) {
     FILE *bin = open_file(bin_name, "r+b");
     struct _finfo vinfo = {.amnt_const = 4, 
                            .amnt_reg = 0,
@@ -163,19 +163,21 @@ void vehicle_insert_into(string bin_name, int amnt_regs) {
     
     if (check_bin_consistency(bin) == False) {
         fclose(bin);
-        printf("Arquivo inconsistente\n");
+        return False;
     }
+
     g_read_header(bin, &vinfo);
     _insert_dataregs_from_terminal(bin, &vinfo, amnt_regs);
     
     fclose(bin);
+    return True;
 }
 
 
 /*
     Inserts new reg into line binary file
 */
-void line_insert_into(string bin_name, int amnt_regs) {
+boolean line_insert_into(string bin_name, int amnt_regs) {
     FILE *bin = open_file(bin_name, "r+b");
 
     struct _finfo linfo = {.amnt_const = 2, 
@@ -188,44 +190,47 @@ void line_insert_into(string bin_name, int amnt_regs) {
     
     if (check_bin_consistency(bin) == False) {
         fclose(bin);
-        printf("Arquivo inconsistente\n");
+        return False;
     }
 
     g_read_header(bin, &linfo);
     _insert_dataregs_from_terminal(bin, &linfo, amnt_regs);
     
     fclose(bin); 
+    return True;
 }
 
 /*
     Third and Fourth funcionality "SELECT WHERE"
 */
-boolean func_select(string bin_name, int select) {
+void func_select(string bin_name, int select) {
     FILE *fp = open_file(bin_name, "rb");
-    if (fp == NULL) return True;
+    if (fp == NULL) return;
 
     // getting the last file's byte
     fseek(fp, 0, SEEK_END);
     int last_byte = ftell(fp);
     fseek(fp, 0, SEEK_SET);
 
-    boolean status = check_bin_consistency(fp);
-    boolean has_reg = True;
+    if (check_bin_consistency(fp) == False) {
+        fclose(fp);
+        return;
+    }
 
-    if (status == True && select == VEHICLE_FILE){
+    boolean has_reg = False;
+    if (select == VEHICLE_FILE){
         fseek(fp, V_HEADER_SIZE, SEEK_SET);
         has_reg = v_select(fp, last_byte);
     }
-    else if (status == True && select == LINE_FILE) {
+    else if (select == LINE_FILE) {
         fseek(fp, L_HEADER_SIZE, SEEK_SET);
         has_reg = line_select(fp, last_byte);
     }
-    else { 
-        has_reg = False;
-    }
+
+    if (!has_reg) printf("Registro inexistente.\n");
+
 
     fclose(fp);
-    return has_reg;
 }
 
 /*

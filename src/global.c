@@ -161,7 +161,10 @@ boolean check_bin_consistency(FILE *fp) {
     char status;
     fseek(fp, 0, SEEK_SET);
     fread(&status, sizeof(char), 1, fp);
-    return (status == CON_STAT) ? True : False;     
+
+    boolean cons = (status == CON_STAT) ? True : False;
+    if (cons == False) printf("Falha no processamento do arquivo.\n");
+    return cons;     
 }
 
 /*

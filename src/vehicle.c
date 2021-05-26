@@ -275,7 +275,7 @@ void v_header_init(struct _g_files *files) {
     Selects/prints all non removed vehicle regs from a bin file
 */
 boolean v_select(FILE *bin, int last_byte) {
-    
+    boolean has_reg = False;
     while (ftell(bin) < last_byte) {
         struct _reg_update *header = _g_read_reg_header(bin);
 
@@ -291,11 +291,14 @@ boolean v_select(FILE *bin, int last_byte) {
             continue;
         }
 
+        has_reg = True;
         vehicle *data = _v_read_reg_data(bin);
         _v_print_reg_data(data);
 
         free(header);
         _v_free_reg_data(data);
     }
+
+    return has_reg;
 }
 

@@ -21,16 +21,14 @@ void select_funcionality(string *tokens) {
         if(is_correct == True) binarioNaTela(tokens[2]);
     }
     else if(tokens[0][0] == '2') {
-        is_correct = vehicle_create_table(tokens[1], tokens[2]);
+        is_correct = line_create_table(tokens[1], tokens[2]);
         if(is_correct == True) binarioNaTela(tokens[2]);
     }
     else if(tokens[0][0] == '3') {
-        is_correct = func_select(tokens[1], 1);
-        if (is_correct == False) printf("Registro inexistente.\n");
+        func_select(tokens[1], 1);
     }
     else if(tokens[0][0] == '4') {
-        is_correct = func_select(tokens[1], 2);
-        if (is_correct == False) printf("Registro inexistente.\n");
+        func_select(tokens[1], 2);
     }    
     else if(tokens[0][0] == '5') {
         vehicle_select_where(tokens[1], tokens[2], tokens[3]);
@@ -39,12 +37,12 @@ void select_funcionality(string *tokens) {
         line_select_where(tokens[1], tokens[2], tokens[3]);
     }
     else if(tokens[0][0] == '7') {
-        vehicle_insert_into(tokens[1], atoi(tokens[2]));
-        binarioNaTela(tokens[1]);
+        is_correct = vehicle_insert_into(tokens[1], atoi(tokens[2]));
+        if (is_correct == True) binarioNaTela(tokens[1]);
     }
     else if(tokens[0][0] == '8') {
-        line_insert_into(tokens[1], atoi(tokens[2]));
-        binarioNaTela(tokens[1]);
+        is_correct = line_insert_into(tokens[1], atoi(tokens[2]));
+        if (is_correct == True) binarioNaTela(tokens[1]);
     }
     else {
         printf("Please select a valid funcionality\n");

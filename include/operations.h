@@ -21,17 +21,17 @@ boolean line_create_table(string csv_name, string bin_name);
 /*
     Inserts new reg into vehicle binary file
 */
-void vehicle_insert_into(string bin_name, int amnt_regs);
+boolean vehicle_insert_into(string bin_name, int amnt_regs);
 
 /*
     Inserts new reg into line binary file
 */
-void line_insert_into(string bin_name, int amnt_regs);
+boolean line_insert_into(string bin_name, int amnt_regs);
 
 /*
     Third and Fourth funcionality "SELECT WHERE"
 */
-boolean func_select(string bin_name, int select);
+void func_select(string bin_name, int select);
 
 /*
     Sixth funcionality "SELECT WHERE"
