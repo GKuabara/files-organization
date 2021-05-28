@@ -4,8 +4,8 @@ Project from Files Organization Discipline of University of São Paulo
 
 ## Students
 
-Gabriel Alves Kuabara - nUSP 11275043<br/>
-Milena Corrêa da Silva - nUSP 11795401
+Gabriel Alves Kuabara - nUSP 11275043 - gabrielalveskuabara@usp.br<br/>
+Milena Corrêa da Silva - nUSP 11795401 - milenacorrea@usp.br
 
 # Introduction
 
@@ -69,3 +69,20 @@ The program receives 'n' registers typed by the user that we need to add in the 
 
 # Use Instructions
 
+To execute our program we use a makefile. By using command "Make" we compile and clean object files, then we can execute our program through the executable main file "./main". Then, the user need to type the funcionality number and the parameters of each one separeted by spaces. 
+
+- Functionalities 1 and 2 receives the csv and binary file name respectively:<br/>
+![](https://i.imgur.com/OOqsNlL.png)<br/>
+![](https://i.imgur.com/wFpkPIG.png)
+
+- Functionalities 3 and 4 receives the binary file name:<br/>
+![](https://i.imgur.com/qY02otn.png)<br/>
+![](https://i.imgur.com/lKOkhuL.png)
+
+- Functionalities 5 and 6 receives the binary file name, a file field, and the value the user is searching for:<br/>
+![](https://i.imgur.com/BGh32d2.png)<br/>
+![](https://i.imgur.com/zBSimc7.png)
+
+- Functionalities 7 and 8 receives the binary file name and the number of registers to be inserted. After this, in each line is typed one register which have its string between quotes:<br/>
+![](https://i.imgur.com/AxdRuEy.png)<br/>
+![](https://i.imgur.com/W084Wmz.png)
