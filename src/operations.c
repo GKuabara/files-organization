@@ -22,14 +22,14 @@ static void _header_init(_files_t *files, long h_size, void (*header_funct)(_fil
 */
 static _reg_update_t *_insert_datareg(FILE *bin, string *tokens,  void (*insert_funct)(FILE *, string *), long next_reg, int amnt_const, int const_size) {
     fseek(bin, next_reg, SEEK_SET);
-    _reg_update_t *update = g_insert_datareg(bin, tokens, amnt_const, const_size);
+    _reg_update_t *update = g_insert_datareg_header(bin, tokens, amnt_const, const_size);
     insert_funct(bin, tokens);
 
     return update;
 }
 
 /*
-    Reads an csv file and inserts all dataregs from it. Can be used for both
+    Reads a csv file and inserts all dataregs from it. Can be used for both
     line and vehicle files given their respective `insert_funct` via `finfo`.
 */
 static void _insert_dataregs_from_csv(_files_t *files, void (*insert_funct)(FILE *, string *), long h_size, int amnt_const, int const_size) {
@@ -176,6 +176,12 @@ boolean line_select(string bin_name) {
 boolean vehicle_select_where(string bin_name, string field, string value) {
     FILE *bin = open_file(bin_name, "rb");
     if (!bin) return False;
+
+    if (check_bin_consistency(bin) == False) {
+        printf("Falha no processamento do arquivo.\n");
+        fclose(bin);
+        return False;
+    }
    
     if (check_terminal_parameters(field, value) == False) {
         printf("Falha no processamento do arquivo.\n");
@@ -204,6 +210,12 @@ boolean line_select_where(string bin_name, string field, string value) {
         return False;
     }
 
+    if (check_bin_consistency(bin) == False) {
+        printf("Falha no processamento do arquivo.\n");
+        fclose(bin);
+        return False;
+    }
+
     long end_of_file = _get_end_of_file(bin);
     boolean has_reg = l_select_where(bin, field, value, end_of_file);
     
@@ -221,7 +233,6 @@ boolean vehicle_insert_into(string bin_name, int amnt_regs) {
 
     if (check_bin_consistency(bin) == False) {
         printf("Falha no processamento do arquivo.\n");
-
         fclose(bin);
         return False;
     }

@@ -75,9 +75,9 @@ void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv) {
 }
 
 /*
-    Global part of a new datareg insertion. Can be user for both vehicle and line files given `finfo`.
+    Global part of a new datareg insertion (remotion and reg size). Can be user for both vehicle and line files given `finfo`.
 */
-_reg_update_t *g_insert_datareg(FILE *bin, string *tokens, int amnt_const, int const_size) {
+_reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const, int const_size) {
     _reg_update_t *update = malloc(sizeof(*update));
     assert(update);
     

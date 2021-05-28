@@ -12,6 +12,7 @@
 boolean vehicle_create_table(string csv_name, string bin_name);
 boolean line_create_table(string csv_name, string bin_name);
 
+
 boolean vehicle_select(string bin_name);
 boolean line_select(string bin_name);
 
