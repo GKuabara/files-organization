@@ -5,9 +5,11 @@
 Projeto da Disciplina de Organização de Arquivos da Universidade de São Paulo
 
 ## Estudantes
+<a href="https://github.com/GKuabara"><img src="https://avatars.githubusercontent.com/u/66877791?v=4" title="gkuabara" width="80" height="80"></a>
+<a href="https://github.com/milenacsilva"><img src="https://avatars2.githubusercontent.com/u/61664263?s=460&v=4" title="milenacsilva" width="80" height="80"></a>
 
 Gabriel Alves Kuabara - nUSP 11275043 - gabrielalveskuabara@usp.br<br/>
-Milena Corrêa da Silva - nUSP 11795401 - milenacorrea@usp.br
+Milena Corrêa da Silva - nUSP 11795401 - milenacorreasilva@usp.br
 
 # Introdução
 
