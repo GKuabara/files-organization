@@ -1,4 +1,4 @@
-# Brazilian Porguguese Version
+# Brazilian Portuguese Version
 
 # Projeto 1 - Funções SQL em C
 
