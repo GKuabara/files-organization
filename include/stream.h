@@ -71,6 +71,6 @@ string str_add_terminator(string str, int len);
     (char *[]) {", ", ","}
 
 
-
+void file_error(string error_mmessage);
 
 #endif

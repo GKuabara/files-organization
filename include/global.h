@@ -79,7 +79,7 @@ _reg_update_t *_g_read_reg_header(FILE *fp);
     For fields with variable size, use this funcion to read the field.
     Also used for strings with fixed size to put "\0" to print easily
 */
-string g_read_var_field(FILE *fp, int field_size);
+string g_read_str_field(FILE *fp, int field_size);
 
 /*
     Checks if file is consistent or not

@@ -1,3 +1,10 @@
+/*
+** File and string handling module.
+
+**  Gabriel Alves Kuabara - nUSP 11275043 - email: gabrielalveskuabara@usp.br
+**  Milena Correa da Silva - nUSP 11795401 - email: milenacorreasilva@usp.br 
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -146,9 +153,7 @@ string readline_(FILE *stream, const struct _term_t t) {
 FILE* open_file(const char *file_path, const char *flag) {
     FILE *fp = fopen(file_path, flag);
 
-    if (fp == NULL) { 
-        printf("Falha no processamento do arquivo.\n");
-    }
+    if (fp == NULL) printf("Falha no processamento do arquivo.\n");
 
     return fp;
 }   
@@ -161,4 +166,11 @@ string str_add_terminator(string str, int len) {
     string new = malloc(sizeof(char) * (len + 1));
     new[len] = '\0';
     return new;
+}
+
+
+void file_error(string error_mmessage) {
+    printf("%s\n", error_mmessage);
+    
+    exit(EXIT_FAILURE);
 }

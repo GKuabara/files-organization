@@ -1,3 +1,10 @@
+/*
+** Line binary and csv files handling module.
+
+**  Gabriel Alves Kuabara - nUSP 11275043 - email: gabrielalveskuabara@usp.br
+**  Milena Correa da Silva - nUSP 11795401 - email: milenacorreasilva@usp.br 
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -23,8 +30,9 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
 static void _l_write_code(FILE *bin, string code) {
     int aux = _g_is_rmv(code) == RMV ? atoi(code + 1) : atoi(code);
 
-    /* fwrite Error Handling */
-    if (fwrite(&aux, sizeof(int), 1, bin) != 1);
+    /* fwrite & Error Handling */
+    if (fwrite(&aux, sizeof(int), 1, bin) != 1)
+        file_error("Falha no processamento do arquivo");
 }
 
 /*
@@ -33,9 +41,9 @@ static void _l_write_code(FILE *bin, string code) {
 static void _l_write_card_opt(FILE *bin, string card_opt) {
     char opt = (_g_is_null(card_opt))? '\0': *card_opt;
 
-
-    /* fwrite Error Handling */
-    if (fwrite(&opt, sizeof(char), 1, bin) != 1);
+    /* fwrite & Error Handling */
+    if (fwrite(&opt, sizeof(char), 1, bin) != 1)
+        file_error("Falha no processamento do arquivo");
 }
 
 /*
@@ -44,9 +52,11 @@ static void _l_write_card_opt(FILE *bin, string card_opt) {
 static void _l_write_var_field(FILE *bin, string field) {
     int len = _g_is_null(field) ? 0 : strlen(field);
 
-    /* fwrite Error Handling */
-    if (fwrite(&len, sizeof(int), 1, bin) != 1);
-    if (fwrite(field, sizeof(*field), len, bin) != len);
+    /* fwrite & Error Handling */
+    if (fwrite(&len, sizeof(int), 1, bin) != 1) 
+        file_error("Falha no processamento do arquivo");
+    if (fwrite(field, sizeof(*field), len, bin) != len) 
+        file_error("Falha no processamento do arquivo");
 }
 
 /*
@@ -62,23 +72,24 @@ static int _l_which_selected_field(string field) {
 }
 
 /*
-    Reads register content to struct
+    Reads/Loads to memory the reg content to struct
 */
 static line *_l_read_reg_data(FILE *fp) {
     line *data = malloc(sizeof(*data));
 
+    /* fwrite & Error handling */
     if (fread(&data->code, sizeof(int), 1, fp) != 1)
-        printf("Falha no processamento do arquivo.\n"); 
+        file_error("Falha no processamento do arquivo");
     if (fread(&data->card, sizeof(char), 1, fp) != 1)
-        printf("Falha no processamento do arquivo.\n"); 
-    
+        file_error("Falha no processamento do arquivo");
+
     if (fread(&data->name_size, sizeof(int), 1, fp) != 1)
-        printf("Falha no processamento do arquivo.\n"); 
-    data->line_name = g_read_var_field(fp, data->name_size);
+        file_error("Falha no processamento do arquivo");
+    data->line_name = g_read_str_field(fp, data->name_size);
 
     if (fread(&data->color_size, sizeof(int), 1, fp) != 1)
-        printf("Falha no processamento do arquivo.\n"); 
-    data->color = g_read_var_field(fp, data->color_size);
+        file_error("Falha no processamento do arquivo");
+    data->color = g_read_str_field(fp, data->color_size);
 
     return data;
 }
@@ -103,11 +114,10 @@ static void _l_print_reg_data(line *data) {
     printf("\n");
 }
 
-/* free struct and its elements */
+/* Free struct and its elements */
 static void _l_free_reg_data(line *data) {
     free(data->line_name);
     free(data->color);
-
     free(data);    
 }
 
@@ -115,24 +125,24 @@ static void _l_free_reg_data(line *data) {
     Reads reg and checks if it contains 'value' in 'field'
 */
 static line *_l_get_selected_reg(FILE *bin, int offset, string field, string value) {
-    _reg_update_t *header = _g_read_reg_header(bin);
+    _reg_update_t *reg_header = _g_read_reg_header(bin);
 
-    // Error and removed regs handling
-    if (!header) return NULL;
-    if (header->is_removed == RMV) {
-        fseek(bin, header->reg_size, SEEK_CUR);
-        free(header);
+    /* Error and removed regs handling */
+    if (!reg_header) return NULL;
+    if (reg_header->is_removed == RMV) {
+        fseek(bin, reg_header->reg_size, SEEK_CUR);
         
+        free(reg_header);
         return NULL;
     }
-    free(header);
+    free(reg_header);
     
-    // Struct receives register content
+    /* Loads reg content to memory */
     fseek(bin, L_REG_CODE_OFFSET, offset);
     line *data = _l_read_reg_data(bin);
     
-    // Gets the field we need to search for 'value', if the
-    // register contains 'value', return struct with all reg data
+    /* Gets the field we need to search for 'value', if the
+    register contains 'value', return struct with all reg data */
     switch (_l_which_selected_field(field)) {
     case CODE:
         if (atoi(value) == data->code) return data;
@@ -150,6 +160,7 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
         break;
     }
 
+    /* In case is not the value searched */
     _l_free_reg_data(data);
     return NULL;
 }
@@ -162,12 +173,17 @@ void l_header_init(_files_t *files) {
     string header = readline(files->csv);
     string *tokens = str_get_tokens(header, .amnt_delim=2,.delim=csv_delim);
 
-    /* Error handling */
-    if (fwrite(tokens[CODE], sizeof(l_code_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[CARD], sizeof(l_card_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[NAME], sizeof(l_name_desc_t), 1, files->bin) != 1);
-    if (fwrite(tokens[COLOR], sizeof(l_color_desc_t), 1, files->bin) != 1);
+    /* fwrite & Error handling */
+    if (fwrite(tokens[CODE], sizeof(l_code_desc_t), 1, files->bin) != 1)
+        file_error("Falha no processamento do arquivo");
+    if (fwrite(tokens[CARD], sizeof(l_card_desc_t), 1, files->bin) != 1)
+        file_error("Falha no processamento do arquivo");
+    if (fwrite(tokens[NAME], sizeof(l_name_desc_t), 1, files->bin) != 1)
+        file_error("Falha no processamento do arquivo");
+    if (fwrite(tokens[COLOR], sizeof(l_color_desc_t), 1, files->bin) != 1)
+        file_error("Falha no processamento do arquivo");
     
+    /* Frees all alloc'ed memory */
     for (string *t = tokens; *t; t++) free(*t);
     free(tokens);
     free(header);
@@ -184,34 +200,30 @@ void l_insert_datareg(FILE *bin, string *tokens) {
 }
 
 /*
-    Fourth functionality, prints every valid register
+    Prints every valid reg from a vehicle reg file
 */
 boolean l_select(FILE *bin, int last_byte) {
-    fseek(bin, L_HEADER_SIZE, SEEK_SET);
+    fseek(bin, L_HEADER_SIZE, SEEK_SET); // Goes to the first reg
     boolean has_reg = False;
     
-    while(ftell(bin) < last_byte) {
-        _reg_update_t *header = _g_read_reg_header(bin);
+    while(ftell(bin) < last_byte) { 
+        _reg_update_t *reg_header = _g_read_reg_header(bin);
 
-        if (header == NULL) {
-            free(header);
-            return False;
-        }
-
-        // If reg is removed, jump for the next register
-        if(header->is_removed == RMV) {
-            int next_reg = ftell(bin) + header->reg_size;
-            fseek(bin, next_reg, SEEK_SET);
-            free(header);
+        /* Error and removed regs handling */
+        if (!reg_header) continue;
+        if (reg_header->is_removed == RMV) {
+            fseek(bin, reg_header->reg_size, SEEK_CUR);
+            free(reg_header);
+            
             continue;
         }
 
-        has_reg = True;
+        has_reg = True; // If there is at leat 1 valid reg
         line *data = _l_read_reg_data(bin);
         _l_print_reg_data(data);
-
-        free(header);
+        
         _l_free_reg_data(data);
+        free(reg_header);
     }
 
     return has_reg;
@@ -221,13 +233,11 @@ boolean l_select(FILE *bin, int last_byte) {
     Print registers containing 'value' in the requested 'field'
 */
 boolean l_select_where(FILE *bin, string field, string value, long end_of_file) {    
-    fseek(bin, L_HEADER_SIZE, SEEK_SET);
+    fseek(bin, L_HEADER_SIZE, SEEK_SET); // Goes to the first reg
 
-    if (_l_which_selected_field(field) == -1) {
-        printf("Não existe esse campo no arquivo\n");
-        return True;
-    }
-
+    /* In case a invalid field is given */
+    if (_l_which_selected_field(field) == -1) return False;
+    
     boolean has_reg = False;
     long offset;
     while ((offset = ftell(bin)) < end_of_file) {
@@ -236,7 +246,7 @@ boolean l_select_where(FILE *bin, string field, string value, long end_of_file) 
         if (data) {
             _l_print_reg_data(data);
             _l_free_reg_data(data);
-            has_reg = True;
+            has_reg = True; // If at least 1 valid field is given
         }
     }
 

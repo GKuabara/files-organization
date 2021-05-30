@@ -1,3 +1,10 @@
+/*
+** Database operations handling module.
+
+**  Gabriel Alves Kuabara - nUSP 11275043 - email: gabrielalveskuabara@usp.br
+**  Milena Correa da Silva - nUSP 11795401 - email: milenacorreasilva@usp.br 
+*/
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,7 +12,11 @@
 
 #include "operations.h"
 
-
+static void _header_init(_files_t *files, long h_size, void (*header_funct)(_files_t *));
+static _reg_update_t *_insert_datareg(FILE *bin, string *tokens,  void (*insert_funct)(FILE *, string *), long next_reg, int amnt_const, int const_size);
+static void _insert_dataregs_from_csv(_files_t *files, void (*insert_funct)(FILE *, string *), long h_size, int amnt_const, int const_size);
+static void _insert_dataregs_from_terminal(FILE *bin, int amnt_regs, void (*insert_funct)(FILE *, string *), long offset, int amnt_const, int const_size);
+static long _get_end_of_file(FILE *bin);
 
 /*
     Initializes a binary header. Can be used for both line and vehicle files
@@ -33,7 +44,7 @@ static _reg_update_t *_insert_datareg(FILE *bin, string *tokens,  void (*insert_
     line and vehicle files given their respective `insert_funct` via `finfo`.
 */
 static void _insert_dataregs_from_csv(_files_t *files, void (*insert_funct)(FILE *, string *), long h_size, int amnt_const, int const_size) {
-    g_header_update(files->bin, INC_STAT, 0, 0);
+    g_header_update(files->bin, INC_STAT, 0, 0); // Makes the file inconsistent at the start
 
     int amnt_reg = 0;
     int amnt_rmv = 0;
@@ -41,6 +52,7 @@ static void _insert_dataregs_from_csv(_files_t *files, void (*insert_funct)(FILE
     
     string line;
     while ((line = readline(files->csv)) != NULL) {
+        /* Gets the csv line */
         string *tokens = str_get_tokens(line, .amnt_delim=2, .delim=csv_delim);
 
         _reg_update_t *update = _insert_datareg(files->bin, tokens, insert_funct, next_reg, amnt_const, const_size);
@@ -53,14 +65,14 @@ static void _insert_dataregs_from_csv(_files_t *files, void (*insert_funct)(FILE
         free(line);
     }
 
-    g_header_update(files->bin, CON_STAT, amnt_reg, amnt_rmv); // Update header status only
+    g_header_update(files->bin, CON_STAT, amnt_reg, amnt_rmv); // U´status only
 }
 
 /*
     Reads new regs from terminal to insert in the end of the binary files
 */
 static void _insert_dataregs_from_terminal(FILE *bin, int amnt_regs, void (*insert_funct)(FILE *, string *), long offset, int amnt_const, int const_size) {
-    g_header_update(bin, INC_STAT, 0, 0);
+    g_header_update(bin, INC_STAT, 0, 0); // Makes the file inconsistent at the start
     
     int amnt_reg = 0;
     int amnt_rmv = 0;
@@ -68,7 +80,7 @@ static void _insert_dataregs_from_terminal(FILE *bin, int amnt_regs, void (*inse
 
 
     for (int i = 0; i < amnt_regs; ++i) {
-        // Gets line from terminal
+        /* Gets line from terminal */
         string line = readline(stdin);
         string *tokens = str_get_tokens(line, .amnt_delim=1, .delim=(char *[]){" "});
 
@@ -85,6 +97,9 @@ static void _insert_dataregs_from_terminal(FILE *bin, int amnt_regs, void (*inse
     g_header_update(bin, CON_STAT, amnt_reg, amnt_rmv); // Update header status only
 }
 
+/*
+    Gets the offset of the last byte of a file. 
+*/
 static long _get_end_of_file(FILE *bin) {
     fseek(bin, 0, SEEK_END);
     long end_of_file = ftell(bin);
@@ -93,17 +108,22 @@ static long _get_end_of_file(FILE *bin) {
 } 
 
 /*
-    First functionality: creates a vehicle table
+    First functionality: creates a vehicle table.
 */
 boolean vehicle_create_table(string csv_name, string bin_name) {
     _files_t files = {.bin = open_file(bin_name, "w+b"),
                       .csv = open_file(csv_name, "r")};
 
-    if (!files.bin || !files.csv) return False;
-    
+    /* Error handling */
+    if (!files.bin || !files.csv) {
+        if (files.bin) fclose(files.bin);
+        if (files.csv) fclose(files.csv);
+        return False; 
+    }
+
     _header_init(&files, V_HEADER_SIZE, v_header_init);
     _insert_dataregs_from_csv(&files, v_insert_datareg, V_HEADER_SIZE, V_AMNT_REG_CONST, V_CONST_REG_SIZE);
-
+    
     fclose(files.bin);
     fclose(files.csv);
 
@@ -117,7 +137,12 @@ boolean line_create_table(string csv_name, string bin_name) {
      _files_t files = {.bin = open_file(bin_name, "w+b"),
                       .csv = open_file(csv_name, "r")};
 
-    if (!files.bin || !files.csv) return False;
+    /* Error handling */
+    if (!files.bin || !files.csv) {
+        if (files.bin) fclose(files.bin);
+        if (files.csv) fclose(files.csv);
+        return False; 
+    }
     
     _header_init(&files, L_HEADER_SIZE, l_header_init);
     _insert_dataregs_from_csv(&files, l_insert_datareg, L_HEADER_SIZE, L_AMNT_REG_CONST, L_CONST_REG_SIZE);
@@ -133,8 +158,9 @@ boolean line_create_table(string csv_name, string bin_name) {
 */
 boolean vehicle_select(string bin_name) {
     FILE *bin = open_file(bin_name, "rb");
-    if (!bin) return False;
 
+    /* Error handling */
+    if (!bin) return False;
     if (check_bin_consistency(bin) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
@@ -145,7 +171,8 @@ boolean vehicle_select(string bin_name) {
     boolean has_reg = v_select(bin, end_of_file);
 
     if (has_reg == False) printf("Registro inexistente.\n");
-    
+
+    fclose(bin);
     return has_reg;
 }
 
@@ -154,8 +181,9 @@ boolean vehicle_select(string bin_name) {
 */
 boolean line_select(string bin_name) {
     FILE *bin = open_file(bin_name, "rb");
+    
+    /* Error handling */
     if (!bin) return False;
-
     if (check_bin_consistency(bin) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
@@ -167,22 +195,23 @@ boolean line_select(string bin_name) {
 
     if (has_reg == False) printf("Registro inexistente.\n");
     
+    fclose(bin);
     return has_reg;
 }
 
 /*
-    Fifth funcionality "SELECT WHERE"
+    Fifth funcionality: "SELECT WHERE" for vehicle files
 */
 boolean vehicle_select_where(string bin_name, string field, string value) {
     FILE *bin = open_file(bin_name, "rb");
-    if (!bin) return False;
 
+    /* Error handling */
+    if (!bin) return False;
     if (check_bin_consistency(bin) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
         return False;
     }
-   
     if (check_terminal_parameters(field, value) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
@@ -194,22 +223,23 @@ boolean vehicle_select_where(string bin_name, string field, string value) {
     
     if (has_reg == False) printf("Registro inexistente.\n");
 
+    fclose(bin);
     return has_reg;
 }
 
 /*
-    Sixth funcionality "SELECT WHERE"
+    Sixth funcionality: "SELECT WHERE" for line files
 */
 boolean line_select_where(string bin_name, string field, string value) {
     FILE *bin = open_file(bin_name, "rb");
+    
+    /* Error handlign */
     if (!bin) return False;
-   
     if (check_terminal_parameters(field, value) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
         return False;
     }
-
     if (check_bin_consistency(bin) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
@@ -221,9 +251,9 @@ boolean line_select_where(string bin_name, string field, string value) {
     
     if (has_reg == False) printf("Registro inexistente.\n");
 
+    fclose(bin);
     return has_reg;
 }
-
 
 /*
     Seventh functionality: inserts new reg into vehicle binary file
@@ -231,15 +261,20 @@ boolean line_select_where(string bin_name, string field, string value) {
 boolean vehicle_insert_into(string bin_name, int amnt_regs) {
     FILE *bin = open_file(bin_name, "r+b");
 
+    /* Error handling */
+    if (!bin) return False; 
     if (check_bin_consistency(bin) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
         return False;
     }
 
+    /* Tries to get the next reg offset */
     long next_reg;
-    if (fread(&next_reg, sizeof(long), 1, bin) != 1)
+    if (fread(&next_reg, sizeof(long), 1, bin) != 1) {
         printf("Falha no processamento do arquivo.\n");
+        return False;
+    }
 
     _insert_dataregs_from_terminal(bin, amnt_regs, v_insert_datareg, next_reg, V_AMNT_REG_CONST, V_CONST_REG_SIZE);
     
@@ -248,20 +283,25 @@ boolean vehicle_insert_into(string bin_name, int amnt_regs) {
 }
 
 /*
-    Eighty functionality: inserts new reg into line binary file
+    Eighth functionality: inserts new reg into line binary file
 */
 boolean line_insert_into(string bin_name, int amnt_regs) {
     FILE *bin = open_file(bin_name, "r+b");
 
+    /* Error handling */
+    if (!bin) return False; 
     if (check_bin_consistency(bin) == False) {
         printf("Falha no processamento do arquivo.\n");
         fclose(bin);
         return False;
     }
 
+    /* Tries to get the next reg offset */
     long next_reg;
-    if (fread(&next_reg, sizeof(long), 1, bin) != 1)
+    if (fread(&next_reg, sizeof(long), 1, bin) != 1) {
         printf("Falha no processamento do arquivo.\n");
+        return False;
+    }
 
     _insert_dataregs_from_terminal(bin, amnt_regs, l_insert_datareg, next_reg, L_AMNT_REG_CONST, L_CONST_REG_SIZE);
     

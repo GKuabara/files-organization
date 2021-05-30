@@ -1,3 +1,11 @@
+/*
+** Module reponsible for handlig data common to both vehicle and line 
+** binary and csv files.
+
+**  Gabriel Alves Kuabara - nUSP 11275043 - email: gabrielalveskuabara@usp.br
+**  Milena Correa da Silva - nUSP 11795401 - email: milenacorreasilva@usp.br 
+*/
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,16 +30,17 @@ static int _g_reg_get_size(string *var_fields, int const_size) {
 }
 
 static void _g_update_amnt_reg(FILE *bin, int new_regs) {
+    fseek(bin, 0, SEEK_CUR);
     int total_amnt_reg;
 
-    fseek(bin, 0, SEEK_CUR);
+    /* fread & Error handling */
     if (fread(&total_amnt_reg, sizeof(int), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
     
     total_amnt_reg += new_regs;
     fseek(bin, -sizeof(int), SEEK_CUR);
     if (fwrite(&total_amnt_reg, sizeof(int), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
 
 }
 
@@ -44,15 +53,15 @@ void g_header_init(FILE *bin, long header_size) {
     int amnt_reg = 0;
     int amnt_rmv = 0;
 
-    /* fwrite Error handling */
+    /* fwrite & Error handling */
     if (fwrite(&stats, sizeof(char), 1, bin) != 1) 
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
     if (fwrite(&header_size, sizeof(long), 1, bin) != 1) 
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
     if (fwrite(&amnt_reg, sizeof(int), 1, bin) != 1) 
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
     if (fwrite(&amnt_rmv, sizeof(int), 1, bin) != 1) 
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
 }
 
 /*
@@ -62,13 +71,13 @@ void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv) {
     long next_reg = ftell(bin);
     fseek(bin, 0, SEEK_SET);
 
-    /* fwrite Error handling */
+    /* fwrite & Error handling */
     if (fwrite(&stats, sizeof(char), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
     if (stats == INC_STAT) return; 
 
     if (fwrite(&next_reg, sizeof(long), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
 
     _g_update_amnt_reg(bin, amnt_reg);
     _g_update_amnt_reg(bin, amnt_rmv);
@@ -84,11 +93,11 @@ _reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const
     update->is_removed = _g_is_rmv((*tokens));
     update->reg_size = _g_reg_get_size(tokens + amnt_const, const_size);
 
-    /* fwrite Error Handling */
+    /* fwrite & Error Handling */
     if (fwrite(&(update->is_removed), sizeof(char), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
     if (fwrite(&(update->reg_size), sizeof(int), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n");
+        file_error("Falha no processamento do arquivo");
 
     return update;
 }
@@ -106,7 +115,7 @@ _reg_update_t *_g_read_reg_header(FILE *fp) {
     }
     
     if (fread(&reg_header->reg_size, sizeof(int), 1, fp) != 1) 
-        printf("Falha no processamento do arquivo.\n"); 
+        file_error("Falha no processamento do arquivo"); 
         
     return reg_header;
 }
@@ -115,16 +124,13 @@ _reg_update_t *_g_read_reg_header(FILE *fp) {
     For fields with variable size, use this funcion to read the field.
     Also used for strings with fixed size to put "\0" to print easily
 */
-string g_read_var_field(FILE *fp, int field_size) {
+string g_read_str_field(FILE *fp, int field_size) {
     string str = NULL;
 
-    if (field_size == 0) {
-        str = realloc(str, sizeof(char) * NULL_FIELD_ERROR_SIZE);
-        strcpy(str, "campo com valor nulo");
-    }
+    if (field_size == 0) str = strdup("campo com valor nulo"); // In case is a mepty field
+    
     else {
         str = realloc(str, sizeof(char) * (field_size + 1));
-
         fread(str, sizeof(char), field_size, fp);
         str[field_size] = '\0';
     }
@@ -139,10 +145,10 @@ boolean check_bin_consistency(FILE *bin) {
     fseek(bin, 0, SEEK_SET);
     
     char status;
-    fread(&status, sizeof(char), 1, bin);
+    if (fread(&status, sizeof(char), 1, bin) != 1)
+        file_error("Falha no processamento do arquivo");
 
-    boolean cons = (status == CON_STAT) ? True : False;
-    return cons;     
+    return (status == CON_STAT) ? True : False;
 }
 
 /*
