@@ -67,13 +67,17 @@ static int _l_which_selected_field(string field) {
 static line *_l_read_reg_data(FILE *fp) {
     line *data = malloc(sizeof(*data));
 
-    fread(&data->code, sizeof(int), 1, fp);
-    fread(&data->card, sizeof(char), 1, fp);
+    if (fread(&data->code, sizeof(int), 1, fp) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
+    if (fread(&data->card, sizeof(char), 1, fp) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
     
-    fread(&data->name_size, sizeof(int), 1, fp);
+    if (fread(&data->name_size, sizeof(int), 1, fp) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
     data->line_name = g_read_var_field(fp, data->name_size);
 
-    fread(&data->color_size, sizeof(int), 1, fp);
+    if (fread(&data->color_size, sizeof(int), 1, fp) != 1)
+        printf("Falha no processamento do arquivo.\n"); 
     data->color = g_read_var_field(fp, data->color_size);
 
     return data;

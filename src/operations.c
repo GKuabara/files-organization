@@ -43,7 +43,7 @@ static void _insert_dataregs_from_csv(_files_t *files, void (*insert_funct)(FILE
     while ((line = readline(files->csv)) != NULL) {
         string *tokens = str_get_tokens(line, .amnt_delim=2, .delim=csv_delim);
 
-        _reg_update_t *update = _insert_datareg(files->bin, tokens,insert_funct, next_reg, amnt_const, const_size);
+        _reg_update_t *update = _insert_datareg(files->bin, tokens, insert_funct, next_reg, amnt_const, const_size);
         update->is_removed == RMV ? amnt_rmv++ : amnt_reg++;
         next_reg += update->reg_size + G_CONST_REG_SIZE;
 

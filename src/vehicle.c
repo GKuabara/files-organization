@@ -80,8 +80,7 @@ static vehicle *_v_read_reg_data(FILE *bin) {
         printf("Falha no processamento do arquivo.\n"); 
     
     if (fread(&data->model_size, sizeof(int), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n"); 
-
+        printf("Falha no processamento do arquivo.\n");
     data->model = g_read_var_field(bin, data->model_size);
 
     if (fread(&data->category_size, sizeof(int), 1, bin) != 1)
