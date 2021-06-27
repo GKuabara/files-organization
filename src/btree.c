@@ -265,6 +265,8 @@ bt_node *_bt_split_child(FILE *bin, bt_node *parent, int child_pos, bt_node *chi
     return new_child;
 }
 
+
+
 key_pair *_bt_split_child2(FILE *bin, bt_node *parent, bt_node *child, int child_pos, int *next_rrn, key_pair *new) { // Assumes the parent is not full
     bt_node *splited = _bt_node_init(*next_rrn);
     
@@ -281,18 +283,16 @@ key_pair *_bt_split_child2(FILE *bin, bt_node *parent, bt_node *child, int child
         child->p[i+2] = -1;
     } // Copies the p pointers in case its not a leaf
 
-    for (int i = parent->amnt_keys - 1; i > child_pos; --i) {
-        parent->pairs[i] = parent->pairs[i - 1];
-    } 
+    // for (int i = parent->amnt_keys - 1; i > child_pos; --i) {
+    //     parent->pairs[i] = parent->pairs[i - 1];
+    // } 
 
-    parent->pairs[child_pos] = 
+    // parent->pairs[child_pos] = 
    
-    for (int i = parent->amnt_keys; i > child_pos; --i) {
-        parent->p[i + 1] = parent->p[i]; 
-    }
-    parent->p[child_pos + 1] = *next_rrn;
-  
-
+    // for (int i = parent->amnt_keys; i > child_pos; --i) {
+    //     parent->p[i + 1] = parent->p[i]; 
+    // }
+    // parent->p[child_pos + 1] = *next_rrn;
 }
 
 key_pair **_bt_get_overflow_pairs(bt_node *original_node, key_pair *new_pair) {
