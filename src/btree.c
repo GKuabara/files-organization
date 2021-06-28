@@ -168,18 +168,21 @@ int _bt_leaf_insert_key(bt_node *node, key_pair *new_pair) {
     return i;
 }
 
-bt_node *_bt_insert_key_recursive_2(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair) {
+bt_node *_bt_insert_key_recursive_2(FILE *bin, int *root_rrn, int *next_rrn, int *new_child_rrn, key_pair *new_pair) {
     bt_node *cur_node = _b_node_load(bin, root_rrn); 
 
+    // achando a posição da chave
     int i = 0;
     for (i = 0; i < AMNT_KEYS; ++i) {
         if (new_pair->c < cur_node->pairs[i]->c) break;
     }
 
+    // chamada recursiva para chegar ao nó folha
     bt_node *child = NULL;
     if (cur_node->is_leaf == NOT_LEAF) 
-        child =_bt_insert_key_recursive(bin, root_rrn, next_rrn, cur_node->p[i]);
+        child =_bt_insert_key_recursive(bin, root_rrn, next_rrn, new_child_rrn, cur_node->p[i]);
     
+    // se for folha e tiver espaço, adiciona no nó
     else if (cur_node->amnt_keys < AMNT_KEYS){
         _bt_leaf_insert_key(cur_node, new_pair);
         new_pair = NULL;
@@ -189,6 +192,30 @@ bt_node *_bt_insert_key_recursive_2(FILE *bin, int *root_rrn, int *next_rrn, key
     if (new_pair == NULL) return cur_node;
 
     bt_node *new_child = _bt_split_child_3(..., cur_node, i, next_rrn, new_pair);
+
+    if (cur_node->rrn == NODE_SIZE) {
+        bt_node *new_root = _bt_node_init(next_rrn);
+        new_root->p[0] = cur_node->rrn;
+        new_root->p[1] = new_child->rrn;
+        new_root->pairs[0] = new_pair;
+        new_pair = NULL;
+        _bt_node_update(bin, new_root);
+        return new_root;
+    }
+
+    else if(cur_node->amnt_keys < AMNT_KEYS) {
+        int pos = _bt_leaf_insert_key(cur_node, new_pair);
+        cur_node->p[pos + 1] = *new_child_rrn;
+
+        new_pair = NULL;
+        _bt_node_update(bin, cur_node);
+        return cur_node;
+    }
+
+    else {
+        
+    }
+
 }
 
 /*
