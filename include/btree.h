@@ -19,8 +19,8 @@ typedef struct {
     char is_leaf;
     int amnt_keys;
     int rrn;
-    int p[BT_DEGREE];
-    key_pair *pairs[AMNT_KEYS];
+    int p[BT_DEGREE + 1];
+    key_pair *pairs[AMNT_KEYS + 1];
 } bt_node;
 
 void b_header_init(_files_t *files);

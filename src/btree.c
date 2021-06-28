@@ -71,12 +71,12 @@ key_pair *b_search_key(FILE *bin, int root_rrn, int c_tar) {
     Initializes a new btree node.
     Callers are responsible for `free()`ing it.
 */
-bt_node *_bt_node_init(int rrn_tar) {
+bt_node *_bt_node_init(int *next_rrn) {
     bt_node *new_node = malloc(sizeof(*new_node));
 
     new_node->is_leaf = IS_LEAF;
     new_node->amnt_keys = 0;
-    new_node->rrn = rrn_tar;
+    new_node->rrn = *next_rrn;
     memset(&new_node->p, -1, BT_DEGREE);
     
     for (int i = 0; i < AMNT_KEYS; i++) {
@@ -84,6 +84,7 @@ bt_node *_bt_node_init(int rrn_tar) {
         new_node->pairs[i]->c = new_node->pairs[i]->p_r = -1;
     }
 
+    *next_rrn += 77;
     return new_node;
 }
 
@@ -150,7 +151,7 @@ bt_node *_bt_node_load(FILE *bin, int rrn_tar) {
 /*
     Inserts a new pair into a node without overflow
 */
-int _bt_simple_insert_key(bt_node *node, key_pair *new_pair) {
+int _bt_leaf_insert_key(bt_node *node, key_pair *new_pair) {
     int i;
     for (i = 0; i < AMNT_KEYS - 1; i++) {
         if (node->pairs[i]->c > new_pair->c) break;
@@ -162,9 +163,32 @@ int _bt_simple_insert_key(bt_node *node, key_pair *new_pair) {
     }
 
     node->pairs[i] = new_pair;
-    node->p[i] = -1;
+    node->p[i + 1] = -1;
 
     return i;
+}
+
+bt_node *_bt_insert_key_recursive_2(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair) {
+    bt_node *cur_node = _b_node_load(bin, root_rrn); 
+
+    int i = 0;
+    for (i = 0; i < AMNT_KEYS; ++i) {
+        if (new_pair->c < cur_node->pairs[i]->c) break;
+    }
+
+    bt_node *child = NULL;
+    if (cur_node->is_leaf == NOT_LEAF) 
+        child =_bt_insert_key_recursive(bin, root_rrn, next_rrn, cur_node->p[i]);
+    
+    else if (cur_node->amnt_keys < AMNT_KEYS){
+        _bt_leaf_insert_key(cur_node, new_pair);
+        new_pair = NULL;
+        return cur_node;
+    }
+
+    if (new_pair == NULL) return cur_node;
+
+    bt_node *new_child = _bt_split_child_3(..., cur_node, i, next_rrn, new_pair);
 }
 
 /*
@@ -189,21 +213,25 @@ bt_node *_bt_insert_key_recursive(FILE *bin, int *root_rrn, int *next_rrn, key_p
     /* Recursive decends */
     bt_node *child = _bt_insert_key_recursive(bin, root_rrn, next_rrn, cur_node->p[i]);
 
+    // caso não tiver new_pair, quer dizer que a inserção incial foi feita
+    // e todas as possíveis promoções também
     if (new_pair == NULL) return cur_node;
 
     // se o nó filho tiver espaço a gente insere normlamente
     // e retorna esse filho nas chamadas recursivas
     if (child->amnt_keys < AMNT_KEYS) {
-        int pos = _bt_simple_insert_key(child, new_pair);
-
+        
         // caso o nó que inserimos nao for folha, entao esta chave inserida através
         // de uma promoção, logo devemos atualizar o rrn do nó junto da inserção
         if (child->is_leaf == NOT_LEAF) {
-            // child->p[pos] = *next_rrn;
-            //*next_rrn += NODE_SIZE;
+            child->pairs[i] = new_pair;
+        }
+        else {
+            int pos = _bt_leaf_insert_key(child, new_pair);
         }
 
-        return child;        
+        new_pair = NULL;
+        return cur_node;        
     }
     
     // a partir daqui somente casos de overflow
@@ -213,10 +241,11 @@ bt_node *_bt_insert_key_recursive(FILE *bin, int *root_rrn, int *next_rrn, key_p
         
         // podemos fazer inserção sem oveflow no nó raiz
         if (cur_node->amnt_keys < AMNT_KEYS) {
-            int pos = _bt_simple_insert_key(cur_node, new_pair);
+            int pos = _bt_leaf_insert_key(cur_node, new_pair);
             // cur_node->p[pos] = *next_rrn;
             // *next_rrn += NODE_SIZE;
 
+            new_pair = NULL;
             return cur_node;
         }
 
@@ -232,25 +261,73 @@ bt_node *_bt_insert_key_recursive(FILE *bin, int *root_rrn, int *next_rrn, key_p
             new_root->p[1] = new_child->rrn;
             *root_rrn = new_root->rrn;
 
+            new_pair = NULL;
             return new_root;
         }
     }
 
     // overflow de qualquer outro nó sem ser raiz
     else {
-        bt_node *new_child = _bt_split_child(bin, cur_node, i, child, next_rrn, new_pair);
-        cur_node->p[i] = child->rrn;
+        bt_node *new_child = _bt_split_child_3(cur_node, child, i, next_rrn, new_pair);
+        
+        // fazemos o nó apontar para o novo filho criado no split
         cur_node->p[i + 1] = new_child->rrn;
-        new_pair = child->pairs[2];
+
+        _bt_node_update(bin, cur_node);
+        _bt_node_update(bin, child);
+        _bt_node_update(bin, new_child);
     }
         
     return cur_node; 
 }
 
+bt_node *_bt_split_child_3(bt_node *parent, bt_node *child, int child_pos, int *next_rrn, key_pair *new_pair) {
+
+    // inserindo no nó com overflow
+    child = _bt_overflow_insert_key(child, new_pair);
+    
+    bt_node *new_child = _bt_node_init(*next_rrn);
+
+    // copiando para novo nó as duas ultimas chaves e RNNs
+    // ao mesmo tempo que esvazia o nó original
+    for (int i = 0, j = 3; j < AMNT_KEYS; i++, j++) {
+        new_child->p[i] = child->p[j];
+        new_child->pairs[i] = child->pairs[j]; 
+        child->p[j] = -1;
+        child->pairs[j] = NULL;
+    }
+    new_child->p[2] = child->p[5];
+
+    // seta a chave a ser promovida como new_pair e remove a mesma do nó
+    new_pair = child->pairs[2];
+    child->pairs[2] = NULL;
+
+    return new_child;
+}
+
+bt_node *_bt_overflow_insert_key(bt_node *node, key_pair *new_pair) {
+    int i;
+
+    // acha posição para inserção
+    for (i = 0; i < AMNT_KEYS; i++) {
+        if (node->pairs[i]->c > new_pair->c) break;
+    }
+
+    // shift as chaves e RRNs
+    for (int j = AMNT_KEYS, k = BT_DEGREE; j > i; --j, --k)  {
+        node->pairs[j] = node->pairs[j - 1];
+        node->p[k] = node->p[k - 1];
+    }
+
+    // posiciona novo nó
+    node->pairs[i] = new_pair;
+    node->p[i + 1] = -1;
+
+    return i;
+}
 
 bt_node *_bt_split_child(FILE *bin, bt_node *parent, int child_pos, bt_node *child, int *next_rrn, key_pair *new) {
 
-    int overflow_p[6];
     key_pair **overflow_pairs = _bt_get_overflow_pairs(child, new);
 
     bt_node *new_child = _bt_node_init(next_rrn);
