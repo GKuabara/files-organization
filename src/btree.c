@@ -12,7 +12,11 @@
 
 #include "btree.h"
 
-/* Initizalizes the btree file header */
+//////////// DONE /////////////////
+
+/* 
+    Initizalizes the btree file header
+*/
 void bt_header_init(_files_t *files) {
     int status = INC_STAT;
     int root_rrn = -1;
@@ -51,7 +55,9 @@ void bt_header_update(FILE *bin, char stats, int root_rrn, int next_node_rnn) {
         file_error("Falha no processamento do arquivo");
 }
 
-/* Searchs and returns a key pair */
+/* 
+    Searchs and returns a key pair
+*/
 key_pair *b_search_key(FILE *bin, int root_rrn, int c_tar) {
     if (root_rrn == -1) return NULL;
     
@@ -67,24 +73,42 @@ key_pair *b_search_key(FILE *bin, int root_rrn, int c_tar) {
     return _b_node_search(bin, c_tar, cur_node->p[i]);
 }
 
+//////////// IN PROGRESS //////////
+
 /* 
-    Initializes a new btree node.
-    Callers are responsible for `free()`ing it.
+    Initializes a new btree node with an extra 
+    overflow in the keys space. Callers are 
+    responsible for `free()`ing it.
 */
-bt_node *_bt_node_init(int *next_rrn) {
+bt_node *_bt_node_init(int rrn_tar) {
     bt_node *new_node = malloc(sizeof(*new_node));
 
     new_node->is_leaf = IS_LEAF;
     new_node->amnt_keys = 0;
-    new_node->rrn = *next_rrn;
-    memset(&new_node->p, -1, BT_DEGREE);
+    new_node->rrn = rrn_tar;
+    memset(&new_node->p, -1, BT_DEGREE + 1);
     
-    for (int i = 0; i < AMNT_KEYS; i++) {
+    for (int i = 0; i < AMNT_KEYS + 1; i++) {
         new_node->pairs[i] = malloc(sizeof(*new_node->pairs[i]));
         new_node->pairs[i]->c = new_node->pairs[i]->p_r = -1;
     }
 
-    *next_rrn += 77;
+    return new_node;
+}
+
+bt_node *_bt_node_init_2(int rrn_tar, char leaf, int n_keys) {
+    bt_node *new_node = malloc(sizeof(*new_node));
+
+    new_node->is_leaf = leaf;
+    new_node->amnt_keys = n_keys;
+    new_node->rrn = rrn_tar;
+    memset(&new_node->p, -1, BT_DEGREE + 1);
+    
+    for (int i = 0; i < AMNT_KEYS + 1; i++) {
+        new_node->pairs[i] = malloc(sizeof(*new_node->pairs[i]));
+        new_node->pairs[i]->c = new_node->pairs[i]->p_r = -1;
+    }
+
     return new_node;
 }
 
@@ -122,7 +146,7 @@ void _bt_node_store(FILE *bin, bt_node *node) {
 bt_node *_bt_node_load(FILE *bin, int rrn_tar) {
     fseek(bin, rrn_tar, SEEK_SET);
 
-    bt_node *node = malloc(sizeof(*node));
+    bt_node *node = _bt_node_init_2(rrn_tar, IS_LEAF, 0);
 
     /* Reads node's header */
     if (fread(&node->is_leaf, sizeof(char), 1, bin) != 1)
@@ -149,73 +173,61 @@ bt_node *_bt_node_load(FILE *bin, int rrn_tar) {
 }
 
 /*
-    Inserts a new pair into a node without overflow
+    Inserts a key in a btree node with an extra 
+    overflow space
 */
-int _bt_leaf_insert_key(bt_node *node, key_pair *new_pair) {
-    int i;
-    for (i = 0; i < AMNT_KEYS - 1; i++) {
-        if (node->pairs[i]->c > new_pair->c) break;
+int _bt_node_insert_key(bt_node *node, key_pair *new_pair) {
+    if (node->amnt_keys > AMNT_KEYS) return -1;
+    
+    int new_key_pos;
+    for (new_key_pos = 0; new_key_pos < node->amnt_keys; new_key_pos++) {
+        if (new_pair->c < node->pairs[new_key_pos]->c) break;
     }
 
-    for (int j = AMNT_KEYS - 1, k = BT_DEGREE - 1; j > i; --j, --k)  {
+
+    free(node->pairs[node->amnt_keys]); // Frees space to pull everything before
+    for (int j = node->amnt_keys, k = node->amnt_keys + 1; j > new_key_pos; --j, --k)  {
         node->pairs[j] = node->pairs[j - 1];
         node->p[k] = node->p[k - 1];
     }
 
-    node->pairs[i] = new_pair;
-    node->p[i + 1] = -1;
+    node->pairs[new_key_pos] = new_pair;
+    node->p[new_key_pos + 1] = -1;
+    node->amnt_keys++;
 
-    return i;
+    return new_key_pos;
 }
 
-bt_node *_bt_insert_key_recursive_2(FILE *bin, int *root_rrn, int *next_rrn, int *new_child_rrn, key_pair *new_pair) {
-    bt_node *cur_node = _b_node_load(bin, root_rrn); 
+bt_node *_bt_split_child(bt_node *parent, bt_node *child, int *next_rrn) { 
+    bt_node *splited = _bt_node_init_2(*next_rrn, child->is_leaf, 2);
+    *next_rrn += NODE_SIZE;
 
-    // achando a posição da chave
-    int i = 0;
-    for (i = 0; i < AMNT_KEYS; ++i) {
-        if (new_pair->c < cur_node->pairs[i]->c) break;
-    }
+    //splited->is_leaf = child->is_leaf;
+    //splited->amnt_keys = 2;
+    child->amnt_keys = 2;
 
-    // chamada recursiva para chegar ao nó folha
-    bt_node *child = NULL;
-    if (cur_node->is_leaf == NOT_LEAF) 
-        child =_bt_insert_key_recursive(bin, root_rrn, next_rrn, new_child_rrn, cur_node->p[i]);
-    
-    // se for folha e tiver espaço, adiciona no nó
-    else if (cur_node->amnt_keys < AMNT_KEYS){
-        _bt_leaf_insert_key(cur_node, new_pair);
-        new_pair = NULL;
-        return cur_node;
-    }
-
-    if (new_pair == NULL) return cur_node;
-
-    bt_node *new_child = _bt_split_child_3(..., cur_node, i, next_rrn, new_pair);
-
-    if (cur_node->rrn == NODE_SIZE) {
-        bt_node *new_root = _bt_node_init(next_rrn);
-        new_root->p[0] = cur_node->rrn;
-        new_root->p[1] = new_child->rrn;
-        new_root->pairs[0] = new_pair;
-        new_pair = NULL;
-        _bt_node_update(bin, new_root);
-        return new_root;
-    }
-
-    else if(cur_node->amnt_keys < AMNT_KEYS) {
-        int pos = _bt_leaf_insert_key(cur_node, new_pair);
-        cur_node->p[pos + 1] = *new_child_rrn;
-
-        new_pair = NULL;
-        _bt_node_update(bin, cur_node);
-        return cur_node;
-    }
-
-    else {
+    for (int i = 0; i < 2; ++i) { // Copies the second half of pairs (3 and 4) to splited 
+        free(splited->pairs[i]);
+        splited->pairs[i] = child->pairs[i + 3];
         
+        child->pairs[i + 3] = malloc(sizeof(key_pair*));
+        child->pairs[i + 3]->c = child->pairs[i + 3]->p_r = -1; 
     }
 
+    for (int i = 0; i < 3; ++i) { // Copies the second half of p (3, 4 and 5) to splited
+        splited->p[i] = child->p[i + 3]; 
+        child->p[i + 3] = -1;
+    } 
+
+    // Promotes the middle key (child->pairs[2]) to the parent
+    int promotion_pos = _bt_node_insert_key(parent, child->pairs[2]);
+    
+    child->pairs[2] = malloc(sizeof(key_pair*));
+    child->pairs[2]->c = child->pairs[2]->c = -1; 
+
+    parent->p[promotion_pos + 1] = splited->rrn;
+
+    return splited;
 }
 
 /*
@@ -225,207 +237,73 @@ bt_node *_bt_insert_key_recursive_2(FILE *bin, int *root_rrn, int *next_rrn, int
     2 - b-tree has a full root,
     3 - node of insertion is full
 */
-bt_node *_bt_insert_key_recursive(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair) {
-    bt_node *cur_node = _b_node_load(bin, root_rrn); 
+bt_node *_bt_insert_key_recursive(FILE *bin, int start, int *next_rrn, key_pair *new_pair) {
+    bt_node *cur_node = _bt_node_load(bin, start); 
 
     if (cur_node->is_leaf == IS_LEAF)  {
+        _bt_node_insert_key(cur_node, new_pair);
         return cur_node;
     }
 
-    int i = 0;
-    for (i = 0; i < AMNT_KEYS; ++i) {
-        if (new_pair->c < cur_node->pairs[i]->c) break;
+    int child_pos = 0;
+    for (child_pos = 0; child_pos < AMNT_KEYS; ++child_pos) {
+        if (new_pair->c < cur_node->pairs[child_pos]->c) break;
     }
 
-    /* Recursive decends */
-    bt_node *child = _bt_insert_key_recursive(bin, root_rrn, next_rrn, cur_node->p[i]);
+    start = cur_node->p[child_pos];
+    bt_node *child = _bt_insert_key_recursive(bin, start, next_rrn, new_pair);
 
-    // caso não tiver new_pair, quer dizer que a inserção incial foi feita
-    // e todas as possíveis promoções também
-    if (new_pair == NULL) return cur_node;
+    /* Recursive ascent */
+    if (child == NULL) return NULL;
 
-    // se o nó filho tiver espaço a gente insere normlamente
-    // e retorna esse filho nas chamadas recursivas
-    if (child->amnt_keys < AMNT_KEYS) {
-        
-        // caso o nó que inserimos nao for folha, entao esta chave inserida através
-        // de uma promoção, logo devemos atualizar o rrn do nó junto da inserção
-        if (child->is_leaf == NOT_LEAF) {
-            child->pairs[i] = new_pair;
-        }
-        else {
-            int pos = _bt_leaf_insert_key(child, new_pair);
-        }
-
-        new_pair = NULL;
-        return cur_node;        
+    /* In case the child node has a free key space (without overflow), 
+    and "ends" the recursive ascention */
+    if (child->amnt_keys <= AMNT_KEYS) {  
+        _bt_node_store(bin, child);
+        return NULL;
     }
-    
-    // a partir daqui somente casos de overflow
 
-    // se for nó raiz, tratamento deve ser diferente
-    else if (cur_node->rrn == NODE_SIZE) {
-        
-        // podemos fazer inserção sem oveflow no nó raiz
-        if (cur_node->amnt_keys < AMNT_KEYS) {
-            int pos = _bt_leaf_insert_key(cur_node, new_pair);
-            // cur_node->p[pos] = *next_rrn;
-            // *next_rrn += NODE_SIZE;
+    // Treats any other overflow in child
+    bt_node *splited = _bt_split_child(cur_node, child, next_rrn);
+    _bt_node_store(bin, splited);
+    _bt_node_store(bin, child);
 
-            new_pair = NULL;
-            return cur_node;
-        }
+    return cur_node;
+}
 
-        // temos que criar dois novos nós:
-        // um para ser a nova raiz e outro para ser o irmão da raiz atual
-        else {
-            bt_node *new_child = _bt_split_child(bin, cur_node, next_rrn, new_pair);
-            bt_node *new_root = _bt_node_init(*next_rrn);
+void _bt_insert_key(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair) {
+
+    // In case there is no root node
+    if (root_rrn  == -1) {
+        bt_node *node = _bt_node_init_2(NODE_SIZE, IS_LEAF, 0);
+        _bt_node_insert_key(node, new_pair);
+        _bt_node_store(bin, node);
+
+        *next_rrn += (2 * NODE_SIZE);
+        *root_rrn = NODE_SIZE;
+
+        return;
+    }
+
+    bt_node *node = _bt_insert_key_recursive(bin, *root_rrn, next_rrn, new_pair);
+
+    if (node != NULL) {
+        // If there is a overflow in the root
+        if (node->amnt_keys > AMNT_KEYS) { 
+            bt_node *new_root = _bt_node_init_2(*next_rrn, NOT_LEAF, 0);
+            new_root->rrn = *next_rrn;
+            *next_rrn += NODE_SIZE;
+
+            new_root->is_leaf = NOT_LEAF;
+            new_root->p[0] = node->rrn;
+
+            bt_node *splited = _bt_split_child(new_root, node, next_rrn);
             
-            new_root->pairs[0] = cur_node->pairs[2];
-            cur_node->pairs[2] = NULL;
-            new_root->p[0] = cur_node->rrn;
-            new_root->p[1] = new_child->rrn;
-            *root_rrn = new_root->rrn;
-
-            new_pair = NULL;
-            return new_root;
+            _bt_node_store(bin, new_root);
+            _bt_node_store(bin, splited);
         }
-    }
-
-    // overflow de qualquer outro nó sem ser raiz
-    else {
-        bt_node *new_child = _bt_split_child_3(cur_node, child, i, next_rrn, new_pair);
         
-        // fazemos o nó apontar para o novo filho criado no split
-        cur_node->p[i + 1] = new_child->rrn;
-
-        _bt_node_update(bin, cur_node);
-        _bt_node_update(bin, child);
-        _bt_node_update(bin, new_child);
-    }
-        
-    return cur_node; 
-}
-
-bt_node *_bt_split_child_3(bt_node *parent, bt_node *child, int child_pos, int *next_rrn, key_pair *new_pair) {
-
-    // inserindo no nó com overflow
-    child = _bt_overflow_insert_key(child, new_pair);
-    
-    bt_node *new_child = _bt_node_init(*next_rrn);
-
-    // copiando para novo nó as duas ultimas chaves e RNNs
-    // ao mesmo tempo que esvazia o nó original
-    for (int i = 0, j = 3; j < AMNT_KEYS; i++, j++) {
-        new_child->p[i] = child->p[j];
-        new_child->pairs[i] = child->pairs[j]; 
-        child->p[j] = -1;
-        child->pairs[j] = NULL;
-    }
-    new_child->p[2] = child->p[5];
-
-    // seta a chave a ser promovida como new_pair e remove a mesma do nó
-    new_pair = child->pairs[2];
-    child->pairs[2] = NULL;
-
-    return new_child;
-}
-
-bt_node *_bt_overflow_insert_key(bt_node *node, key_pair *new_pair) {
-    int i;
-
-    // acha posição para inserção
-    for (i = 0; i < AMNT_KEYS; i++) {
-        if (node->pairs[i]->c > new_pair->c) break;
+        _bt_node_store(bin, node);
     }
 
-    // shift as chaves e RRNs
-    for (int j = AMNT_KEYS, k = BT_DEGREE; j > i; --j, --k)  {
-        node->pairs[j] = node->pairs[j - 1];
-        node->p[k] = node->p[k - 1];
-    }
-
-    // posiciona novo nó
-    node->pairs[i] = new_pair;
-    node->p[i + 1] = -1;
-
-    return i;
 }
-
-bt_node *_bt_split_child(FILE *bin, bt_node *parent, int child_pos, bt_node *child, int *next_rrn, key_pair *new) {
-
-    key_pair **overflow_pairs = _bt_get_overflow_pairs(child, new);
-
-    bt_node *new_child = _bt_node_init(next_rrn);
-
-    int i;
-    for(i = 0; i < 3; i++) child->pairs[i] = overflow_pairs[i];
-    for(; i < 5; i++) new_child->pairs[i] = overflow_pairs[i];
-
-    _bt_node_update(bin, new_child);
-    *next_rrn += NODE_SIZE;
-
-    return new_child;
-}
-
-
-
-key_pair *_bt_split_child2(FILE *bin, bt_node *parent, bt_node *child, int child_pos, int *next_rrn, key_pair *new) { // Assumes the parent is not full
-    bt_node *splited = _bt_node_init(*next_rrn);
-    
-    splited->is_leaf = child->is_leaf;
-    splited->amnt_keys = 2;
-    child->amnt_keys = 2;
-
-    for (int i = 0; i < 2; ++i) {
-        splited->pairs[i] = child->pairs[i+2];
-        child->pairs[i+2] = NULL;
-    }
-    for (int i = 0; i < 3; ++i) {
-        splited->p[i] = child->pairs[i + 2]; 
-        child->p[i+2] = -1;
-    } // Copies the p pointers in case its not a leaf
-
-    // for (int i = parent->amnt_keys - 1; i > child_pos; --i) {
-    //     parent->pairs[i] = parent->pairs[i - 1];
-    // } 
-
-    // parent->pairs[child_pos] = 
-   
-    // for (int i = parent->amnt_keys; i > child_pos; --i) {
-    //     parent->p[i + 1] = parent->p[i]; 
-    // }
-    // parent->p[child_pos + 1] = *next_rrn;
-}
-
-key_pair **_bt_get_overflow_pairs(bt_node *original_node, key_pair *new_pair) {
-    key_pair **overflow_pairs = malloc(sizeof(*overflow_pairs) * 5);
-
-    int i;
-    for (i = 0; i < 4; ++i) {
-        if (new_pair->c < original_node->pairs[i]->c) break; 
-        overflow_pairs[i] = original_node->pairs[i];  
-    }
-
-    overflow_pairs[i] = new_pair;
-    for (++i; i < 5; ++i) overflow_pairs[i] = original_node->pairs[i - 1];
-
-    return overflow_pairs;
-}
-
-// /*
-    
-// */
-// void _bt_insert_key(FILE *bin, int root_rrn, int next_node_rrn, key_pair *new_pair) {  
-
-// }
-
-
-
-
-
-
-
-
-
