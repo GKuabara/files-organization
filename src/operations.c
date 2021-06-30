@@ -310,5 +310,11 @@ boolean line_insert_into(string bin_name, int amnt_regs) {
 }
 
 
+boolean vehicle_create_index(string bin_name, string index_name) {
+    FILE *reg_bin = open_file(bin_name, "rb");
+    FILE *index = open_file(index_name, "wb");
 
+    long end_of_file = _get_end_of_file(reg_bin);
 
+    v_create_index_file(reg_bin, index, end_of_file);
+}

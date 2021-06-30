@@ -23,4 +23,7 @@ typedef struct {
     key_pair *pairs[AMNT_KEYS + 1];
 } bt_node;
 
-void b_header_init(_files_t *files);
+void bt_header_init(FILE *bin);
+void bt_header_update(FILE *bin, char stats, int root_rrn, int next_node_rnn);
+void bt_insert_key(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair);
+key_pair *bt_search_key(FILE *bin, int root_rrn, int c_tar);

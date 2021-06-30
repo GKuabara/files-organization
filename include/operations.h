@@ -7,6 +7,7 @@
 #include "global.h"
 #include "vehicle.h"
 #include "line.h"
+#include "btree.h"
 
 
 boolean vehicle_create_table(string csv_name, string bin_name);
@@ -23,5 +24,7 @@ boolean line_select_where(string bin_name, string field, string value);
 
 boolean vehicle_insert_into(string bin_name, int amnt_regs);
 boolean line_insert_into(string bin_name, int amnt_regs);
+
+boolean vehicle_create_index(string bin_name, string index_name);
 
 #endif

@@ -316,3 +316,44 @@ boolean v_select_where(FILE *bin, string field, string value, long end_of_file) 
 
     return has_reg;
 }
+
+
+void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
+    bt_header_init(index); // Initializes the btree header
+    
+    fseek(reg_bin, V_HEADER_SIZE, SEEK_SET); // Goes to te first reg in the vehicle bin file
+    
+    int root_rrn = -1;
+    int next_reg = 0;
+    long p_r = -1;
+   
+   // Loops through every reg in the vehicle file
+    while ((p_r = ftell(reg_bin)) < end_of_file) { 
+        _reg_update_t *reg_header = _g_read_reg_header(reg_bin);
+
+        /* Error and removed regs handling */
+        if (!reg_header) continue;
+        if (reg_header->is_removed == RMV) {
+            fseek(reg_bin, reg_header->reg_size, SEEK_CUR);
+            free(reg_header);
+            
+            continue;
+        }
+
+        vehicle *data = _v_read_reg_data(reg_bin);
+        
+        // Creates a new key_pair to be inserted in the btree
+        key_pair *new_key = malloc(sizeof(*new_key));
+        new_key->c = convertePrefixo(data->prefix);
+        new_key->p_r = p_r; 
+
+        bt_insert_key(index, &root_rrn, &next_reg, new_key);
+  
+        free(new_key);
+        _v_free_reg_data(data);
+        free(reg_header);
+    }
+
+    
+    bt_header_update(index, CON_STAT, root_rrn, next_reg);
+}

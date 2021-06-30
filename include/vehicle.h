@@ -5,6 +5,8 @@
 
 #include "stream.h"
 #include "global.h"
+#include "btree.h"
+#include "convertePrefixo.h"
 
 /* VEHICLE BINARY CONST CHAR FIELDS */
 #define v_prefix_t char[5]
@@ -72,5 +74,7 @@ boolean v_select(FILE *fp, int last_byte);
 boolean v_select_where(FILE *bin, string field, string value, long end_of_file);
 
 
+
+void v_create_index_file(FILE *bin, FILE *index, long end_of_file);
 
 #endif
