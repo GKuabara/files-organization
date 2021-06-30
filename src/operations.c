@@ -318,4 +318,7 @@ boolean vehicle_create_index(string bin_name, string index_name) {
     long end_of_file = _get_end_of_file(reg_bin);
 
     v_create_index_file(reg_bin, index, end_of_file);
+
+    fclose(reg_bin);
+    fclose(index);
 }

@@ -16,7 +16,7 @@ LINK.o = $(CC) $(LDFLAGS) $(TARGET_ARCH)
 DDEBUG = -g
 DEBUGER = valgrind
 DBFLAGS = --leak-check=full --show-leak-kinds=all\
-		  --track-origins=yes --verbose 
+		  --track-origins=yes 
 TEST_CASE = 
 
 clean: $(MAIN)

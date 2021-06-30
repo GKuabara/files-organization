@@ -350,7 +350,6 @@ void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
 
         bt_insert_key(index, &root_rrn, &next_reg, new_key);
   
-        free(new_key);
         _v_free_reg_data(data);
         free(reg_header);
     }

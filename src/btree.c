@@ -111,7 +111,7 @@ static bt_node *_bt_node_init(int rrn_tar, char leaf, int n_keys) {
     memset(&new_node->p, -1, BT_DEGREE + 1);
     
     for (int i = 0; i < AMNT_KEYS + 1; i++) {
-        new_node->pairs[i] = malloc(sizeof(*new_node->pairs[i]));
+        new_node->pairs[i] = malloc(sizeof(key_pair));
         new_node->pairs[i]->c = new_node->pairs[i]->p_r = -1;
     }
 
@@ -122,7 +122,7 @@ static bt_node *_bt_node_init(int rrn_tar, char leaf, int n_keys) {
     Stores a btree node from memory to disk 
 */
 static void _bt_node_store(FILE *bin, bt_node *node) {
-    fseek(bin, node->rrn, SEEK_SET);
+    fseek(bin, (node->rrn + 1) * NODE_SIZE, SEEK_SET);
     /* Updates the header of each node */
     if (fwrite(&(node->is_leaf), sizeof(char), 1, bin) != 1)
         file_error("Falha no processamento do arquivo");
@@ -149,8 +149,7 @@ static void _bt_node_store(FILE *bin, bt_node *node) {
     Callers are responsible for `free()`ing it.
 */
 static bt_node *_bt_node_load(FILE *bin, int rrn_tar) {
-    printf("rrn_tar: %d\n", rrn_tar);
-    fseek(bin, rrn_tar, SEEK_SET);
+    fseek(bin, (rrn_tar + 1) * NODE_SIZE, SEEK_SET);
 
     bt_node *node = _bt_node_init(rrn_tar, IS_LEAF, 0);
 
@@ -176,6 +175,11 @@ static bt_node *_bt_node_load(FILE *bin, int rrn_tar) {
         file_error("Falha no processamento do arquivo");
 
     return node;
+}
+
+static void _bt_node_free(bt_node *node) {
+    for (int i = 0; i < AMNT_KEYS + 1; ++i) free(node->pairs[i]);
+    free(node);
 }
 
 /*
@@ -206,8 +210,7 @@ static int _bt_node_insert_key(bt_node *node, key_pair *new_pair) {
 
 static bt_node *_bt_split_child(bt_node *parent, bt_node *child, int *next_rrn) { 
     bt_node *splited = _bt_node_init(*next_rrn, child->is_leaf, 2);
-    printf("splited: %d", splited->rrn);
-    *next_rrn += NODE_SIZE;
+    *next_rrn += 1;
 
     child->amnt_keys = 2;
 
@@ -224,16 +227,18 @@ static bt_node *_bt_split_child(bt_node *parent, bt_node *child, int *next_rrn) 
         child->p[i + 3] = -1;
     } 
 
+
     // Promotes the middle key (child->pairs[2]) to the parent
     int promotion_pos = _bt_node_insert_key(parent, child->pairs[2]);
     
     child->pairs[2] = malloc(sizeof(key_pair));
     child->pairs[2]->c = child->pairs[2]->c = -1; 
 
+    parent->p[promotion_pos] = child->rrn;
     parent->p[promotion_pos + 1] = splited->rrn;
 
     return splited;
-}
+}   
 
 /*
     Recursive call to insert key at the b-tree, inside the function
@@ -251,21 +256,26 @@ static bt_node *_bt_insert_key_recursive(FILE *bin, int start, int *next_rrn, ke
     }
 
     int child_pos = 0;
-    for (child_pos = 0; child_pos < AMNT_KEYS; ++child_pos) {
+    for (child_pos = 0; child_pos < cur_node->amnt_keys; ++child_pos) {
         if (new_pair->c < cur_node->pairs[child_pos]->c) break;
     }
 
     start = cur_node->p[child_pos];
-    printf("start: %d\n", start);
     bt_node *child = _bt_insert_key_recursive(bin, start, next_rrn, new_pair);
 
     /* Recursive ascent */
-    if (child == NULL) return NULL;
-
+    if (child == NULL) {
+        _bt_node_free(cur_node);
+        return NULL;
+    }
     /* In case the child node has a free key space (without overflow), 
     and "ends" the recursive ascention */
     if (child->amnt_keys <= AMNT_KEYS) {  
         _bt_node_store(bin, child);
+        
+        _bt_node_free(cur_node);
+        _bt_node_free(child);
+        
         return NULL;
     }
 
@@ -274,6 +284,9 @@ static bt_node *_bt_insert_key_recursive(FILE *bin, int start, int *next_rrn, ke
     _bt_node_store(bin, splited);
     _bt_node_store(bin, child);
 
+    _bt_node_free(child);
+    _bt_node_free(splited);
+
     return cur_node;
 }
 
@@ -281,39 +294,40 @@ void bt_insert_key(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair) 
 
     // In case there is no root node
     if (*root_rrn  == -1) {
-        printf("Inserindo a raiz\n");
-        bt_node *node = _bt_node_init(NODE_SIZE, IS_LEAF, 0);
+        bt_node *node = _bt_node_init(0, IS_LEAF, 0);
         _bt_node_insert_key(node, new_pair);
         _bt_node_store(bin, node);
 
-        *next_rrn += (2 * NODE_SIZE);
-        *root_rrn = NODE_SIZE;
+        _bt_node_free(node);
+
+        *next_rrn += 1;
+        *root_rrn = 0;
 
         return;
     }
 
-    printf("Inserindo nó\n");
     bt_node *node = _bt_insert_key_recursive(bin, *root_rrn, next_rrn, new_pair);
 
     if (node != NULL) {
         // If there is a overflow in the root
         if (node->amnt_keys > AMNT_KEYS) { 
-            printf("VSF caralho funciona pls\n");
-            bt_node *new_root = _bt_node_init(*next_rrn, NOT_LEAF, 0);
-            *root_rrn = *next_rrn;
-            *next_rrn += NODE_SIZE;
-
-            new_root->is_leaf = NOT_LEAF;
-            new_root->p[0] = node->rrn;
+            bt_node *new_root = _bt_node_init(*next_rrn + 1, NOT_LEAF, 0);
 
             bt_node *splited = _bt_split_child(new_root, node, next_rrn);
-            
+
+            *root_rrn = *next_rrn;
+            *next_rrn += 1;
+
             _bt_node_store(bin, new_root);
             _bt_node_store(bin, splited);
+        
+            _bt_node_free(new_root);
+            _bt_node_free(splited);
         }
 
         
         _bt_node_store(bin, node);
+        _bt_node_free(node);
     }
 
 }

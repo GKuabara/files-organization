@@ -59,6 +59,8 @@ int main() {
     printf("filename: %s\t %s\n", tokens[1], tokens[2]);
 
     vehicle_create_index(tokens[1], tokens[2]);
+    binarioNaTela(tokens[2]);
+    
 
     // select_funcionality(tokens);
     str_free_tokens(tokens);
