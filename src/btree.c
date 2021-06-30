@@ -79,29 +79,6 @@ key_pair *bt_search_key(FILE *bin, int root_rrn, int c_tar) {
     return bt_search_key(bin, c_tar, cur_node->p[i]);
 }
 
-//////////// IN PROGRESS //////////
-
-/* 
-    Initializes a new btree node with an extra 
-    overflow in the keys space. Callers are 
-    responsible for `free()`ing it.
-*/
-// bt_node *_bt_node_init(int rrn_tar) {
-//     bt_node *new_node = malloc(sizeof(*new_node));
-
-//     new_node->is_leaf = IS_LEAF;
-//     new_node->amnt_keys = 0;
-//     new_node->rrn = rrn_tar;
-//     memset(&new_node->p, -1, BT_DEGREE + 1);
-    
-//     for (int i = 0; i < AMNT_KEYS + 1; i++) {
-//         new_node->pairs[i] = malloc(sizeof(*new_node->pairs[i]));
-//         new_node->pairs[i]->c = new_node->pairs[i]->p_r = -1;
-//     }
-
-//     return new_node;
-// }
-
 static bt_node *_bt_node_init(int rrn_tar, char leaf, int n_keys) {
     bt_node *new_node = malloc(sizeof(bt_node));
 
