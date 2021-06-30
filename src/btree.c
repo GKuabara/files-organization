@@ -53,7 +53,6 @@ void bt_header_update(FILE *bin, char stats, int root_rrn, int next_node_rnn) {
     if (fwrite(&stats, sizeof(char), 1, bin) != 1)
         file_error("Falha no processamento do arquivo");
     if (stats == INC_STAT) return; 
-
     if (fwrite(&root_rrn, sizeof(int), 1, bin) != 1)    
         file_error("Falha no processamento do arquivo");
 
@@ -85,11 +84,12 @@ static bt_node *_bt_node_init(int rrn_tar, char leaf, int n_keys) {
     new_node->is_leaf = leaf;
     new_node->amnt_keys = n_keys;
     new_node->rrn = rrn_tar;
-    memset(&new_node->p, -1, BT_DEGREE + 1);
-    
+ 
+    new_node->p[0] = -1;
     for (int i = 0; i < AMNT_KEYS + 1; i++) {
         new_node->pairs[i] = malloc(sizeof(key_pair));
         new_node->pairs[i]->c = new_node->pairs[i]->p_r = -1;
+        new_node->p[i + 1] = -1;
     }
 
     return new_node;
@@ -209,7 +209,7 @@ static bt_node *_bt_split_child(bt_node *parent, bt_node *child, int *next_rrn) 
     int promotion_pos = _bt_node_insert_key(parent, child->pairs[2]);
     
     child->pairs[2] = malloc(sizeof(key_pair));
-    child->pairs[2]->c = child->pairs[2]->c = -1; 
+    child->pairs[2]->c = child->pairs[2]->p_r = -1; 
 
     parent->p[promotion_pos] = child->rrn;
     parent->p[promotion_pos + 1] = splited->rrn;
@@ -289,7 +289,6 @@ void bt_insert_key(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair) 
         // If there is a overflow in the root
         if (node->amnt_keys > AMNT_KEYS) { 
             bt_node *new_root = _bt_node_init(*next_rrn + 1, NOT_LEAF, 0);
-
             bt_node *splited = _bt_split_child(new_root, node, next_rrn);
 
             *root_rrn = *next_rrn;

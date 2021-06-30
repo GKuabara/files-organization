@@ -29,7 +29,7 @@ node 01:
 	reg_3 < key: 3406270   , p_r: 4414                 >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -80,7 +80,7 @@ node 04:
 	reg_3 < key: 97972     , p_r: 21121                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -97,7 +97,7 @@ node 05:
 	reg_3 < key: 6728053   , p_r: 15559                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -199,7 +199,7 @@ node 11:
 	reg_3 < key: 10087288  , p_r: 7769                 >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -216,7 +216,7 @@ node 12:
 	reg_3 < key: 15163643  , p_r: 23756                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -233,7 +233,7 @@ node 13:
 	reg_3 < key: 5132819   , p_r: 51510                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -336,10 +336,10 @@ node 19:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 20:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 20        
@@ -352,7 +352,7 @@ node 20:
 	reg_3 < key: 1689208   , p_r: 7895                 >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -454,7 +454,7 @@ node 26:
 	reg_3 < key: 8406623   , p_r: 38121                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -488,7 +488,7 @@ node 28:
 	reg_3 < key: 6812219   , p_r: 24098                >
 	----> p_3: 202       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -607,7 +607,7 @@ node 35:
 	reg_3 < key: 5085886   , p_r: 7496                 >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -624,7 +624,7 @@ node 36:
 	reg_3 < key: 5086171   , p_r: 41917                >
 	----> p_3: 250       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -675,7 +675,7 @@ node 39:
 	reg_3 < key: 1683953   , p_r: 28413                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -692,7 +692,7 @@ node 40:
 	reg_3 < key: 6933      , p_r: 22663                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -743,7 +743,7 @@ node 43:
 	reg_3 < key: 3363887   , p_r: 10621                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -760,7 +760,7 @@ node 44:
 	reg_3 < key: 6723119   , p_r: 10792                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -862,7 +862,7 @@ node 50:
 	reg_3 < key: 9589      , p_r: 16966                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -896,7 +896,7 @@ node 52:
 	reg_3 < key: 3367385   , p_r: 8397                 >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -913,7 +913,7 @@ node 53:
 	reg_3 < key: 15303832  , p_r: 42704                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1032,7 +1032,7 @@ node 60:
 	reg_3 < key: 10129009  , p_r: 19725                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1049,7 +1049,7 @@ node 61:
 	reg_3 < key: 8402740   , p_r: 12336                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1066,7 +1066,7 @@ node 62:
 	reg_3 < key: 10082356  , p_r: 12222                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1185,7 +1185,7 @@ node 69:
 	reg_3 < key: 5093687   , p_r: 12846                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1202,7 +1202,7 @@ node 70:
 	reg_3 < key: 6719129   , p_r: 31640                >
 	----> p_3: 189       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1220,10 +1220,10 @@ node 71:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 72:
 	is_leaf: num eh | amt_keys: 4          | node_rrn: 72        
@@ -1253,7 +1253,7 @@ node 73:
 	reg_3 < key: 3410548   , p_r: 17029                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1270,7 +1270,7 @@ node 74:
 	reg_3 < key: 3650203   , p_r: 45853                >
 	----> p_3: 274       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1288,10 +1288,10 @@ node 75:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 76:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 76        
@@ -1304,7 +1304,7 @@ node 76:
 	reg_3 < key: 8156      , p_r: 8867                 >
 	----> p_3: 103       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1338,7 +1338,7 @@ node 78:
 	reg_3 < key: 1687772   , p_r: 8806                 >
 	----> p_3: 63        
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1356,10 +1356,10 @@ node 79:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 80:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 80        
@@ -1389,7 +1389,7 @@ node 81:
 	reg_3 < key: 10085849  , p_r: 13676                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1406,7 +1406,7 @@ node 82:
 	reg_3 < key: 1923718   , p_r: 7705                 >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1444,7 +1444,7 @@ node 84:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 85:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 85        
@@ -1457,7 +1457,7 @@ node 85:
 	reg_3 < key: 11851067  , p_r: 23243                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1474,7 +1474,7 @@ node 86:
 	reg_3 < key: 6821368   , p_r: 30250                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1491,7 +1491,7 @@ node 87:
 	reg_3 < key: 8398740   , p_r: 35301                >
 	----> p_3: 214       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1508,7 +1508,7 @@ node 88:
 	reg_3 < key: 8452889   , p_r: 26035                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1525,7 +1525,7 @@ node 89:
 	reg_3 < key: 10078360  , p_r: 32171                >
 	----> p_3: 216       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1563,7 +1563,7 @@ node 91:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 92:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 92        
@@ -1576,7 +1576,7 @@ node 92:
 	reg_3 < key: 5047031   , p_r: 13090                >
 	----> p_3: 80        
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1631,7 +1631,7 @@ node 95:
 	----> p_4: 200       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 96:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 96        
@@ -1678,7 +1678,7 @@ node 98:
 	reg_3 < key: 1730935   , p_r: 10216                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1695,7 +1695,7 @@ node 99:
 	reg_3 < key: 1782517   , p_r: 27338                >
 	----> p_3: 259       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1729,7 +1729,7 @@ node 101:
 	reg_3 < key: 13446524  , p_r: 40202                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1784,7 +1784,7 @@ node 104:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 105:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 105       
@@ -1797,7 +1797,7 @@ node 105:
 	reg_3 < key: 8402746   , p_r: 22844                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1849,10 +1849,10 @@ node 108:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 109:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 109       
@@ -1866,10 +1866,10 @@ node 109:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 110:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 110       
@@ -1903,7 +1903,7 @@ node 111:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 112:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 112       
@@ -1933,7 +1933,7 @@ node 113:
 	reg_3 < key: 1687843   , p_r: 5208                 >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -1950,7 +1950,7 @@ node 114:
 	reg_3 < key: 6769786   , p_r: 22787                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2005,7 +2005,7 @@ node 117:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 118:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 118       
@@ -2018,7 +2018,7 @@ node 118:
 	reg_3 < key: 54839     , p_r: 17843                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2069,7 +2069,7 @@ node 121:
 	reg_3 < key: 102904    , p_r: 19312                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2086,7 +2086,7 @@ node 122:
 	reg_3 < key: 3414041   , p_r: 25791                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2103,7 +2103,7 @@ node 123:
 	reg_3 < key: 1735865   , p_r: 21955                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2120,7 +2120,7 @@ node 124:
 	reg_3 < key: 8454329   , p_r: 29781                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2138,10 +2138,10 @@ node 125:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 126:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 126       
@@ -2171,7 +2171,7 @@ node 127:
 	reg_3 < key: 6774709   , p_r: 21652                >
 	----> p_3: 126       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2188,7 +2188,7 @@ node 128:
 	reg_3 < key: 1782515   , p_r: 30384                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2239,7 +2239,7 @@ node 131:
 	reg_3 < key: 3453211   , p_r: 46780                >
 	----> p_3: 278       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2260,7 +2260,7 @@ node 132:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 133:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 133       
@@ -2307,7 +2307,7 @@ node 135:
 	reg_3 < key: 11812121  , p_r: 25623                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2328,7 +2328,7 @@ node 136:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 137:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 137       
@@ -2345,7 +2345,7 @@ node 137:
 	----> p_4: 106       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 138:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 138       
@@ -2375,7 +2375,7 @@ node 139:
 	reg_3 < key: 1680281   , p_r: 31817                >
 	----> p_3: 218       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2392,7 +2392,7 @@ node 140:
 	reg_3 < key: 93686     , p_r: 24725                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2444,10 +2444,10 @@ node 143:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 144:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 144       
@@ -2461,10 +2461,10 @@ node 144:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 145:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 145       
@@ -2511,7 +2511,7 @@ node 147:
 	reg_3 < key: 13493171  , p_r: 30317                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2545,7 +2545,7 @@ node 149:
 	reg_3 < key: 11855284  , p_r: 52600                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2562,7 +2562,7 @@ node 150:
 	reg_3 < key: 10171672  , p_r: 34151                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2630,7 +2630,7 @@ node 154:
 	reg_3 < key: 3367424   , p_r: 16527                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2665,10 +2665,10 @@ node 156:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 157:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 157       
@@ -2682,10 +2682,10 @@ node 157:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 158:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 158       
@@ -2698,7 +2698,7 @@ node 158:
 	reg_3 < key: 55282     , p_r: 2974                 >
 	----> p_3: 83        
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2715,7 +2715,7 @@ node 159:
 	reg_3 < key: 94153     , p_r: 175                  >
 	----> p_3: 41        
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2732,7 +2732,7 @@ node 160:
 	reg_3 < key: 6812441   , p_r: 44838                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2749,7 +2749,7 @@ node 161:
 	reg_3 < key: 8585368   , p_r: 43971                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2787,7 +2787,7 @@ node 163:
 	----> p_4: 254       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 164:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 164       
@@ -2800,7 +2800,7 @@ node 164:
 	reg_3 < key: 244101    , p_r: 22406                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2817,7 +2817,7 @@ node 165:
 	reg_3 < key: 5179481   , p_r: 44620                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2868,7 +2868,7 @@ node 168:
 	reg_3 < key: 5047289   , p_r: 36499                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2936,7 +2936,7 @@ node 172:
 	reg_3 < key: 5086169   , p_r: 34800                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -2971,10 +2971,10 @@ node 174:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 175:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 175       
@@ -2987,7 +2987,7 @@ node 175:
 	reg_3 < key: 11897651  , p_r: 24383                >
 	----> p_3: 255       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3008,7 +3008,7 @@ node 176:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 177:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 177       
@@ -3022,10 +3022,10 @@ node 177:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 178:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 178       
@@ -3076,7 +3076,7 @@ node 180:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 181:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 181       
@@ -3110,7 +3110,7 @@ node 182:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 183:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 183       
@@ -3123,7 +3123,7 @@ node 183:
 	reg_3 < key: 8491835   , p_r: 24155                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3140,7 +3140,7 @@ node 184:
 	reg_3 < key: 140627    , p_r: 49268                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3157,7 +3157,7 @@ node 185:
 	reg_3 < key: 13530611  , p_r: 23186                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3174,7 +3174,7 @@ node 186:
 	reg_3 < key: 1734463   , p_r: 31519                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3191,7 +3191,7 @@ node 187:
 	reg_3 < key: 1734569   , p_r: 39637                >
 	----> p_3: 238       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3208,7 +3208,7 @@ node 188:
 	reg_3 < key: 8398739   , p_r: 35997                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3229,7 +3229,7 @@ node 189:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 190:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 190       
@@ -3246,7 +3246,7 @@ node 190:
 	----> p_4: 223       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 191:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 191       
@@ -3260,10 +3260,10 @@ node 191:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 192:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 192       
@@ -3277,10 +3277,10 @@ node 192:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 193:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 193       
@@ -3331,7 +3331,7 @@ node 195:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 196:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 196       
@@ -3348,7 +3348,7 @@ node 196:
 	----> p_4: 24        
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 197:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 197       
@@ -3365,7 +3365,7 @@ node 197:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 198:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 198       
@@ -3378,7 +3378,7 @@ node 198:
 	reg_3 < key: 10219331  , p_r: 4040                 >
 	----> p_3: 45        
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3399,7 +3399,7 @@ node 199:
 	----> p_4: 146       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 200:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 200       
@@ -3416,7 +3416,7 @@ node 200:
 	----> p_4: 171       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 201:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 201       
@@ -3467,7 +3467,7 @@ node 203:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 204:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 204       
@@ -3484,7 +3484,7 @@ node 204:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 205:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 205       
@@ -3514,7 +3514,7 @@ node 206:
 	reg_3 < key: 1773587   , p_r: 50752                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3548,7 +3548,7 @@ node 208:
 	reg_3 < key: 10125016  , p_r: 34564                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3582,7 +3582,7 @@ node 210:
 	reg_3 < key: 244313    , p_r: 35485                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3603,7 +3603,7 @@ node 211:
 	----> p_4: 271       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 212:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 212       
@@ -3633,7 +3633,7 @@ node 213:
 	reg_3 < key: 12001625  , p_r: 35741                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3650,7 +3650,7 @@ node 214:
 	reg_3 < key: 8398744   , p_r: 32230                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3685,10 +3685,10 @@ node 216:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 217:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 217       
@@ -3705,7 +3705,7 @@ node 217:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 218:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 218       
@@ -3718,7 +3718,7 @@ node 218:
 	reg_3 < key: 1680285   , p_r: 40932                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3756,7 +3756,7 @@ node 220:
 	----> p_4: 312       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 221:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 221       
@@ -3769,7 +3769,7 @@ node 221:
 	reg_3 < key: 3367673   , p_r: 36545                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3786,7 +3786,7 @@ node 222:
 	reg_3 < key: 13445225  , p_r: 39767                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3807,7 +3807,7 @@ node 223:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 224:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 224       
@@ -3837,7 +3837,7 @@ node 225:
 	reg_3 < key: 3499865   , p_r: 44443                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3875,7 +3875,7 @@ node 227:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 228:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 228       
@@ -3888,7 +3888,7 @@ node 228:
 	reg_3 < key: 1688060   , p_r: 40646                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -3909,7 +3909,7 @@ node 229:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 230:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 230       
@@ -3923,10 +3923,10 @@ node 230:
 	----> p_3: 104       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 231:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 231       
@@ -3943,7 +3943,7 @@ node 231:
 	----> p_4: 190       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 232:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 232       
@@ -3960,7 +3960,7 @@ node 232:
 	----> p_4: 231       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 233:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 233       
@@ -3974,10 +3974,10 @@ node 233:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 234:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 234       
@@ -3990,7 +3990,7 @@ node 234:
 	reg_3 < key: 8543      , p_r: 36850                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -4011,7 +4011,7 @@ node 235:
 	----> p_4: 50        
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 236:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 236       
@@ -4025,10 +4025,10 @@ node 236:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 237:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 237       
@@ -4042,10 +4042,10 @@ node 237:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 238:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 238       
@@ -4062,7 +4062,7 @@ node 238:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 239:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 239       
@@ -4079,7 +4079,7 @@ node 239:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 240:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 240       
@@ -4093,10 +4093,10 @@ node 240:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 241:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 241       
@@ -4110,10 +4110,10 @@ node 241:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 242:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 242       
@@ -4143,7 +4143,7 @@ node 243:
 	reg_3 < key: 13534901  , p_r: 18189                >
 	----> p_3: 129       
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -4161,10 +4161,10 @@ node 244:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 245:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 245       
@@ -4198,7 +4198,7 @@ node 246:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 247:
 	is_leaf: num eh | amt_keys: 4          | node_rrn: 247       
@@ -4232,7 +4232,7 @@ node 248:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 249:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 249       
@@ -4246,10 +4246,10 @@ node 249:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 250:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 250       
@@ -4263,10 +4263,10 @@ node 250:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 251:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 251       
@@ -4280,10 +4280,10 @@ node 251:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 252:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 252       
@@ -4334,7 +4334,7 @@ node 254:
 	----> p_4: 204       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 255:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 255       
@@ -4347,7 +4347,7 @@ node 255:
 	reg_3 < key: 11897945  , p_r: 44207                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -4365,10 +4365,10 @@ node 256:
 	----> p_3: 174       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 257:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 257       
@@ -4385,7 +4385,7 @@ node 257:
 	----> p_4: 281       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 258:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 258       
@@ -4436,7 +4436,7 @@ node 260:
 	----> p_4: 248       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 261:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 261       
@@ -4450,10 +4450,10 @@ node 261:
 	----> p_3: 194       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 262:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 262       
@@ -4466,7 +4466,7 @@ node 262:
 	reg_3 < key: 13577561  , p_r: 44266                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -4487,7 +4487,7 @@ node 263:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 264:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 264       
@@ -4504,7 +4504,7 @@ node 264:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 265:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 265       
@@ -4521,7 +4521,7 @@ node 265:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 266:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 266       
@@ -4535,10 +4535,10 @@ node 266:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 267:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 267       
@@ -4552,10 +4552,10 @@ node 267:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 268:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 268       
@@ -4572,7 +4572,7 @@ node 268:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 269:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 269       
@@ -4585,7 +4585,7 @@ node 269:
 	reg_3 < key: 93974     , p_r: 53326                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -4640,7 +4640,7 @@ node 272:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 273:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 273       
@@ -4654,10 +4654,10 @@ node 273:
 	----> p_3: 272       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 274:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 274       
@@ -4671,10 +4671,10 @@ node 274:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 275:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 275       
@@ -4688,10 +4688,10 @@ node 275:
 	----> p_3: 192       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 276:
 	is_leaf: num eh | amt_keys: 3          | node_rrn: 276       
@@ -4708,7 +4708,7 @@ node 276:
 	----> p_4: 275       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 277:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 277       
@@ -4722,10 +4722,10 @@ node 277:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 278:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 278       
@@ -4742,7 +4742,7 @@ node 278:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 279:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 279       
@@ -4756,10 +4756,10 @@ node 279:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 280:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 280       
@@ -4773,10 +4773,10 @@ node 280:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 281:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 281       
@@ -4790,10 +4790,10 @@ node 281:
 	----> p_3: 212       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 282:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 282       
@@ -4807,10 +4807,10 @@ node 282:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 283:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 283       
@@ -4824,10 +4824,10 @@ node 283:
 	----> p_3: 197       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 284:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 284       
@@ -4841,10 +4841,10 @@ node 284:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 285:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 285       
@@ -4858,10 +4858,10 @@ node 285:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 286:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 286       
@@ -4875,10 +4875,10 @@ node 286:
 	----> p_3: 285       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 287:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 287       
@@ -4892,10 +4892,10 @@ node 287:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 288:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 288       
@@ -4908,7 +4908,7 @@ node 288:
 	reg_3 < key: 15219443  , p_r: 52162                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -4929,7 +4929,7 @@ node 289:
 	----> p_4: 320       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 290:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 290       
@@ -4942,7 +4942,7 @@ node 290:
 	reg_3 < key: 1688162   , p_r: 54354                >
 	----> p_3: NULL (-1) 
 
-	reg_4 < key: NULL (-1) , p_r: 0                    >
+	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
@@ -4963,7 +4963,7 @@ node 291:
 	----> p_4: 323       
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 292:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 292       
@@ -4977,10 +4977,10 @@ node 292:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 293:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 293       
@@ -4994,10 +4994,10 @@ node 293:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 294:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 294       
@@ -5028,10 +5028,10 @@ node 295:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 296:
 	is_leaf: eh | amt_keys: 4          | node_rrn: 296       
@@ -5062,10 +5062,10 @@ node 297:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 298:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 298       
@@ -5079,10 +5079,10 @@ node 298:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 299:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 299       
@@ -5096,10 +5096,10 @@ node 299:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 300:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 300       
@@ -5113,10 +5113,10 @@ node 300:
 	----> p_3: 299       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 301:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 301       
@@ -5130,10 +5130,10 @@ node 301:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 302:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 302       
@@ -5150,7 +5150,7 @@ node 302:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 303:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 303       
@@ -5164,10 +5164,10 @@ node 303:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 304:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 304       
@@ -5184,7 +5184,7 @@ node 304:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 305:
 	is_leaf: eh | amt_keys: 3          | node_rrn: 305       
@@ -5201,7 +5201,7 @@ node 305:
 	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 306:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 306       
@@ -5215,10 +5215,10 @@ node 306:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 307:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 307       
@@ -5232,10 +5232,10 @@ node 307:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 308:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 308       
@@ -5249,10 +5249,10 @@ node 308:
 	----> p_3: 178       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 309:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 309       
@@ -5266,10 +5266,10 @@ node 309:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 310:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 310       
@@ -5283,10 +5283,10 @@ node 310:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 311:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 311       
@@ -5300,10 +5300,10 @@ node 311:
 	----> p_3: 310       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 312:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 312       
@@ -5317,10 +5317,10 @@ node 312:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 313:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 313       
@@ -5334,10 +5334,10 @@ node 313:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 314:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 314       
@@ -5351,10 +5351,10 @@ node 314:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 315:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 315       
@@ -5368,10 +5368,10 @@ node 315:
 	----> p_3: 105       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 316:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 316       
@@ -5385,10 +5385,10 @@ node 316:
 	----> p_3: 315       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 317:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 317       
@@ -5402,10 +5402,10 @@ node 317:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 318:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 318       
@@ -5419,10 +5419,10 @@ node 318:
 	----> p_3: 317       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 319:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 319       
@@ -5436,10 +5436,10 @@ node 319:
 	----> p_3: 308       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 320:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 320       
@@ -5453,10 +5453,10 @@ node 320:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 321:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 321       
@@ -5470,10 +5470,10 @@ node 321:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 322:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 322       
@@ -5487,10 +5487,10 @@ node 322:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 323:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 323       
@@ -5504,10 +5504,10 @@ node 323:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 324:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 324       
@@ -5521,10 +5521,10 @@ node 324:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 325:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 325       
@@ -5538,10 +5538,10 @@ node 325:
 	----> p_3: 295       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 326:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 326       
@@ -5555,10 +5555,10 @@ node 326:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 327:
 	is_leaf: num eh | amt_keys: 2          | node_rrn: 327       
@@ -5572,10 +5572,10 @@ node 327:
 	----> p_3: 326       
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 328:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 328       
@@ -5589,10 +5589,10 @@ node 328:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
 node 329:
 	is_leaf: eh | amt_keys: 2          | node_rrn: 329       
@@ -5606,8 +5606,8 @@ node 329:
 	----> p_3: NULL (-1) 
 
 	reg_4 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_4: 0         
+	----> p_4: NULL (-1) 
 
 	reg_5 < key: NULL (-1) , p_r: NULL (-1)            >
-	----> p_5: 0         
+	----> p_5: NULL (-1) 
 
