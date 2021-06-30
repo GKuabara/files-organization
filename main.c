@@ -56,6 +56,8 @@ int main() {
     string s = readline(stdin);
     string *tokens = str_get_tokens(s, .amnt_delim=1, .delim=(char *[]){" "});
 
+    printf("filename: %s\t %s\n", tokens[1], tokens[2]);
+
     vehicle_create_index(tokens[1], tokens[2]);
 
     // select_funcionality(tokens);

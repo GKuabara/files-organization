@@ -345,6 +345,7 @@ void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
         // Creates a new key_pair to be inserted in the btree
         key_pair *new_key = malloc(sizeof(*new_key));
         new_key->c = convertePrefixo(data->prefix);
+        // printf("chave: %d \t %x\n", new_key->c, new_key->c);
         new_key->p_r = p_r; 
 
         bt_insert_key(index, &root_rrn, &next_reg, new_key);

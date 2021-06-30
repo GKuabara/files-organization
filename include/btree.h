@@ -1,3 +1,6 @@
+#ifndef _BTREE_H
+#define _BTREE_H
+
 #include "stream.h"
 #include "global.h"
 #include "vehicle.h"
@@ -10,12 +13,12 @@
 
 #define AMNT_KEYS (BT_DEGREE - 1)
 
-typedef struct {
+typedef struct _key_pair{
     int c;
     long p_r;
 } key_pair;
 
-typedef struct {
+typedef struct _bt_node{
     char is_leaf;
     int amnt_keys;
     int rrn;
@@ -27,3 +30,5 @@ void bt_header_init(FILE *bin);
 void bt_header_update(FILE *bin, char stats, int root_rrn, int next_node_rnn);
 void bt_insert_key(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair);
 key_pair *bt_search_key(FILE *bin, int root_rrn, int c_tar);
+
+#endif
