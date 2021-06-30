@@ -76,5 +76,6 @@ boolean v_select_where(FILE *bin, string field, string value, long end_of_file);
 
 
 void v_create_index_file(FILE *bin, FILE *index, long end_of_file);
+void v_load_reg(FILE *bin, int offset);
 
 #endif

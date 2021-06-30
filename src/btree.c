@@ -60,10 +60,23 @@ void bt_header_update(FILE *bin, char stats, int root_rrn, int next_node_rnn) {
         file_error("Falha no processamento do arquivo");
 }
 
+bt_header_t *bt_header_load(FILE *bin) {
+    fseek(bin, 0, SEEK_SET);
+
+    bt_header_t *header = malloc(sizeof(*header));
+
+    fread(&header->status, sizeof(header->status), 1, bin);
+    fread(&header->root_rrn, sizeof(header->root_rrn), 1, bin);
+    fread(&header->next_rrn, sizeof(header->next_rrn), 1, bin);
+
+
+    return header;
+}
+
 /* 
     Searchs and returns a key pair
 */
-key_pair *bt_search_key(FILE *bin, int root_rrn, int c_tar) {
+key_pair *_bt_search_keyr_recusive(FILE *bin, int root_rrn, int c_tar) {
     if (root_rrn == -1) return NULL;
     
     bt_node *cur_node = _bt_node_load(bin, root_rrn);
@@ -75,7 +88,19 @@ key_pair *bt_search_key(FILE *bin, int root_rrn, int c_tar) {
         if (c_tar < cur_node->pairs[i]->c) break;
     }
 
-    return bt_search_key(bin, c_tar, cur_node->p[i]);
+    return _bt_search_keyr_recusive(bin, c_tar, cur_node->p[i]);
+}
+
+key_pair *bt_search_key(FILE *bin, int c_tar) {
+    if (!bin) return NULL;
+
+    bt_header_t *header = bt_header_load(bin);
+    // Lembrar de checar a consistencia do arquivo
+    key_pair *key = _bt_search_keyr_recusive(bin, header->root_rrn, c_tar);
+    free(header);
+
+
+    return key;
 }
 
 static bt_node *_bt_node_init(int rrn_tar, char leaf, int n_keys) {

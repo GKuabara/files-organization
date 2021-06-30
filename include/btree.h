@@ -26,9 +26,16 @@ typedef struct _bt_node{
     key_pair *pairs[AMNT_KEYS + 1];
 } bt_node;
 
+typedef struct _bt_header_t {
+    char status;
+    int root_rrn;
+    int next_rrn;
+} bt_header_t;
+
 void bt_header_init(FILE *bin);
 void bt_header_update(FILE *bin, char stats, int root_rrn, int next_node_rnn);
 void bt_insert_key(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair);
-key_pair *bt_search_key(FILE *bin, int root_rrn, int c_tar);
+key_pair *bt_search_key(FILE *bin, int c_tar);
+bt_header_t *bt_header_load(FILE *bin);
 
 #endif

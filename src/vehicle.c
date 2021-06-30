@@ -357,3 +357,12 @@ void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
     
     bt_header_update(index, CON_STAT, root_rrn, next_reg);
 }
+
+void v_load_reg(FILE *bin, int offset) {    
+    fseek(bin, offset, SEEK_SET);
+    
+    vehicle *data = _v_read_reg_data(bin);
+    _v_print_reg_data(data);
+  
+    _v_free_reg_data(data);
+}

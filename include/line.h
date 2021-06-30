@@ -5,6 +5,8 @@
 
 #include "stream.h"
 #include "global.h"
+#include "btree.h"
+#include "convertePrefixo.h"
 
 /* LINE BINARY CONST CHAR FIELDS */
 #define l_code_desc_t char[15]
@@ -63,5 +65,7 @@ boolean l_select(FILE *fp, int last_byte);
 */
 boolean l_select_where(FILE *bin, string field, string value, long end_of_file);
 
+void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file);
+void l_load_reg(FILE *bin, int offset);
 
 #endif
