@@ -164,6 +164,9 @@ static void _v_free_reg_data(vehicle *data) {
     free(data);    
 }
 
+/*
+    Reads reg and checks if it contains 'value' in 'field'
+*/
 static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string value) {
     _reg_update_t *header = _g_read_reg_header(bin);
     
