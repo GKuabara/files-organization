@@ -42,4 +42,4 @@ clean:
 	rm -f *.o
 
 zip:
-	zip -r Project_1.zip Makefile ./include/ ./src/ ./main.c ./README.md
+	zip -r Project_2.zip Makefile ./include/ ./src/ ./main.c ./README.md
