@@ -3,12 +3,14 @@
 
 #include <stdio.h>
 #include "stream.h"
+#include "file_handler.h"
+
 
 /* TODO: Maybe put in a file handler (?) */
 typedef struct { 
     FILE *bin;
     FILE *csv;
-} _files_t;
+} files_t;
 
 /* Contains the firsts two fields of both vehicle and line data registers */
 typedef struct  {
@@ -25,7 +27,7 @@ struct _finfo {
     int amnt_reg;
     int amnt_rmv;
     void (*insert_funct)(FILE *, string *);
-    void (*header_funct)(_files_t *);
+    void (*header_funct)(files_t *);
 };
 
 /* Boolean type */
@@ -84,7 +86,7 @@ string g_read_str_field(FILE *fp, int field_size);
 /*
     Checks if file is consistent or not
 */
-boolean check_bin_consistency(FILE *bin);
+boolean check_consistency(FILE *bin);
 
 /*
     Checks of parameters from terminal are correctly formatted 

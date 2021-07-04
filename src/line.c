@@ -11,7 +11,7 @@
 #include <string.h>
 
 #include "line.h"
-#include "funcao-fornecida.h"
+#include "funcao_fornecida.h"
 
 static void _l_write_code(FILE *bin, string code);
 static void _l_write_card_opt(FILE *bin, string card_opt);
@@ -29,10 +29,7 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
 */
 static void _l_write_code(FILE *bin, string code) {
     int aux = _g_is_rmv(code) == RMV ? atoi(code + 1) : atoi(code);
-
-    /* fwrite & Error Handling */
-    if (fwrite(&aux, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(&aux, sizeof(int), 1, bin);
 }
 
 /*
@@ -40,10 +37,7 @@ static void _l_write_code(FILE *bin, string code) {
 */
 static void _l_write_card_opt(FILE *bin, string card_opt) {
     char opt = (_g_is_null(card_opt))? '\0': *card_opt;
-
-    /* fwrite & Error Handling */
-    if (fwrite(&opt, sizeof(char), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(&opt, sizeof(char), 1, bin);
 }
 
 /*
@@ -51,12 +45,8 @@ static void _l_write_card_opt(FILE *bin, string card_opt) {
 */
 static void _l_write_var_field(FILE *bin, string field) {
     int len = _g_is_null(field) ? 0 : strlen(field);
-
-    /* fwrite & Error Handling */
-    if (fwrite(&len, sizeof(int), 1, bin) != 1) 
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(field, sizeof(*field), len, bin) != len) 
-        file_error("Falha no processamento do arquivo");
+    file_write(&len, sizeof(int), 1, bin);
+    file_write(field, sizeof(*field), len, bin);
 }
 
 /*
@@ -77,18 +67,13 @@ static int _l_which_selected_field(string field) {
 static line *_l_read_reg_data(FILE *fp) {
     line *data = malloc(sizeof(*data));
 
-    /* fwrite & Error handling */
-    if (fread(&data->code, sizeof(int), 1, fp) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fread(&data->card, sizeof(char), 1, fp) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_read(&data->code, sizeof(int), 1, fp);
+    file_read(&data->card, sizeof(char), 1, fp);
 
-    if (fread(&data->name_size, sizeof(int), 1, fp) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_read(&data->name_size, sizeof(int), 1, fp);
     data->line_name = g_read_str_field(fp, data->name_size);
 
-    if (fread(&data->color_size, sizeof(int), 1, fp) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_read(&data->color_size, sizeof(int), 1, fp);
     data->color = g_read_str_field(fp, data->color_size);
 
     return data;
@@ -168,20 +153,15 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
 /*
     Initializes all ' only' info of a vehicle header
 */
-void l_header_init(_files_t *files) {
+void l_header_init(files_t *files) {
     /* Gets the header line of the csv */
     string header = readline(files->csv);
     string *tokens = str_get_tokens(header, .amnt_delim=2,.delim=csv_delim);
 
-    /* fwrite & Error handling */
-    if (fwrite(tokens[CODE], sizeof(l_code_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[CARD], sizeof(l_card_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[NAME], sizeof(l_name_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[COLOR], sizeof(l_color_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(tokens[CODE], sizeof(l_code_desc_t), 1, files->bin);
+    file_write(tokens[CARD], sizeof(l_card_desc_t), 1, files->bin);
+    file_write(tokens[NAME], sizeof(l_name_desc_t), 1, files->bin);
+    file_write(tokens[COLOR], sizeof(l_color_desc_t), 1, files->bin);
     
     /* Frees all alloc'ed memory */
     for (string *t = tokens; *t; t++) free(*t);
@@ -254,15 +234,12 @@ boolean l_select_where(FILE *bin, string field, string value, long end_of_file) 
 }
 
 void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
-    bt_header_init(index); // Initializes the btree header
-    
     fseek(reg_bin, L_HEADER_SIZE, SEEK_SET); // Goes to te first reg in the vehicle bin file
-    
-    int root_rrn = -1;
-    int next_reg = 0;
-    long p_r = -1;
-   
+
+    bt_header_t *header = bt_header_init(index); // Initializes the btree header
+
    // Loops through every reg in the vehicle file
+    long p_r = -1;
     while ((p_r = ftell(reg_bin)) < end_of_file) { 
         _reg_update_t *reg_header = _g_read_reg_header(reg_bin);
 
@@ -277,24 +254,21 @@ void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
 
         line *data = _l_read_reg_data(reg_bin);
         
-        // Creates a new key_pair to be inserted in the btree
-        key_pair *new_key = malloc(sizeof(*new_key));
-        new_key->c = data->code;
-        // printf("chave: %d \t %x\n", new_key->c, new_key->c);
-        new_key->p_r = p_r; 
-
-        bt_insert_key(index, &root_rrn, &next_reg, new_key);
+        // Creates a new bt_key_t to be inserted in the btree
+        bt_key_t *new_key = bt_node_key_init(data->code, p_r);
+        bt_insert_key(index, header, new_key);
   
         _l_free_reg_data(data);
         free(reg_header);
     }
 
-    
-    bt_header_update(index, CON_STAT, root_rrn, next_reg);
+    header->status = CON_STAT;
+    bt_header_store(index, header);
+    free(header);
 }
 
-void l_load_reg(FILE *bin, int offset) {    
-    fseek(bin, offset, SEEK_SET);
+void l_get_reg(FILE *bin, long offset) {    
+    fseek(bin, offset + G_CONST_REG_SIZE, SEEK_SET);
     
     line *data = _l_read_reg_data(bin);
     _l_print_reg_data(data);

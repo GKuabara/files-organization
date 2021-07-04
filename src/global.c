@@ -34,14 +34,11 @@ static void _g_update_amnt_reg(FILE *bin, int new_regs) {
     int total_amnt_reg;
 
     /* fread & Error handling */
-    if (fread(&total_amnt_reg, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_read(&total_amnt_reg, sizeof(int), 1, bin);
     
     total_amnt_reg += new_regs;
     fseek(bin, -sizeof(int), SEEK_CUR);
-    if (fwrite(&total_amnt_reg, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
-
+    file_write(&total_amnt_reg, sizeof(int), 1, bin);
 }
 
 /*
@@ -54,14 +51,10 @@ void g_header_init(FILE *bin, long header_size) {
     int amnt_rmv = 0;
 
     /* fwrite & Error handling */
-    if (fwrite(&stats, sizeof(char), 1, bin) != 1) 
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(&header_size, sizeof(long), 1, bin) != 1) 
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(&amnt_reg, sizeof(int), 1, bin) != 1) 
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(&amnt_rmv, sizeof(int), 1, bin) != 1) 
-        file_error("Falha no processamento do arquivo");
+    file_write(&stats, sizeof(char), 1, bin);
+    file_write(&header_size, sizeof(long), 1, bin);
+    file_write(&amnt_reg, sizeof(int), 1, bin);
+    file_write(&amnt_rmv, sizeof(int), 1, bin);
 }
 
 /*
@@ -72,12 +65,10 @@ void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv) {
     fseek(bin, 0, SEEK_SET);
 
     /* fwrite & Error handling */
-    if (fwrite(&stats, sizeof(char), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(&stats, sizeof(char), 1, bin);
     if (stats == INC_STAT) return; 
 
-    if (fwrite(&next_reg, sizeof(long), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(&next_reg, sizeof(long), 1, bin);
 
     _g_update_amnt_reg(bin, amnt_reg);
     _g_update_amnt_reg(bin, amnt_rmv);
@@ -94,10 +85,8 @@ _reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const
     update->reg_size = _g_reg_get_size(tokens + amnt_const, const_size);
 
     /* fwrite & Error Handling */
-    if (fwrite(&(update->is_removed), sizeof(char), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(&(update->reg_size), sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(&(update->is_removed), sizeof(char), 1, bin);
+    file_write(&(update->reg_size), sizeof(int), 1, bin);
 
     return update;
 }
@@ -109,13 +98,9 @@ _reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const
 _reg_update_t *_g_read_reg_header(FILE *fp) {
     _reg_update_t *reg_header = malloc(sizeof(*reg_header));
 
-    if (fread(&reg_header->is_removed, sizeof(char), 1, fp) != 1) {
-        free(reg_header);
-        return NULL;
-    }
     
-    if (fread(&reg_header->reg_size, sizeof(int), 1, fp) != 1) 
-        file_error("Falha no processamento do arquivo"); 
+    file_read(&reg_header->is_removed, sizeof(char), 1, fp);
+    file_read(&reg_header->reg_size, sizeof(int), 1, fp);
         
     return reg_header;
 }
@@ -131,7 +116,7 @@ string g_read_str_field(FILE *fp, int field_size) {
     
     else {
         str = realloc(str, sizeof(char) * (field_size + 1));
-        fread(str, sizeof(char), field_size, fp);
+        file_read(str, sizeof(char), field_size, fp);
         str[field_size] = '\0';
     }
 
@@ -141,12 +126,12 @@ string g_read_str_field(FILE *fp, int field_size) {
 /*
     Checks if file is consistent or not
 */
-boolean check_bin_consistency(FILE *bin) {
-    fseek(bin, 0, SEEK_SET);
-    
+boolean check_consistency(FILE *bin) {
+    if (!bin) return False;
+   
     char status;
-    if (fread(&status, sizeof(char), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    fseek(bin, 0, SEEK_SET);
+    file_read(&status, sizeof(char), 1, bin);
 
     return (status == CON_STAT) ? True : False;
 }

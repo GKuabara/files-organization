@@ -9,61 +9,62 @@
 
 #include "stream.h"
 #include "operations.h"
-#include "funcao-fornecida.h"
+#include "funcao_fornecida.h"
 
 /*
     Function to select what SQL implementation we want to reproduce
 */
 void select_funcionality(string *tokens) {
     boolean is_correct;
+    int num = atoi(tokens[0]);
 
-    if(atoi(tokens[0]) == 1) {
+    if(num == 1) {
         is_correct = vehicle_create_table(tokens[1], tokens[2]);
         if(is_correct == True) binarioNaTela(tokens[2]);
     }
-    else if(atoi(tokens[0]) == 2) {
+    else if(num == 2) {
         is_correct = line_create_table(tokens[1], tokens[2]);
         if(is_correct == True) binarioNaTela(tokens[2]);
     }
-    else if(atoi(tokens[0]) == 3) {
+    else if(num == 3) {
         vehicle_select(tokens[1]);
     }
-    else if(atoi(tokens[0]) == 4) {
+    else if(num == 4) {
         line_select(tokens[1]);
     }    
-    else if(atoi(tokens[0]) == 5) {
+    else if(num == 5) {
         vehicle_select_where(tokens[1], NULL, tokens[2], tokens[3]);
     }
-    else if(atoi(tokens[0]) == 6) {
+    else if(num == 6) {
         line_select_where(tokens[1], NULL, tokens[2], tokens[3]);
     }
-    else if(atoi(tokens[0]) == 7) {
+    else if(num == 7) {
         is_correct = vehicle_insert_into(tokens[1], NULL, atoi(tokens[2]));
         if (is_correct == True) binarioNaTela(tokens[1]);
     }
-    else if(atoi(tokens[0]) == 8) {
+    else if(num == 8) {
         is_correct = line_insert_into(tokens[1], NULL, atoi(tokens[2]));
         if (is_correct == True) binarioNaTela(tokens[1]);
     }
-    else if(atoi(tokens[0]) == 9) {
+    else if(num == 9) {
         is_correct = vehicle_create_index(tokens[1], tokens[2]);
         if (is_correct == True) binarioNaTela(tokens[2]);
     }
-    else if(atoi(tokens[0]) == 10) {
+    else if(num == 10) {
         is_correct = line_create_index(tokens[1], tokens[2]);
         if (is_correct == True) binarioNaTela(tokens[2]);
     } 
-    else if(atoi(tokens[0]) == 11) {
+    else if(num == 11) {
         is_correct = vehicle_select_where(tokens[1], tokens[2], tokens[3], tokens[4]);
     }
-    else if(atoi(tokens[0]) == 12) {
+    else if(num == 12) {
         is_correct = line_select_where(tokens[1], tokens[2], tokens[3], tokens[4]);
     }
-    else if(atoi(tokens[0]) == 13) {
+    else if(num == 13) {
         is_correct = vehicle_insert_into(tokens[1], tokens[2], atoi(tokens[3]));
         if (is_correct == True) binarioNaTela(tokens[2]);
     }
-    else if(atoi(tokens[0]) == 14) {
+    else if(num == 14) {
         is_correct = line_insert_into(tokens[1], tokens[2], atoi(tokens[3]));
         if (is_correct == True) binarioNaTela(tokens[2]);
     }
@@ -80,8 +81,10 @@ void select_funcionality(string *tokens) {
 int main() {    
     string s = readline(stdin);
     string *tokens = str_get_tokens(s, .amnt_delim=1, .delim=(char *[]){" "});
+    
 
     select_funcionality(tokens);
+
     str_free_tokens(tokens);
 
     free(s);

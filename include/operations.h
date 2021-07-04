@@ -8,8 +8,7 @@
 #include "vehicle.h"
 #include "line.h"
 #include "btree.h"
-#include "convertePrefixo.h"
-
+#include "funcao_fornecida.h"
 
 boolean vehicle_create_table(string csv_name, string bin_name);
 boolean line_create_table(string csv_name, string bin_name);

@@ -31,22 +31,16 @@ static void _v_print_reg_data(vehicle *data);
     Writes the prefix of a new vehicle reg
 */
 static void _v_write_prefix(FILE *bin, string prefix) {
-    string aux = _g_is_rmv(prefix) == RMV ? prefix + 1 : prefix;
-    
-    /* fwrite & Error Handling */
-    if (fwrite(aux, sizeof(*prefix), 5, bin) != 5)
-        file_error("Falha no processamento do arquivo");
+    string aux = _g_is_rmv(prefix) == RMV ? prefix + 1 : prefix;    
+    file_write(aux, sizeof(*prefix), 5, bin);
 }
 
 /*
     Writes the date of a new vehicle reg
 */
 static void _v_write_date(FILE *bin, string date) {
-    string aux = _g_is_null(date) ? "\0@@@@@@@@@" : date;
-    
-    /* fwrite & Error Handling */
-    if (fwrite(aux, sizeof(v_date_t), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    string aux = _g_is_null(date) ? "\0@@@@@@@@@" : date;    
+    file_write(aux, sizeof(v_date_t), 1, bin);
 }
 
 /*
@@ -54,10 +48,7 @@ static void _v_write_date(FILE *bin, string date) {
 */
 static void _v_write_int_fields(FILE *bin, string num_field) {
     int num = _g_is_null(num_field) ? -1 : atoi(num_field);
-
-    /* fwrite & Error Handling */
-    if (fwrite(&num, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(&num, sizeof(int), 1, bin);
 }
 
 /*
@@ -65,12 +56,8 @@ static void _v_write_int_fields(FILE *bin, string num_field) {
 */
 static void _v_write_var_fields(FILE *bin, string field) {
     int len = _g_is_null(field) ? 0 : strlen(field);
-
-    /* fwrite & Error Handling */
-    if (fwrite(&len, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(field, sizeof(*field), len, bin) != len)
-        file_error("Falha no processamento do arquivo");
+    file_write(&len, sizeof(int), 1, bin);
+    file_write(field, sizeof(*field), len, bin);
 }
 
 /*
@@ -80,21 +67,16 @@ static vehicle *_v_read_reg_data(FILE *bin) {
     vehicle *data = malloc(sizeof(*data));
     assert(data);   
 
-    /* fwrite & Error handling */
     data->prefix = g_read_str_field(bin, 5);
     data->date = g_read_str_field(bin, 10);
 
-    if (fread(&data->seats, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fread(&data->line, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    
-    if (fread(&data->model_size, sizeof(int), 1, bin) != 1)
-        printf("Falha no processamento do arquivo.\n");
+    file_read(&data->seats, sizeof(int), 1, bin);
+    file_read(&data->line, sizeof(int), 1, bin);
+   
+    file_read(&data->model_size, sizeof(int), 1, bin);
     data->model = g_read_str_field(bin, data->model_size);
 
-    if (fread(&data->category_size, sizeof(int), 1, bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_read(&data->category_size, sizeof(int), 1, bin);
     data->category = g_read_str_field(bin, data->category_size);
 
     return data;
@@ -228,24 +210,18 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
 /*
     Initializes all 'vehicle only' info of a vehicle header
 */
-void v_header_init(_files_t *files) {
+void v_header_init(files_t *files) {
     /* Gets the header line of the csv */
     string header = readline(files->csv);
     string *tokens = str_get_tokens(header, .amnt_delim=2,.delim=csv_delim);
 
     /* fwrite & Error handling */
-    if (fwrite(tokens[PREFIX], sizeof(v_prefix_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[DATE], sizeof(v_date_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[SEAT], sizeof(v_seat_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[LINE], sizeof(v_line_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[MODEL], sizeof(v_model_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
-    if (fwrite(tokens[CATEGORY], sizeof(v_category_desc_t), 1, files->bin) != 1)
-        file_error("Falha no processamento do arquivo");
+    file_write(tokens[PREFIX], sizeof(v_prefix_desc_t), 1, files->bin);
+    file_write(tokens[DATE], sizeof(v_date_desc_t), 1, files->bin);
+    file_write(tokens[SEAT], sizeof(v_seat_desc_t), 1, files->bin);
+    file_write(tokens[LINE], sizeof(v_line_desc_t), 1, files->bin);
+    file_write(tokens[MODEL], sizeof(v_model_desc_t), 1, files->bin);
+    file_write(tokens[CATEGORY], sizeof(v_category_desc_t), 1, files->bin);
     
     /* Frees all alloc'ed structures */
     str_free_tokens(tokens);
@@ -317,17 +293,13 @@ boolean v_select_where(FILE *bin, string field, string value, long end_of_file) 
     return has_reg;
 }
 
-
 void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
-    bt_header_init(index); // Initializes the btree header
-    
     fseek(reg_bin, V_HEADER_SIZE, SEEK_SET); // Goes to te first reg in the vehicle bin file
-    
-    int root_rrn = -1;
-    int next_reg = 0;
-    long p_r = -1;
+
+    bt_header_t *header = bt_header_init(index); 
    
    // Loops through every reg in the vehicle file
+    long p_r = -1;
     while ((p_r = ftell(reg_bin)) < end_of_file) { 
         _reg_update_t *reg_header = _g_read_reg_header(reg_bin);
 
@@ -342,24 +314,21 @@ void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
 
         vehicle *data = _v_read_reg_data(reg_bin);
         
-        // Creates a new key_pair to be inserted in the btree
-        key_pair *new_key = malloc(sizeof(*new_key));
-        new_key->c = convertePrefixo(data->prefix);
-        // printf("chave: %d \t %x\n", new_key->c, new_key->c);
-        new_key->p_r = p_r; 
-
-        bt_insert_key(index, &root_rrn, &next_reg, new_key);
+        // Creates a new bt_key_t to be inserted in the btree
+        bt_key_t *new_key = bt_node_key_init(convertePrefixo(data->prefix), p_r);
+        bt_insert_key(index, header, new_key);
   
         _v_free_reg_data(data);
         free(reg_header);
     }
 
-    
-    bt_header_update(index, CON_STAT, root_rrn, next_reg);
+    header->status = CON_STAT;
+    bt_header_store(index, header);
+    free(header);
 }
 
-void v_load_reg(FILE *bin, int offset) {    
-    fseek(bin, offset, SEEK_SET);
+void v_get_reg(FILE *bin, long offset) {    
+    fseek(bin, offset + G_CONST_REG_SIZE, SEEK_SET);
     
     vehicle *data = _v_read_reg_data(bin);
     _v_print_reg_data(data);

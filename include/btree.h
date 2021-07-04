@@ -3,28 +3,30 @@
 
 #include "stream.h"
 #include "global.h"
-#include "vehicle.h"
-#include "line.h"
+#include "file_handler.h"
+
 
 #define IS_LEAF '1'
 #define NOT_LEAF '0'
-#define NODE_SIZE 77
+
+#define BT_NODE_SIZE 77
+
 #define BT_DEGREE 5
+#define BT_MAX_KEYS (BT_DEGREE - 1)
+#define BT_SPLITED_KEYS (BT_MAX_KEYS / 2) 
 
-#define AMNT_KEYS (BT_DEGREE - 1)
-
-typedef struct _key_pair{
+typedef struct _bt_key_t {
     int c;
     long p_r;
-} key_pair;
+} bt_key_t;
 
-typedef struct _bt_node{
+typedef struct _bt_node_t {
     char is_leaf;
     int amnt_keys;
     int rrn;
     int p[BT_DEGREE + 1];
-    key_pair *pairs[AMNT_KEYS + 1];
-} bt_node;
+    bt_key_t *keys[BT_MAX_KEYS + 1];
+} bt_node_t;
 
 typedef struct _bt_header_t {
     char status;
@@ -32,10 +34,39 @@ typedef struct _bt_header_t {
     int next_rrn;
 } bt_header_t;
 
-void bt_header_init(FILE *bin);
-void bt_header_update(FILE *bin, char stats, int root_rrn, int next_node_rnn);
-void bt_insert_key(FILE *bin, int *root_rrn, int *next_rrn, key_pair *new_pair);
-key_pair *bt_search_key(FILE *bin, int c_tar);
+
+/* 
+    Initizalizes a btree file header both in memory
+    and in disk. Callers are responsible for `free()`ing 
+    it.
+*/
+bt_header_t  *bt_header_init(FILE *bin);
+
+/*
+    Stores/Writes a btree header from disk to memory.
+*/
+void bt_header_store(FILE *bin, bt_header_t *header);
+
+/* 
+    Loads a btree file header from disk to memory. Callers 
+    are responsible for `free()`ing it.
+*/
 bt_header_t *bt_header_load(FILE *bin);
+
+/* 
+    Initializes a new key instance given the code (c) and the 
+    offset (p_r). Callers are responsible for `free()`ing it.
+*/
+bt_key_t *bt_node_key_init(int c, long p_r);
+
+/*
+    Searchs and returns a bt_key_t pair
+*/
+long bt_search_key(FILE *bin, bt_header_t *header, int c_tar);
+
+/*
+    Inserts a new key in a btree.
+*/
+void bt_insert_key(FILE *bin, bt_header_t *header, bt_key_t *new_key);
 
 #endif

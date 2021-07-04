@@ -6,7 +6,8 @@
 #include "stream.h"
 #include "global.h"
 #include "btree.h"
-#include "convertePrefixo.h"
+#include "funcao_fornecida.h"
+#include "file_handler.h"
 
 /* LINE BINARY CONST CHAR FIELDS */
 #define l_code_desc_t char[15]
@@ -52,7 +53,7 @@ void l_insert_datareg(FILE *bin, string *tokens);
 /*
     Initializes all ' only' info of a vehicle header
 */
-void l_header_init(_files_t *files);
+void l_header_init(files_t *files);
 
 
 /*
@@ -66,6 +67,6 @@ boolean l_select(FILE *fp, int last_byte);
 boolean l_select_where(FILE *bin, string field, string value, long end_of_file);
 
 void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file);
-void l_load_reg(FILE *bin, int offset);
+void l_get_reg(FILE *bin, long offset);
 
 #endif

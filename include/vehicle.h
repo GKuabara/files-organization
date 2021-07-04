@@ -6,7 +6,8 @@
 #include "stream.h"
 #include "global.h"
 #include "btree.h"
-#include "convertePrefixo.h"
+#include "file_handler.h"
+#include "funcao_fornecida.h"
 
 /* VEHICLE BINARY CONST CHAR FIELDS */
 #define v_prefix_t char[5]
@@ -56,7 +57,7 @@ typedef struct{
 /*
     Initializes all 'vehicle only' info of a vehicle header
 */
-void v_header_init(_files_t *files);
+void v_header_init(files_t *files);
 
 /*
     Inserts all 'vehicle only' info of a new vehicle datareg
@@ -76,6 +77,6 @@ boolean v_select_where(FILE *bin, string field, string value, long end_of_file);
 
 
 void v_create_index_file(FILE *bin, FILE *index, long end_of_file);
-void v_load_reg(FILE *bin, int offset);
+void v_get_reg(FILE *bin, long offset);
 
 #endif

@@ -9,7 +9,7 @@ int main() {
     int next_reg = 0;
 
 
-    key_pair *new_pair = malloc(sizeof(*new_pair));
+    key *new_pair = malloc(sizeof(*new_pair));
     new_pair->c = 1000;
     bt_insert_key(index, &root_rrn, &next_reg, new_pair);
    
@@ -113,6 +113,6 @@ int main() {
     new_pair->c = 26;
     bt_insert_key(index, &root_rrn, &next_reg, new_pair);
 
-    bt_header_update(index, CON_STAT, root_rrn, next_reg);
+    bt_header_store(index, CON_STAT, root_rrn, next_reg);
     fclose(index);
 }
