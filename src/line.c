@@ -233,6 +233,9 @@ boolean l_select_where(FILE *bin, string field, string value, long end_of_file) 
     return has_reg;
 }
 
+/*
+    Create Index File from the Line Data File
+*/
 void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
     fseek(reg_bin, L_HEADER_SIZE, SEEK_SET); // Goes to te first reg in the vehicle bin file
 
@@ -267,6 +270,9 @@ void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
     free(header);
 }
 
+/*
+    Loads and print a register from Line Data File given its offset
+*/
 void l_get_reg(FILE *bin, long offset) {    
     fseek(bin, offset + G_CONST_REG_SIZE, SEEK_SET);
     

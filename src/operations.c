@@ -369,24 +369,29 @@ boolean line_insert_into(string bin_name, string index_file, int amnt_regs) {
     return True;
 }
 
-
+/*
+    Ninth functionality: creates Index File (B-Tree) from vehicle Data File
+*/
 boolean vehicle_create_index(string bin_name, string index_name) {
     FILE *reg_bin = file_open(bin_name, "rb");
     FILE *index = file_open(index_name, "w+b");
 
+    // Error handling
     if (!reg_bin || !index || _check_consistency_in_files(1, reg_bin) == False ) {
         files_close(2, reg_bin, index);
         return False;
     }
 
     long end_of_file = _get_end_of_file(reg_bin);
-        
+
+    // Case Data File has any registers    
     if (end_of_file < V_HEADER_SIZE)  {
         fclose(reg_bin);
         fclose(index);
         return False; 
     }   
 
+    // Calls function that loops through all the Data File
     v_create_index_file(reg_bin, index, end_of_file);
 
     fclose(reg_bin);
@@ -395,10 +400,14 @@ boolean vehicle_create_index(string bin_name, string index_name) {
     return True;
 }
 
+/*
+    Tenth functionality: creates Index File (B-Tree) from line Data File
+*/
 boolean line_create_index(string bin_name, string index_name) {
     FILE *reg_bin = file_open(bin_name, "rb");
     FILE *index = file_open(index_name, "w+b");
 
+    // Error handling
     if (!reg_bin || !index || _check_consistency_in_files(1, reg_bin) == False ) {
         files_close(2, reg_bin, index);
         return False;
@@ -406,12 +415,14 @@ boolean line_create_index(string bin_name, string index_name) {
 
     long end_of_file = _get_end_of_file(reg_bin);
     
+    // Case Data File has any registers
     if (end_of_file < L_HEADER_SIZE)  {
         fclose(reg_bin);
         fclose(index);
         return False; 
     }   
 
+    // Calls function that loops through all the Data File
     l_create_index_file(reg_bin, index, end_of_file);
 
     fclose(reg_bin);

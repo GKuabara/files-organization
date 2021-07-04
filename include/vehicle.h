@@ -74,9 +74,14 @@ boolean v_select(FILE *fp, int last_byte);
 */
 boolean v_select_where(FILE *bin, string field, string value, long end_of_file);
 
-
-
+/*
+    Create Index File from the Vehicle Data File
+*/
 void v_create_index_file(FILE *bin, FILE *index, long end_of_file);
+
+/*
+    Loads and print a register from Vehicle Data File given its offset
+*/
 void v_get_reg(FILE *bin, long offset);
 
 #endif

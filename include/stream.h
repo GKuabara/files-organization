@@ -70,7 +70,9 @@ string str_add_terminator(string str, int len);
 #define csv_delim \
     (char *[]) {", ", ","}
 
-
+/*
+    Prints error message and exit program
+*/
 void file_error(string error_mmessage);
 
 #endif

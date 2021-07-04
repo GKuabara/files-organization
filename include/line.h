@@ -66,7 +66,14 @@ boolean l_select(FILE *fp, int last_byte);
 */
 boolean l_select_where(FILE *bin, string field, string value, long end_of_file);
 
+/*
+    Create Index File from the Line Data File
+*/
 void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file);
+
+/*
+    Loads and print a register from Line Data File given its offset
+*/
 void l_get_reg(FILE *bin, long offset);
 
 #endif

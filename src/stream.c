@@ -168,7 +168,9 @@ string str_add_terminator(string str, int len) {
     return new;
 }
 
-
+/*
+    Prints error message and exit program
+*/
 void file_error(string error_mmessage) {
     printf("%s\n", error_mmessage);
     
