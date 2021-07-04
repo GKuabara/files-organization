@@ -170,7 +170,7 @@ static boolean _select_index(FILE *reg_bin, FILE *index, int c, void (*load_func
     long p_r = bt_search_key(index, header, c); 
     
     if (p_r != -1) {
-        v_get_reg(reg_bin, p_r);
+        load_funct(reg_bin, p_r);
         has_reg = True;
     }
 
