@@ -63,7 +63,7 @@ void g_header_init(FILE *bin, long header_size) {
 void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv) {
     long next_reg = ftell(bin);
     fseek(bin, 0, SEEK_SET);
-
+    
     /* fwrite & Error handling */
     file_write(&stats, sizeof(char), 1, bin);
     if (stats == INC_STAT) return; 

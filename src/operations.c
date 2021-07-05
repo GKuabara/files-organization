@@ -80,6 +80,7 @@ static void _insert_dataregs_from_csv(files_t *files, void (*insert_funct)(FILE 
     int amnt_reg = 0;
     int amnt_rmv = 0;
     long next_reg = h_size;
+    fseek(files->bin, next_reg, SEEK_SET);
     
     string line;
     while ((line = readline(files->csv)) != NULL) {
@@ -96,7 +97,7 @@ static void _insert_dataregs_from_csv(files_t *files, void (*insert_funct)(FILE 
         free(line);
     }
 
-    g_header_update(files->bin, CON_STAT, amnt_reg, amnt_rmv); // U´status only
+    g_header_update(files->bin, CON_STAT, amnt_reg, amnt_rmv); // Update status only
 }
 
 /*
