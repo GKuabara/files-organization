@@ -278,6 +278,7 @@ boolean vehicle_select_where(string reg_file, string index_file, string field, s
     long end_of_file = _get_end_of_file(bin);
     boolean has_reg; 
     
+    // selecting print funcionality 5 or 11
     if (index) 
         has_reg = _select_index(bin, index, convertePrefixo(value), v_get_reg);
     else 
@@ -296,6 +297,7 @@ boolean line_select_where(string reg_file, string index_file, string field, stri
     FILE *bin = file_open(reg_file, "rb");
     FILE *index = index_file ? file_open(index_file, "rb") : NULL;
 
+    /* Error handling */
     if (!bin || (!index && index_file) || _check_consistency_in_files(2, bin, index) == False ||
         check_terminal_parameters(field, value) == False) {
         files_close(2, bin, index);
@@ -305,6 +307,7 @@ boolean line_select_where(string reg_file, string index_file, string field, stri
     boolean has_reg = False;
     long end_of_file = _get_end_of_file(bin);
     
+    // selecting print funcionality 6 or 12
     if (index) 
         has_reg = _select_index(bin, index, atoi(value), l_get_reg);
     else 
@@ -362,9 +365,7 @@ boolean line_insert_into(string bin_name, string index_file, int amnt_regs) {
         return False;
     }
 
-    _insert_dataregs_from_terminal(bin, index, amnt_regs, l_insert_datareg, next_reg, 
-    
-    L_AMNT_REG_CONST, L_CONST_REG_SIZE);
+    _insert_dataregs_from_terminal(bin, index, amnt_regs, l_insert_datareg, next_reg, L_AMNT_REG_CONST, L_CONST_REG_SIZE);
 
     files_close(2, bin, index);    
     return True;

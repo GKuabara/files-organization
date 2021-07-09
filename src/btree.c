@@ -342,7 +342,6 @@ void bt_insert_key(FILE *bin, bt_header_t *header, bt_key_t *new_key) {
             _bt_node_free(new_root);
             _bt_node_free(splited);
         }
-
         
         _bt_node_store(bin, node);
         _bt_node_free(node);

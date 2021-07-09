@@ -82,7 +82,6 @@ int main() {
     string s = readline(stdin);
     string *tokens = str_get_tokens(s, .amnt_delim=1, .delim=(char *[]){" "});
     
-
     select_funcionality(tokens);
 
     str_free_tokens(tokens);
