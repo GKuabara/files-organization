@@ -51,6 +51,9 @@ static void _insert_index(FILE *index, bt_header_t *header, int c, long p_r) {
     bt_insert_key(index, header, new_key);
 }
 
+/*
+    Create and write a header in the index file
+*/
 static bt_header_t *_index_header_init(FILE *index) {
     if (!index) return NULL;
     
@@ -61,6 +64,9 @@ static bt_header_t *_index_header_init(FILE *index) {
     return header;
 }
 
+/*
+    Update data in the header of index file, usually in the end of all insertions
+*/
 static void _index_header_update(FILE *index, bt_header_t *header) {
     if (!index || !header) return;
 
@@ -137,6 +143,9 @@ static void _insert_dataregs_from_terminal(FILE *bin, FILE *index, int amnt_regs
     _index_header_update(index, bt_header);
 }
 
+/*
+    Check files consistency
+*/
 static boolean _check_consistency_in_files(int n, ...) {
     va_list fps;
     va_start(fps, n);
@@ -164,6 +173,10 @@ static long _get_end_of_file(FILE *bin) {
     return end_of_file;
 } 
 
+/*
+    Given a key c, searches this key in the index file and
+    get the byte offset of a register to print through a pointer to function
+*/
 static boolean _select_index(FILE *reg_bin, FILE *index, int c, void (*load_funct)(FILE*, long)) {
     boolean has_reg = False;
     

@@ -73,9 +73,6 @@ void select_funcionality(string *tokens) {
         printf("Please select a valid funcionality\n");
         return;
     }
-
-
-
 }
 
 int main() {    

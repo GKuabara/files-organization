@@ -15,11 +15,16 @@
 #define BT_MAX_KEYS (BT_DEGREE - 1)
 #define BT_SPLITED_KEYS (BT_MAX_KEYS / 2) 
 
+/* Stores a pair of a key and a byte offset for the data file */
 typedef struct _bt_key_t {
     int c;
     long p_r;
 } bt_key_t;
 
+/*
+    Stores a node data
+    We used arrays of (size + 1) to facilitate the split and promotion
+*/
 typedef struct _bt_node_t {
     char is_leaf;
     int amnt_keys;
@@ -28,6 +33,7 @@ typedef struct _bt_node_t {
     bt_key_t *keys[BT_MAX_KEYS + 1];
 } bt_node_t;
 
+/* Stores the index file header data */
 typedef struct _bt_header_t {
     char status;
     int root_rrn;

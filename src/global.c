@@ -29,6 +29,9 @@ static int _g_reg_get_size(string *var_fields, int const_size) {
     return size + const_size;
 }
 
+/*
+    Update the amount of registers in the header of binary data file
+*/
 static void _g_update_amnt_reg(FILE *bin, int new_regs) {
     fseek(bin, 0, SEEK_CUR);
     int total_amnt_reg;
