@@ -150,3 +150,16 @@ boolean check_terminal_parameters(string field, string value) {
 
     return True;
 }
+
+boolean check_field_parameters(string v_field, string l_field) {
+    if (!v_field || !l_field) {
+        printf("Quantidade de parâmetros inválida\n");
+        return False;
+    }
+
+    if (strcmp(v_field, "codLinha") != 0 || strcmp(l_field, "codLinha") != 0) {
+        printf("Campo inválido\n");
+        return False;
+    }
+    return True;
+}

@@ -193,6 +193,141 @@ static boolean _select_index(FILE *reg_bin, FILE *index, int c, void (*load_func
 }
 
 /*
+    Iterates through all line file registers comparing if any register code
+    matches the line field in vehicle register
+*/
+static boolean _compare_all_registers(FILE *l_file, long l_end_of_file, vehicle *v_data) {
+    fseek(l_file, L_HEADER_SIZE, SEEK_SET);
+
+    while (ftell(l_file) < l_end_of_file) {
+        _reg_update_t *l_reg_header = _g_read_reg_header(l_file);
+
+        /* Error and removed regs handling */
+        if (!l_reg_header) continue;
+        if (l_reg_header->is_removed == RMV) {
+            fseek(l_file, l_reg_header->reg_size, SEEK_CUR);
+            free(l_reg_header);
+            
+            continue;
+        }
+
+        line *l_data = _l_read_reg_data(l_file);
+
+        // checks if a register from line file matches the vehicle register
+        if (strcmp(v_data->line, l_data->code) == 0){
+            _v_print_reg_data(v_data);
+            _l_print_reg_data(l_data);
+            return True;
+        }
+
+        _l_free_reg_data(l_data);
+        free(l_reg_header);
+    }
+    
+    return False;
+}
+
+/*
+    For each register in the vehicle file, searches for 
+    registers with the same field (parameter) value in the line file
+*/
+static boolean _select_from(FILE *v_file, FILE *l_file, long v_end_of_file, long l_end_of_file) {
+    fseek(v_file, V_HEADER_SIZE, SEEK_SET); // Goes to te first reg
+
+    boolean has_reg = False;
+
+    while (ftell(v_file) < v_end_of_file) {
+        _reg_update_t *v_reg_header = _g_read_reg_header(v_file);
+
+        /* Error and removed regs handling */
+        if (!v_reg_header) continue;
+        if (v_reg_header->is_removed == RMV) {
+            fseek(v_file, v_reg_header->reg_size, SEEK_CUR);
+            free(v_reg_header);
+            
+            continue;
+        }
+
+        vehicle *v_data = _v_read_reg_data(v_file);
+
+        // Compare vehicle register with all register of the line file
+        boolean temp = _compare_all_registers(l_file, l_end_of_file, v_data);
+
+        if (!has_reg && temp) has_reg = True;
+
+        // ? sepa tenho q dar fseek pro proximo registro no veiculo
+        // ? pq dou fseek no arquivo de linha
+
+        _v_free_reg_data(v_data);
+        free(v_reg_header);
+    }
+    
+    return has_reg;
+}
+
+/*
+    Using the btree, it searches for a match between a vehicle register
+    and a line register through fields Line and codLinha, respectively
+*/
+boolean _compare_all_registers_index(FILE *l_file, FILE *index, vehicle *v_data) {
+    fseek(index, 0, SEEK_SET);
+
+    bt_header_t *index_header = bt_header_load(index);
+
+    // searches for a line register with codLinha field 
+    // that matches field line of vehicle register
+    long reg_byteoff_set = bt_search_key(index, index_header, v_data->line);
+
+    // any register found
+    if (reg_byteoff_set == -1) return False; 
+
+    _v_print_reg_data(v_data);
+    l_get_reg(l_file, reg_byteoff_set);
+    
+    free(index_header);
+    return True;
+}
+
+/*
+    For each register in the vehicle file, searches for 
+    registers with the same field (parameter) value in the line file
+    using index the btree file
+*/
+static boolean _select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_end_of_file) {
+    fseek(v_file, V_HEADER_SIZE, SEEK_SET); // Goes to te first reg
+
+    boolean has_reg = False;
+
+    while (ftell(v_file) < v_end_of_file) {
+        _reg_update_t *v_reg_header = _g_read_reg_header(v_file);
+
+        /* Error and removed regs handling */
+        if (!v_reg_header) continue;
+        if (v_reg_header->is_removed == RMV) {
+            fseek(v_file, v_reg_header->reg_size, SEEK_CUR);
+            free(v_reg_header);
+            
+            continue;
+        }
+
+        vehicle *v_data = _v_read_reg_data(v_file);
+
+        // Compare vehicle register with all register of the line file
+        boolean temp = _compare_all_registers_index(l_file, index, v_data);
+
+        if (!has_reg && temp) has_reg = True;
+
+        // ? sepa tenho q dar fseek pro proximo registro no veiculo
+        // ? pq dou fseek no arquivo de linha
+
+        _v_free_reg_data(v_data);
+        free(v_reg_header);
+    }
+    
+    return has_reg;
+}
+
+/*
     First functionality: creates a vehicle table.
 */
 boolean vehicle_create_table(string csv_name, string bin_name) {
@@ -446,4 +581,30 @@ boolean line_create_index(string bin_name, string index_name) {
     return True;
 }
 
+boolean select_from(string vehicle_file, string line_file, string index_file, string v_field, string l_field) {
+    FILE *v_file = file_open(vehicle_file, "rb");
+    FILE *l_file = file_open(line_file, "rb");
+    FILE *index = index_file ? file_open(line_file, "rb") : NULL;
 
+        /* Error handling */
+    if (!v_file || !l_file || _check_consistency_in_files(3, v_file, l_file, index_file) == False ||
+        check_terminal_parameters(v_field, l_field) == False || check_field_parameters(v_field, l_field) == False) {
+        files_close(3, v_file, l_file, index_file);
+        return False;
+    }
+
+    long v_end_of_file = _get_end_of_file(v_file);
+    long l_end_of_file = _get_end_of_file(l_file);
+
+    boolean has_reg;
+    if (index) 
+        has_reg = _select_from_index(v_file, l_file, index, v_end_of_file);
+    else
+        has_reg = _select_from(v_file, l_file, v_end_of_file, l_end_of_file);
+
+    if (has_reg == False) printf("Registro inexistente.\n");
+    
+    fclose(v_file);
+    fclose(l_file);
+    return has_reg;
+}
