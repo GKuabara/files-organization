@@ -151,6 +151,9 @@ boolean check_terminal_parameters(string field, string value) {
     return True;
 }
 
+/*
+    Check if strings from terminal are "codLinha"
+*/
 boolean check_field_parameters(string v_field, string l_field) {
     if (!v_field || !l_field) {
         printf("Quantidade de parâmetros inválida\n");

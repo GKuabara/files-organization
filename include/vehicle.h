@@ -60,9 +60,24 @@ typedef struct{
 void v_header_init(files_t *files);
 
 /*
+    Free reg struct pointers
+*/
+void v_free_reg_data(vehicle *data);
+
+/*
     Inserts all 'vehicle only' info of a new vehicle datareg
 */
 void v_insert_datareg(FILE *bin, string *tokens);
+
+/*
+    Reads/Loads to memory a vehicle reg
+*/
+vehicle *v_read_reg_data(FILE *bin);
+
+/*
+    Print reg information from struct
+*/
+void v_print_reg_data(vehicle *data);
 
 /*
     Selects/prints all non removed vehicle regs from a bin file

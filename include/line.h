@@ -55,6 +55,20 @@ void l_insert_datareg(FILE *bin, string *tokens);
 */
 void l_header_init(files_t *files);
 
+/* 
+    Free struct and its elements
+*/
+void l_free_reg_data(line *data);
+
+/*
+    Reads/Loads to memory the reg content to struct
+*/
+line *l_read_reg_data(FILE *fp);
+
+/*
+    Print reg information from struct
+*/
+void l_print_reg_data(line *data);
 
 /*
     Fourth functionality, prints every valid register

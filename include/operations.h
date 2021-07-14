@@ -40,4 +40,9 @@ boolean line_insert_into(string bin_name, string index_file, int amnt_regs);
 boolean vehicle_create_index(string bin_name, string index_name);
 boolean line_create_index(string bin_name, string index_name);
 
+/*
+    Fifteenth and sixteenth Functionalities
+*/
+boolean select_from(string vehicle_file, string line_file, string index_file, string v_field, string l_field);
+
 #endif

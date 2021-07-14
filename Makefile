@@ -17,7 +17,7 @@ DDEBUG = -g
 DEBUGER = valgrind
 DBFLAGS = --leak-check=full --show-leak-kinds=all\
 		  --track-origins=yes 
-TEST_CASE = 
+TEST_CASE = ./casos3/in/5.in
 
 clean: $(MAIN)
 $(MAIN): main.o stream.o file_handler.o global.o btree.o vehicle.o line.o operations.o funcao_fornecida.o
@@ -35,11 +35,11 @@ run:
 
 .PHONY: debug
 debug:
-	$(DEBUGER) $(DBFLAGS) ./$(MAIN) $(TEST_CASE)
+	$(DEBUGER) $(DBFLAGS) ./$(MAIN) < $(TEST_CASE)
 
 .PHONY: clean
 clean:
 	rm -f *.o
 
 zip:
-	zip -r Project_2.zip Makefile ./include/ ./src/ ./main.c ./README.md
+	zip -r Project_3.zip Makefile ./include/ ./src/ ./main.c ./README.md

@@ -68,6 +68,12 @@ void select_funcionality(string *tokens) {
         is_correct = line_insert_into(tokens[1], tokens[2], atoi(tokens[3]));
         if (is_correct == True) binarioNaTela(tokens[2]);
     }
+    else if(num == 15) {
+        select_from(tokens[1], tokens[2], tokens[3], tokens[4], NULL);
+    }
+    else if(num == 16) {
+        select_from(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
+    }
 
     else {
         printf("Please select a valid funcionality\n");
