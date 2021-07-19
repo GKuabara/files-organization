@@ -98,4 +98,9 @@ boolean check_terminal_parameters(string field, string value);
 */
 int g_header_read_amnt_regs(FILE *bin);
 
+/*
+    Check if strings from terminal are "codLinha"
+*/
+boolean check_field_parameters(string v_field, string l_field);
+
 #endif

@@ -17,12 +17,10 @@ static void _v_write_prefix(FILE *bin, string prefix);
 static void _v_write_date(FILE *bin, string date);
 static void _v_write_int_fields(FILE *bin, string num_field);
 static void _v_write_var_fields(FILE *bin, string field);
-static vehicle *_v_read_reg_data(FILE *bin);
 static string _v_get_month_name(string str);
 static void _v_print_date(string date);
 static void _v_print_seats(int seats);
 static int _v_which_selected_field(string field);
-static void _v_free_reg_data(vehicle *data);
 static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string value);
 
 
@@ -81,28 +79,6 @@ static void _v_write_var_fields(FILE *bin, string field) {
     int len = _g_is_null(field) ? 0 : strlen(field);
     file_write(&len, sizeof(int), 1, bin);
     file_write(field, sizeof(*field), len, bin);
-}
-
-/*
-    Reads/Loads to memory a vehicle reg
-*/
-static vehicle *_v_read_reg_data(FILE *bin) {
-    vehicle *data = malloc(sizeof(*data));
-    assert(data);   
-
-    data->prefix = g_read_str_field(bin, 5);
-    data->date = g_read_str_field(bin, 10);
-
-    file_read(&data->seats, sizeof(int), 1, bin);
-    file_read(&data->line, sizeof(int), 1, bin);
-   
-    file_read(&data->model_size, sizeof(int), 1, bin);
-    data->model = g_read_str_field(bin, data->model_size);
-
-    file_read(&data->category_size, sizeof(int), 1, bin);
-    data->category = g_read_str_field(bin, data->category_size);
-
-    return data;
 }
 
 /*
@@ -204,7 +180,7 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
     
     /* Loads new reg to memory */
     fseek(bin, V_REG_PREFIX_OFFSET, offset);
-    vehicle *data = _v_read_reg_data(bin);
+    vehicle *data = v_read_reg_data(bin);
 
     /* Gets the field we need to search for 'value', if the
        register contains 'value', return struct with all reg data */
@@ -228,7 +204,7 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
         break;
     }
 
-    _v_free_reg_data(data);
+    v_free_reg_data(data);
     return NULL;
 }
 
@@ -318,6 +294,17 @@ void v_header_init(files_t *files) {
 }
 
 /*
+    Free reg struct pointers
+*/
+void v_free_reg_data(vehicle *data) {
+    free(data->prefix);
+    free(data->date);
+    free(data->model);
+    free(data->category);
+    free(data);    
+}
+
+/*
     Inserts all 'vehicle only' info of a new vehicle datareg
 */
 void v_insert_datareg(FILE *bin, string *tokens) {
@@ -327,6 +314,41 @@ void v_insert_datareg(FILE *bin, string *tokens) {
     _v_write_int_fields(bin, tokens[LINE]);
     _v_write_var_fields(bin, tokens[MODEL]);
     _v_write_var_fields(bin, tokens[CATEGORY]);
+}
+
+/*
+    Reads/Loads to memory a vehicle reg
+*/
+vehicle *v_read_reg_data(FILE *bin) {
+    vehicle *data = malloc(sizeof(*data));
+    assert(data);   
+
+    data->prefix = g_read_str_field(bin, 5);
+    data->date = g_read_str_field(bin, 10);
+
+    file_read(&data->seats, sizeof(int), 1, bin);
+    file_read(&data->line, sizeof(int), 1, bin);
+   
+    file_read(&data->model_size, sizeof(int), 1, bin);
+    data->model = g_read_str_field(bin, data->model_size);
+
+    file_read(&data->category_size, sizeof(int), 1, bin);
+    data->category = g_read_str_field(bin, data->category_size);
+
+    return data;
+}
+
+/*
+    Print reg information from struct
+*/
+void v_print_reg_data(vehicle *data) {
+    printf("Prefixo do veiculo: %s\n", data->prefix);
+    printf("Modelo do veiculo: %s\n", data->model);
+    printf("Categoria do veiculo: %s\n", data->category);
+    
+    _v_print_date(data->date);
+    _v_print_seats(data->seats);
+    //printf("\n");
 }
 
 /*
@@ -350,11 +372,10 @@ boolean v_select(FILE *bin, int last_byte) {
 
         vehicle *data = _v_read_reg_data(bin);
         v_print_reg_data(data);
-        printf("\n");
-    
+        //printf("\n");
         has_reg = True; // If the is at leat 1 valid reg in the file
   
-        _v_free_reg_data(data);
+        v_free_reg_data(data);
         free(reg_header);
     }
 
@@ -376,8 +397,8 @@ boolean v_select_where(FILE *bin, string field, string value, long end_of_file) 
 
         if (data) {
             v_print_reg_data(data);
-            printf("\n");
-            _v_free_reg_data(data);
+            v_free_reg_data(data);
+            //printf("\n");
             has_reg = True; // If the is at leat 1 valid reg in the file
         }
     }
@@ -407,13 +428,13 @@ void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
             continue;
         }
 
-        vehicle *data = _v_read_reg_data(reg_bin);
+        vehicle *data = v_read_reg_data(reg_bin);
         
         // Creates a new bt_key_t to be inserted in the btree
         bt_key_t *new_key = bt_node_key_init(convertePrefixo(data->prefix), p_r);
         bt_insert_key(index, header, new_key);
   
-        _v_free_reg_data(data);
+        v_free_reg_data(data);
         free(reg_header);
     }
 

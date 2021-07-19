@@ -41,6 +41,11 @@ boolean vehicle_create_index(string bin_name, string index_name);
 boolean line_create_index(string bin_name, string index_name);
 
 /*
+    Fifteenth and sixteenth Functionalities
+*/
+boolean select_from(string vehicle_file, string line_file, string index_file, string v_field, string l_field);
+
+/*
     Seventeenth and Eighteenth Functionalities
 */
 boolean vehicle_create_sorted_file(string original_name, string sorted_name, string field);
@@ -50,5 +55,6 @@ boolean line_create_sorted_file(string original_name, string sorted_name, string
     Nineteenth Functionality
 */
 boolean merge_files_by_field(string v_name, string l_name, string v_field, string l_field);
+
 
 #endif

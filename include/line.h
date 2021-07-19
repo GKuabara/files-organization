@@ -55,6 +55,20 @@ void l_insert_datareg(FILE *bin, string *tokens);
 */
 void l_header_init(files_t *files);
 
+/* 
+    Free struct and its elements
+*/
+void l_free_reg_data(line *data);
+
+/*
+    Reads/Loads to memory the reg content to struct
+*/
+line *l_read_reg_data(FILE *fp);
+
+/*
+    Print reg information from struct
+*/
+void l_print_reg_data(line *data);
 
 /*
     Fourth functionality, prints every valid register
@@ -76,13 +90,29 @@ void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file);
 */
 void l_get_reg(FILE *bin, long offset);
 
-
+/*
+    Copy the header of the "original" to a new file
+*/
 void l_copy_header(FILE *original, FILE *copy);
+
+/*
+    Selects whar field we want to use to sort the file
+*/
 line  **l_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs);
 
+/*
+    Frees all read dataregs 
+*/
 void l_free_all_regs(line **regs, int amnt_regs);
+
+/*
+    Write in the 'bin' file, all line registers
+*/
 long l_write_all_regs(FILE *bin, line **regs, int amnt_regs);
+
+/*
+    Reads all data regs from the line bin file
+*/
 line **l_read_all_regs(FILE *bin, long end_of_file, int amnt_regs);
-void l_print_reg_data(line *data);
 
 #endif

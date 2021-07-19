@@ -17,9 +17,7 @@ static void _l_write_code(FILE *bin, string code);
 static void _l_write_card_opt(FILE *bin, string card_opt);
 static void _l_write_var_field(FILE *bin, string field);
 static int _l_which_selected_field(string field);
-static line *_l_read_reg_data(FILE *fp);
-static void _print_card(char card);
-static void _l_free_reg_data(line *data);
+static void print_card(char card);
 static line *_l_get_selected_reg(FILE *bin, int offset, string field, string value);
 
 
@@ -140,7 +138,7 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
     
     /* Loads reg content to memory */
     fseek(bin, L_REG_CODE_OFFSET, offset);
-    line *data = _l_read_reg_data(bin);
+    line *data = l_read_reg_data(bin);
     
     /* Gets the field we need to search for 'value', if the
     register contains 'value', return struct with all reg data */
@@ -162,7 +160,7 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
     }
 
     /* In case is not the value searched */
-    _l_free_reg_data(data);
+    l_free_reg_data(data);
     return NULL;
 }
 
@@ -246,6 +244,15 @@ void l_header_init(files_t *files) {
     free(header);
 }
 
+/* 
+    Free struct and its elements
+*/
+void l_free_reg_data(line *data) {
+    free(data->name);
+    free(data->color);
+    free(data);    
+}
+
 /*
     Inserts all 'line only' info of a new line datareg
 */
@@ -255,6 +262,36 @@ void l_insert_datareg(FILE *bin, string *tokens) {
     _l_write_var_field(bin, tokens[NAME]);
     _l_write_var_field(bin, tokens[COLOR]);
 }
+
+/*
+    Reads/Loads to memory the reg content to struct
+*/
+line *l_read_reg_data(FILE *fp) {
+    line *data = malloc(sizeof(*data));
+
+    file_read(&data->code, sizeof(int), 1, fp);
+    file_read(&data->card, sizeof(char), 1, fp);
+
+    file_read(&data->name_size, sizeof(int), 1, fp);
+    data->name = g_read_str_field(fp, data->name_size);
+
+    file_read(&data->color_size, sizeof(int), 1, fp);
+    data->color = g_read_str_field(fp, data->color_size);
+
+    return data;
+}
+
+/*
+    Print reg information from struct
+*/
+void l_print_reg_data(line *data) {
+    printf("Codigo da linha: %d\n", data->code);
+    printf("Nome da linha: %s\n", data->name);
+    printf("Cor que descreve a linha: %s\n", data->color);
+    print_card(data->card);
+    printf("\n");
+}
+
 
 /*
     Prints every valid reg from a vehicle reg file
@@ -276,10 +313,10 @@ boolean l_select(FILE *bin, int last_byte) {
         }
 
         has_reg = True; // If there is at leat 1 valid reg
-        line *data = _l_read_reg_data(bin);
+        line *data = l_read_reg_data(bin);
         l_print_reg_data(data);
         
-        _l_free_reg_data(data);
+        l_free_reg_data(data);
         free(reg_header);
     }
 
@@ -302,7 +339,7 @@ boolean l_select_where(FILE *bin, string field, string value, long end_of_file) 
 
         if (data) {
             l_print_reg_data(data);
-            _l_free_reg_data(data);
+            l_free_reg_data(data);
             has_reg = True; // If at least 1 valid field is given
         }
     }
@@ -332,13 +369,13 @@ void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
             continue;
         }
 
-        line *data = _l_read_reg_data(reg_bin);
+        line *data = l_read_reg_data(reg_bin);
         
         // Creates a new bt_key_t to be inserted in the btree
         bt_key_t *new_key = bt_node_key_init(data->code, p_r);
         bt_insert_key(index, header, new_key);
   
-        _l_free_reg_data(data);
+        l_free_reg_data(data);
         free(reg_header);
     }
 

@@ -60,9 +60,24 @@ typedef struct{
 void v_header_init(files_t *files);
 
 /*
+    Free reg struct pointers
+*/
+void v_free_reg_data(vehicle *data);
+
+/*
     Inserts all 'vehicle only' info of a new vehicle datareg
 */
 void v_insert_datareg(FILE *bin, string *tokens);
+
+/*
+    Reads/Loads to memory a vehicle reg
+*/
+vehicle *v_read_reg_data(FILE *bin);
+
+/*
+    Print reg information from struct
+*/
+void v_print_reg_data(vehicle *data);
 
 /*
     Selects/prints all non removed vehicle regs from a bin file
@@ -84,12 +99,29 @@ void v_create_index_file(FILE *bin, FILE *index, long end_of_file);
 */
 void v_get_reg(FILE *bin, long offset);
 
+/*
+    Copy the header of the "original" to a new file
+*/
 void v_copy_header(FILE *original, FILE *copy);
+
+/*
+    Selects whar field we want to use to sort the file
+*/
 vehicle **v_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs);
 
-void v_print_reg_data(vehicle *data);
+/*
+    Write in the 'bin' file, all vehicle registers
+*/
 long v_write_all_regs(FILE *bin, vehicle **regs, int amnt_regs);
+
+/*
+    Reads all data regs from the vehicle bin file
+*/
 vehicle **v_read_all_regs(FILE *bin, long end_of_file, int amnt_regs);
+
+/*
+    Frees all read dataregs 
+*/
 void v_free_all_regs(vehicle **regs, int amnt_regs);
 
 #endif

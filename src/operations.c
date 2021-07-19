@@ -152,7 +152,7 @@ static boolean _check_consistency_in_files(int n, ...) {
 
     while (n--) {
         FILE *fp = va_arg(fps, FILE *);
-        if (check_consistency(fp) == False && fp  != NULL) {
+        if (check_consistency(fp) == False && fp != NULL) {
             printf("Falha no processamento do arquivo.\n");
             va_end(fps);
             return False;
@@ -193,6 +193,141 @@ static boolean _select_index(FILE *reg_bin, FILE *index, int c, void (*load_func
 }
 
 /*
+    Iterates through all line file registers comparing if any register code
+    matches the line field in vehicle register
+*/
+static boolean _compare_all_registers(FILE *l_file, long l_end_of_file, vehicle *v_data) {
+    fseek(l_file, L_HEADER_SIZE, SEEK_SET);
+
+    while (ftell(l_file) < l_end_of_file) {
+        _reg_update_t *l_reg_header = _g_read_reg_header(l_file);
+
+        /* Error and removed regs handling */
+        if (!l_reg_header) continue;
+        if (l_reg_header->is_removed == RMV) {
+            fseek(l_file, l_reg_header->reg_size, SEEK_CUR);
+            free(l_reg_header);
+            
+            continue;
+        }
+
+        line *l_data = l_read_reg_data(l_file);
+
+        // checks if a register from line file matches the vehicle register
+        if (v_data->line == l_data->code){
+            v_print_reg_data(v_data);
+            l_print_reg_data(l_data);
+
+            l_free_reg_data(l_data);
+            free(l_reg_header);
+            return True;
+        }
+
+        l_free_reg_data(l_data);
+        free(l_reg_header);
+    }
+    
+    return False;
+}
+
+/*
+    For each register in the vehicle file, searches for 
+    registers with the same field (parameter) value in the line file
+*/
+static boolean _select_from(FILE *v_file, FILE *l_file, long v_end_of_file, long l_end_of_file) {
+    fseek(v_file, V_HEADER_SIZE, SEEK_SET); // Goes to te first reg
+
+    boolean has_reg = False;
+
+    while (ftell(v_file) < v_end_of_file) {
+        _reg_update_t *v_reg_header = _g_read_reg_header(v_file);
+
+        /* Error and removed regs handling */
+        if (!v_reg_header) continue;
+        if (v_reg_header->is_removed == RMV) {
+            fseek(v_file, v_reg_header->reg_size, SEEK_CUR);
+            free(v_reg_header);
+            
+            continue;
+        }
+
+        vehicle *v_data = v_read_reg_data(v_file);
+
+        // Compare vehicle register with all register of the line file
+        boolean temp = _compare_all_registers(l_file, l_end_of_file, v_data);
+
+        if (!has_reg && temp) has_reg = True;
+
+        v_free_reg_data(v_data);
+        free(v_reg_header);
+    }
+    
+    return has_reg;
+}
+
+/*
+    Using the btree, it searches for a match between a vehicle register
+    and a line register through fields Line and codLinha, respectively
+*/
+static boolean _compare_all_registers_index(FILE *l_file, FILE *index, vehicle *v_data) {
+    fseek(index, 0, SEEK_SET);
+
+    bt_header_t *index_header = bt_header_load(index);
+
+    // searches for a line register with codLinha field 
+    // that matches field line of vehicle register
+    long reg_byteoff_set = bt_search_key(index, index_header, v_data->line);
+
+    // any register found
+    if (reg_byteoff_set == -1) {
+        free(index_header);
+        return False; 
+    }
+
+    // printing vehicle and line registers
+    v_print_reg_data(v_data);
+    l_get_reg(l_file, reg_byteoff_set);
+    
+    free(index_header);
+    return True;
+}
+
+/*
+    For each register in the vehicle file, searches for 
+    registers with the same field (parameter) value in the line file
+    using index the btree file
+*/
+static boolean _select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_end_of_file) {
+    fseek(v_file, V_HEADER_SIZE, SEEK_SET); // Goes to te first reg
+    boolean has_reg = False;
+
+    while (ftell(v_file) < v_end_of_file) {
+        _reg_update_t *v_reg_header = _g_read_reg_header(v_file);
+        
+        /* Error and removed regs handling */
+        if (!v_reg_header) continue;
+        if (v_reg_header->is_removed == RMV) {
+            fseek(v_file, v_reg_header->reg_size, SEEK_CUR);
+            free(v_reg_header);
+            
+            continue;
+        }
+        
+        vehicle *v_data = v_read_reg_data(v_file);
+        
+        // Compare vehicle register with all register of the line file
+        boolean temp = _compare_all_registers_index(l_file, index, v_data);
+
+        if (temp) has_reg = True;
+
+        v_free_reg_data(v_data);
+        free(v_reg_header);
+    }
+    
+    return has_reg;
+}
+
+/*
     Gets sorted all registers from both files and print if they match their v_field
 */
 static boolean _match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, string l_field) {
@@ -218,9 +353,8 @@ static boolean _match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, s
 
     v_free_all_regs(v_regs, v_amnt_regs);
     l_free_all_regs(l_regs, l_amnt_regs);
-
-    return has_reg;
 }
+
 
 /*
     First functionality: creates a vehicle table.
@@ -474,6 +608,42 @@ boolean line_create_index(string bin_name, string index_name) {
     fclose(index);
 
     return True;
+}
+
+/*
+    Fifteenth and Sixteenth Functionality: Selects betweehn both funcionalities
+    Fifteenth: Prints registers that matches line field by double loop
+    Sexteenth: Prints registers that matches line field by searching in the B-Tree  
+*/
+boolean select_from(string vehicle_file, string line_file, string v_field, string l_field, string index_file) {
+    FILE *v_file = file_open(vehicle_file, "rb");
+    if (!v_file) return False;
+    FILE *l_file = file_open(line_file, "rb");
+    FILE *index = index_file ? file_open(index_file, "rb") : NULL;
+
+    // Error handling
+    if (!v_file || !l_file || _check_consistency_in_files(3, v_file, l_file, index) == False ||
+        check_terminal_parameters(v_field, l_field) == False || check_field_parameters(v_field, l_field) == False) {
+        files_close(3, v_file, l_file, index);
+        return False;
+    }
+
+    long v_end_of_file = _get_end_of_file(v_file);
+    long l_end_of_file = _get_end_of_file(l_file);
+
+    // Selects the functionality
+    boolean has_reg;
+    if (index) 
+        has_reg = _select_from_index(v_file, l_file, index, v_end_of_file);
+    else
+        has_reg = _select_from(v_file, l_file, v_end_of_file, l_end_of_file);
+
+    if (has_reg == False) printf("Registro inexistente.\n");
+    
+    fclose(v_file);
+    fclose(l_file);
+    if (index) fclose(index);
+    return has_reg;
 }
 
 /*

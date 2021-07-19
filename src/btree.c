@@ -99,7 +99,6 @@ static bt_node_t *_bt_node_load(FILE *bin, int rrn_tar) {
     file_read(&node->is_leaf, sizeof(char), 1, bin);
     file_read(&node->amnt_keys, sizeof(int), 1, bin);
     file_read(&node->rrn, sizeof(int), 1, bin);
-
     /* Reads all the node's bt_key_t keys */
     file_read(&node->p[0], sizeof(int), 1, bin);
     for (int i = 0; i < node->amnt_keys; i++) {

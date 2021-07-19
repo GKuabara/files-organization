@@ -139,7 +139,7 @@ ________________________________________________________________________________
 
 # Project - SQL Functions in C
 
-Project from Files Organization Discipline of University of São Paulo
+Project from Files Organization Course of University of São Paulo
 
 ## Students
 <a href="https://github.com/GKuabara"><img src="https://avatars.githubusercontent.com/u/66877791?v=4" title="gkuabara" width="80" height="80"></a>
