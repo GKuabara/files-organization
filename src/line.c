@@ -282,18 +282,6 @@ line *l_read_reg_data(FILE *fp) {
 }
 
 /*
-    Print reg information from struct
-*/
-void l_print_reg_data(line *data) {
-    printf("Codigo da linha: %d\n", data->code);
-    printf("Nome da linha: %s\n", data->name);
-    printf("Cor que descreve a linha: %s\n", data->color);
-    print_card(data->card);
-    printf("\n");
-}
-
-
-/*
     Prints every valid reg from a vehicle reg file
 */
 boolean l_select(FILE *bin, int last_byte) {

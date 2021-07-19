@@ -68,7 +68,12 @@ void select_funcionality(string *tokens) {
         is_correct = line_insert_into(tokens[1], tokens[2], atoi(tokens[3]));
         if (is_correct == True) binarioNaTela(tokens[2]);
     }
-<<<<<<< HEAD
+    else if(num == 15) {
+        select_from(tokens[1], tokens[2], tokens[3], tokens[4], NULL);
+    }
+    else if(num == 16) {
+        select_from(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
+    }
     else if(num == 17) {
         is_correct = vehicle_create_sorted_file(tokens[1], tokens[2], tokens[3]);
         if (is_correct == True) binarioNaTela(tokens[2]);
@@ -80,15 +85,7 @@ void select_funcionality(string *tokens) {
     else if(num == 19) {
         merge_files_by_field(tokens[1], tokens[2], tokens[3], tokens[4]);
     }
-=======
-    else if(num == 15) {
-        select_from(tokens[1], tokens[2], tokens[3], tokens[4], NULL);
-    }
-    else if(num == 16) {
-        select_from(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5]);
-    }
 
->>>>>>> ku
     else {
         printf("Please select a valid funcionality\n");
         return;

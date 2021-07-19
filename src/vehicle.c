@@ -256,7 +256,7 @@ vehicle **v_read_all_regs(FILE *bin, long end_of_file, int amnt_regs) {
             continue;
         }
 
-        regs[i++] = _v_read_reg_data(bin);
+        regs[i++] = v_read_reg_data(bin);
         free(reg_header);
     }
     
@@ -339,19 +339,6 @@ vehicle *v_read_reg_data(FILE *bin) {
 }
 
 /*
-    Print reg information from struct
-*/
-void v_print_reg_data(vehicle *data) {
-    printf("Prefixo do veiculo: %s\n", data->prefix);
-    printf("Modelo do veiculo: %s\n", data->model);
-    printf("Categoria do veiculo: %s\n", data->category);
-    
-    _v_print_date(data->date);
-    _v_print_seats(data->seats);
-    //printf("\n");
-}
-
-/*
     Selects/prints all non removed vehicle regs from a bin file
 */
 boolean v_select(FILE *bin, int last_byte) {
@@ -370,7 +357,7 @@ boolean v_select(FILE *bin, int last_byte) {
             continue;
         }
 
-        vehicle *data = _v_read_reg_data(bin);
+        vehicle *data = v_read_reg_data(bin);
         v_print_reg_data(data);
         //printf("\n");
         has_reg = True; // If the is at leat 1 valid reg in the file
@@ -449,7 +436,7 @@ void v_create_index_file(FILE *reg_bin, FILE *index, long end_of_file) {
 void v_get_reg(FILE *bin, long offset) {    
     fseek(bin, offset + G_CONST_REG_SIZE, SEEK_SET);
     
-    vehicle *data = _v_read_reg_data(bin);
+    vehicle *data = v_read_reg_data(bin);
     v_print_reg_data(data);
     printf("\n");
   
