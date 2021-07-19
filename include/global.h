@@ -93,4 +93,7 @@ boolean check_consistency(FILE *bin);
 */
 boolean check_terminal_parameters(string field, string value);
 
+
+int g_header_read_amnt_regs(FILE *bin);
+
 #endif

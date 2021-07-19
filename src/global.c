@@ -73,6 +73,7 @@ void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv) {
 
     file_write(&next_reg, sizeof(long), 1, bin);
 
+    if (amnt_reg == -1 || amnt_rmv == -1) return;
     _g_update_amnt_reg(bin, amnt_reg);
     _g_update_amnt_reg(bin, amnt_rmv);
 }
@@ -126,6 +127,15 @@ string g_read_str_field(FILE *fp, int field_size) {
     return str;
 }
 
+int g_header_read_amnt_regs(FILE *bin) {
+    fseek(bin, sizeof(char) + sizeof(long), SEEK_SET);
+
+    int amnt_regs = 0;
+    file_read(&amnt_regs, sizeof(int), 1, bin);
+
+    return amnt_regs;
+}
+
 /*
     Checks if file is consistent or not
 */
@@ -150,3 +160,4 @@ boolean check_terminal_parameters(string field, string value) {
 
     return True;
 }
+

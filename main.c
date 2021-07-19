@@ -68,7 +68,17 @@ void select_funcionality(string *tokens) {
         is_correct = line_insert_into(tokens[1], tokens[2], atoi(tokens[3]));
         if (is_correct == True) binarioNaTela(tokens[2]);
     }
-
+    else if(num == 17) {
+        is_correct = vehicle_create_sorted_file(tokens[1], tokens[2], tokens[3]);
+        if (is_correct == True) binarioNaTela(tokens[2]);
+    }
+    else if(num == 18) {
+        is_correct = line_create_sorted_file(tokens[1], tokens[2], tokens[3]);
+        if (is_correct == True) binarioNaTela(tokens[2]);
+    }
+    else if(num == 19) {
+        merge_files_by_field(tokens[1], tokens[2], tokens[3], tokens[4]);
+    }
     else {
         printf("Please select a valid funcionality\n");
         return;

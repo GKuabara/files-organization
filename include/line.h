@@ -40,7 +40,7 @@ typedef struct{
     int code;
     char card;
     int name_size;
-    char *line_name;
+    char *name;
     int color_size;
     char *color;
 } line;
@@ -75,5 +75,14 @@ void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file);
     Loads and print a register from Line Data File given its offset
 */
 void l_get_reg(FILE *bin, long offset);
+
+
+void l_copy_header(FILE *original, FILE *copy);
+line  **l_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs);
+
+void l_free_all_regs(line **regs, int amnt_regs);
+long l_write_all_regs(FILE *bin, line **regs, int amnt_regs);
+line **l_read_all_regs(FILE *bin, long end_of_file, int amnt_regs);
+void l_print_reg_data(line *data);
 
 #endif

@@ -192,6 +192,34 @@ static boolean _select_index(FILE *reg_bin, FILE *index, int c, void (*load_func
     return has_reg;
 }
 
+
+static boolean _match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, string l_field) {
+    long v_end_of_file = _get_end_of_file(vehicle_bin);
+    int v_amnt_regs = g_header_read_amnt_regs(vehicle_bin);
+    vehicle **v_regs = v_sort_by_field(vehicle_bin, v_field, v_end_of_file, v_amnt_regs);
+
+    long l_end_of_file = _get_end_of_file(line_bin);
+    int l_amnt_regs = g_header_read_amnt_regs(line_bin);
+    line **l_regs = l_sort_by_field(line_bin, l_field, l_end_of_file, l_amnt_regs);
+
+    int i = 0;
+    int j  = 0;
+    boolean has_reg = False;
+    while (i < v_amnt_regs && j < l_amnt_regs) {
+        if (v_regs[i]->line == l_regs[j]->code) {
+            has_reg = True;
+            v_print_reg_data(v_regs[i]);
+            l_print_reg_data(l_regs[j]);
+        }
+        (v_regs[i]->line <= l_regs[j]->code)? i++ : j++;
+    }
+
+    v_free_all_regs(v_regs, v_amnt_regs);
+    l_free_all_regs(l_regs, l_amnt_regs);
+
+    return has_reg;
+}
+
 /*
     First functionality: creates a vehicle table.
 */
@@ -447,3 +475,94 @@ boolean line_create_index(string bin_name, string index_name) {
 }
 
 
+boolean vehicle_create_sorted_file(string original_name, string sorted_name, string field) {
+    FILE *original = file_open(original_name, "rb");
+    FILE *sorted = file_open(sorted_name, "w+b");
+
+    // Error handling
+    if (!original || !sorted || _check_consistency_in_files(1, original) == False ) {
+        files_close(2, original, sorted);
+        return False;
+    }
+
+    long end_of_file = _get_end_of_file(original);
+    int amnt_regs = g_header_read_amnt_regs(original);
+
+    if (amnt_regs == 0  || end_of_file < V_HEADER_SIZE) {
+        files_close(2, original, sorted);
+        return False;
+    }
+
+    v_copy_header(original, sorted);
+    g_header_update(sorted, INC_STAT, -1, -1);
+    
+    vehicle **regs = v_sort_by_field(original, field, end_of_file, amnt_regs);
+    
+    if (!regs) {
+        files_close(2, original, sorted);
+        return False;
+    }
+
+    v_write_all_regs(sorted, regs, amnt_regs);
+    v_free_all_regs(regs, amnt_regs);
+
+
+    g_header_update(sorted, CON_STAT, -1, -1);
+
+    files_close(2, original, sorted);
+    return True;
+}
+
+boolean line_create_sorted_file(string original_name, string sorted_name, string field) {
+    FILE *original = file_open(original_name, "rb");
+    FILE *sorted = file_open(sorted_name, "w+b");
+
+    // Error handling
+    if (!original || !sorted || _check_consistency_in_files(1, original) == False ) {
+        files_close(2, original, sorted);
+        return False;
+    }
+
+    long end_of_file = _get_end_of_file(original);
+    int amnt_regs = g_header_read_amnt_regs(original);
+
+    if (amnt_regs == 0  || end_of_file < L_HEADER_SIZE) {
+        files_close(2, original, sorted);
+        return False;
+    }
+
+    l_copy_header(original, sorted);
+    g_header_update(sorted, INC_STAT, -1, -1);
+    
+    line **regs = l_sort_by_field(original, field, end_of_file, amnt_regs);
+
+    if (!regs) {
+        files_close(2, original, sorted);
+        return False;
+    }
+    
+    l_write_all_regs(sorted, regs, amnt_regs);
+    l_free_all_regs(regs, amnt_regs);
+    g_header_update(sorted, CON_STAT, -1, -1);
+
+    files_close(2, original, sorted);
+    return True;
+}
+
+boolean merge_files_by_field(string v_name, string l_name, string v_field, string l_field) {
+    FILE *v_file = file_open(v_name, "rb");
+    FILE *l_file = file_open(l_name, "rb");
+
+    // Error handling
+    if (!v_file || !l_file || _check_consistency_in_files(2, v_file, l_file) == False ) {
+        files_close(2, v_file, l_file);
+        return False;
+    }
+
+    if (!_match_files(v_file, l_file, v_field, l_field))
+        printf("Registro inexistente.\n");
+
+    
+    files_close(2, v_file, l_file);    
+    return True;
+}

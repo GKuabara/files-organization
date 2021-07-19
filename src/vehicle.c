@@ -24,8 +24,31 @@ static void _v_print_seats(int seats);
 static int _v_which_selected_field(string field);
 static void _v_free_reg_data(vehicle *data);
 static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string value);
-static void _v_print_reg_data(vehicle *data);
 
+
+static int _v_prefix_field_comparator(const void *a, const void *b) {
+    return strcmp((*(vehicle **)a)->prefix, (*(vehicle **)b)->prefix);
+}
+
+static int _v_date_field_comparator(const void *a, const void *b) {
+    return strcmp((*(vehicle **)a)->date, (*(vehicle **)b)->date);
+}
+
+static int _v_seat_field_comparator(const void *a, const void *b) {
+    return (*(vehicle **)a)->seats - (*(vehicle **)b)->seats;
+}
+
+static int _v_line_field_comparator(const void *a, const void *b) {
+    return (*(vehicle **)a)->line - (*(vehicle **)b)->line;
+}
+
+static int _v_model_field_comparator(const void *a, const void *b) {
+    return strcmp((*(vehicle **)a)->model, (*(vehicle **)b)->model);
+}
+
+static int _v_category_field_comparator(const void *a, const void *b) {
+    return strcmp((*(vehicle **)a)->category, (*(vehicle **)b)->category);
+}
 
 /*
     Writes the prefix of a new vehicle reg
@@ -133,7 +156,7 @@ static int _v_which_selected_field(string field) {
     if (strcmp(field, "prefixo") == 0) return PREFIX;
     if (strcmp(field, "data") == 0) return DATE;
     if (strcmp(field, "quantidadeLugares") == 0) return SEAT; 
-    if (strcmp(field, "linha") == 0) return SEAT; 
+    if (strcmp(field, "codLinha") == 0) return LINE; 
     if (strcmp(field, "modelo") == 0) return MODEL;
     if (strcmp(field, "categoria") == 0) return CATEGORY;
 
@@ -143,14 +166,13 @@ static int _v_which_selected_field(string field) {
 /*
     Print reg information from struct
 */
-static void _v_print_reg_data(vehicle *data) {
+void v_print_reg_data(vehicle *data) {
     printf("Prefixo do veiculo: %s\n", data->prefix);
     printf("Modelo do veiculo: %s\n", data->model);
     printf("Categoria do veiculo: %s\n", data->category);
     
     _v_print_date(data->date);
     _v_print_seats(data->seats);
-    printf("\n");
 }
 
 /*
@@ -210,6 +232,67 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
     return NULL;
 }
 
+long v_write_all_regs(FILE *bin, vehicle **regs, int amnt_regs) {
+    fseek(bin, V_HEADER_SIZE, SEEK_SET);
+
+    for (int i = 0; i < amnt_regs; ++i) {
+        char is_rmv = NRM;
+        int reg_size = V_CONST_REG_SIZE + regs[i]->model_size + regs[i]->category_size;
+
+        file_write(&is_rmv, sizeof(char), 1, bin);
+        file_write(&reg_size, sizeof(int), 1, bin);
+        
+        file_write(regs[i]->prefix, sizeof(char), 5, bin);
+        file_write(regs[i]->date, sizeof(char), 10, bin);
+        file_write(&regs[i]->seats, sizeof(int), 1, bin);
+        file_write(&regs[i]->line, sizeof(int), 1, bin);
+
+        file_write(&regs[i]->model_size, sizeof(int), 1, bin);
+        file_write(regs[i]->model, sizeof(char), regs[i]->model_size, bin);    
+
+        file_write(&regs[i]->category_size, sizeof(int), 1, bin);
+        file_write(regs[i]->category, sizeof(char), (int)regs[i]->category_size, bin);
+    }
+} 
+
+
+/*
+    Reads all data regs from the vehicle bin file
+*/
+vehicle **v_read_all_regs(FILE *bin, long end_of_file, int amnt_regs) {
+    vehicle **regs = malloc(sizeof(*regs) * amnt_regs);
+    
+    fseek(bin, V_HEADER_SIZE, SEEK_SET);
+    
+    long offset;
+    for (int i = 0; (offset = ftell(bin)) < end_of_file;) {
+        _reg_update_t *reg_header = _g_read_reg_header(bin);
+
+        /* Error and removed regs handling */
+        if (!reg_header) continue;
+        if (reg_header->is_removed == RMV) {
+            fseek(bin, reg_header->reg_size, SEEK_CUR);
+            free(reg_header);
+            
+            continue;
+        }
+
+        regs[i++] = _v_read_reg_data(bin);
+        free(reg_header);
+    }
+    
+
+    return regs;
+}
+
+/*
+    Frees all read dataregs 
+*/
+void v_free_all_regs(vehicle **regs, int amnt_regs) {
+    for (int i = 0; i < amnt_regs; i++) _v_free_reg_data(regs[i]);
+    free(regs);
+}
+
 /*
     Initializes all 'vehicle only' info of a vehicle header
 */
@@ -263,7 +346,9 @@ boolean v_select(FILE *bin, int last_byte) {
         }
 
         vehicle *data = _v_read_reg_data(bin);
-        _v_print_reg_data(data);
+        v_print_reg_data(data);
+        printf("\n");
+    
         has_reg = True; // If the is at leat 1 valid reg in the file
   
         _v_free_reg_data(data);
@@ -287,7 +372,8 @@ boolean v_select_where(FILE *bin, string field, string value, long end_of_file) 
         vehicle *data = _v_get_selected_reg(bin, offset, field, value);
 
         if (data) {
-            _v_print_reg_data(data);
+            v_print_reg_data(data);
+            printf("\n");
             _v_free_reg_data(data);
             has_reg = True; // If the is at leat 1 valid reg in the file
         }
@@ -340,7 +426,80 @@ void v_get_reg(FILE *bin, long offset) {
     fseek(bin, offset + G_CONST_REG_SIZE, SEEK_SET);
     
     vehicle *data = _v_read_reg_data(bin);
-    _v_print_reg_data(data);
+    v_print_reg_data(data);
+    printf("\n");
   
     _v_free_reg_data(data);
+}
+
+vehicle **v_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs) {
+    int sort_field = _v_which_selected_field(field);
+    if (sort_field == -1) False;
+
+    vehicle **regs = v_read_all_regs(original, end_of_file, amnt_regs);
+
+    switch (sort_field) {
+        case PREFIX:
+            qsort(regs, amnt_regs, sizeof(vehicle*), _v_prefix_field_comparator);
+            break;
+        case DATE:
+            qsort(regs, amnt_regs, sizeof(vehicle*), _v_date_field_comparator);
+            break;
+        case SEAT:
+            qsort(regs, amnt_regs, sizeof(vehicle*), _v_seat_field_comparator); 
+            break;
+        case LINE:
+            qsort(regs, amnt_regs, sizeof(vehicle*), _v_line_field_comparator); 
+            break;
+        case MODEL:
+            qsort(regs, amnt_regs, sizeof(vehicle*), _v_model_field_comparator);
+            break;
+        case CATEGORY:
+            qsort(regs, amnt_regs, sizeof(vehicle*), _v_category_field_comparator);
+            break;
+    }
+
+    return regs;
+}
+
+void v_copy_header(FILE *original, FILE *copy) {
+    char stats;
+    long next_reg;
+    int amnt_reg;
+    int amnt_rmv;
+    char prefix_desc[18];
+    char date_desc[35];
+    char seat_desc[42];
+    char line_desc[26];
+    char model_desc[17];
+    char category_desc[20];
+
+    fseek(original, 0, SEEK_SET);
+    file_read(&stats, sizeof(char), 1, original);
+    file_read(&next_reg, sizeof(long), 1, original);
+    file_read(&amnt_reg, sizeof(int), 1, original);
+    file_read(&amnt_rmv, sizeof(int), 1, original);
+
+    file_read(prefix_desc, sizeof(char), 18, original);
+    file_read(date_desc, sizeof(char), 35, original);
+    file_read(seat_desc, sizeof(char), 42, original);
+    file_read(line_desc, sizeof(char), 26, original);
+    file_read(model_desc, sizeof(char), 17, original);
+    file_read(category_desc, sizeof(char), 20, original);
+
+
+    fseek(copy, 0, SEEK_SET);
+    file_write(&stats, sizeof(char), 1, copy);
+    file_write(&next_reg, sizeof(long), 1, copy);
+    file_write(&amnt_reg, sizeof(int), 1, copy);
+
+    amnt_rmv = 0;
+    file_write(&amnt_rmv, sizeof(int), 1, copy);
+
+    file_write(prefix_desc, sizeof(char), 18, copy);
+    file_write(date_desc, sizeof(char), 35, copy);
+    file_write(seat_desc, sizeof(char), 42, copy);
+    file_write(line_desc, sizeof(char), 26, copy);
+    file_write(model_desc, sizeof(char), 17, copy);
+    file_write(category_desc, sizeof(char), 20, copy);
 }

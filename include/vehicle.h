@@ -84,4 +84,12 @@ void v_create_index_file(FILE *bin, FILE *index, long end_of_file);
 */
 void v_get_reg(FILE *bin, long offset);
 
+void v_copy_header(FILE *original, FILE *copy);
+vehicle **v_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs);
+
+void v_print_reg_data(vehicle *data);
+long v_write_all_regs(FILE *bin, vehicle **regs, int amnt_regs);
+vehicle **v_read_all_regs(FILE *bin, long end_of_file, int amnt_regs);
+void v_free_all_regs(vehicle **regs, int amnt_regs);
+
 #endif

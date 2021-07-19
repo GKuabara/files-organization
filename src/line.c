@@ -18,10 +18,26 @@ static void _l_write_card_opt(FILE *bin, string card_opt);
 static void _l_write_var_field(FILE *bin, string field);
 static int _l_which_selected_field(string field);
 static line *_l_read_reg_data(FILE *fp);
-static void print_card(char card);
-static void _l_print_reg_data(line *data);
+static void _print_card(char card);
 static void _l_free_reg_data(line *data);
 static line *_l_get_selected_reg(FILE *bin, int offset, string field, string value);
+
+
+static int _l_code_field_comparator(const void *a, const void *b) {
+    return (*(line **)a)->code - (*(line **)b)->code;
+}
+
+static int _l_card_field_comparator(const void *a, const void *b) {
+    return (*(line **)a)->card - (*(line **)b)->card;
+}
+
+static int _l_name_field_comparator(const void *a, const void *b) {
+    return strcmp((*(line **)a)->name, (*(line **)b)->name);
+}
+
+static int _l_color_field_comparator(const void *a, const void *b) {
+    return strcmp((*(line **)a)->color, (*(line **)b)->color);
+}
 
 
 /*
@@ -71,7 +87,7 @@ static line *_l_read_reg_data(FILE *fp) {
     file_read(&data->card, sizeof(char), 1, fp);
 
     file_read(&data->name_size, sizeof(int), 1, fp);
-    data->line_name = g_read_str_field(fp, data->name_size);
+    data->name = g_read_str_field(fp, data->name_size);
 
     file_read(&data->color_size, sizeof(int), 1, fp);
     data->color = g_read_str_field(fp, data->color_size);
@@ -82,7 +98,7 @@ static line *_l_read_reg_data(FILE *fp) {
 /*
     Print string according with card
 */
-static void print_card(char card) {
+static void _print_card(char card) {
     if (card == S) printf("Aceita cartao: PAGAMENTO SOMENTE COM CARTAO SEM PRESENCA DE COBRADOR\n");
     else if (card == N) printf("Aceita cartao: PAGAMENTO EM CARTAO E DINHEIRO\n");
     else if (card == F) printf("Aceita cartao: PAGAMENTO EM CARTAO SOMENTE NO FINAL DE SEMANA\n");
@@ -91,17 +107,17 @@ static void print_card(char card) {
 /*
     Print reg information from struct
 */
-static void _l_print_reg_data(line *data) {
+void l_print_reg_data(line *data) {
     printf("Codigo da linha: %d\n", data->code);
-    printf("Nome da linha: %s\n", data->line_name);
+    printf("Nome da linha: %s\n", data->name);
     printf("Cor que descreve a linha: %s\n", data->color);
-    print_card(data->card);
+    _print_card(data->card);
     printf("\n");
 }
 
 /* Free struct and its elements */
 static void _l_free_reg_data(line *data) {
-    free(data->line_name);
+    free(data->name);
     free(data->color);
     free(data);    
 }
@@ -136,7 +152,7 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
         if (data->card == value[0]) return data;
         break;
     case NAME:
-        if (strcmp(value, data->line_name) == 0) return data;
+        if (strcmp(value, data->name) == 0) return data;
         break;
     case COLOR:
         if (strcmp(value, data->color) == 0) return data;
@@ -150,8 +166,67 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
     return NULL;
 }
 
+
+long l_write_all_regs(FILE *bin, line **regs, int amnt_regs) {
+    fseek(bin, L_HEADER_SIZE, SEEK_SET);
+
+    for (int i = 0; i < amnt_regs; ++i) {
+        char is_rmv = NRM;
+        int reg_size = L_CONST_REG_SIZE + regs[i]->name_size + regs[i]->color_size;
+
+        file_write(&is_rmv, sizeof(char), 1, bin);
+        file_write(&reg_size, sizeof(int), 1, bin);
+        
+        file_write(&regs[i]->code, sizeof(int), 1, bin);
+        file_write(&regs[i]->card, sizeof(char), 1, bin);
+
+        file_write(&regs[i]->name_size, sizeof(int), 1, bin);
+        file_write(regs[i]->name, sizeof(char), regs[i]->name_size, bin);    
+
+        file_write(&regs[i]->color_size, sizeof(int), 1, bin);
+        file_write(regs[i]->color, sizeof(char), regs[i]->color_size, bin);
+    }
+} 
+
 /*
-    Initializes all ' only' info of a vehicle header
+    Reads all data regs from the line bin file
+*/
+line **l_read_all_regs(FILE *bin, long end_of_file, int amnt_regs) {
+    line **regs = malloc(sizeof(*regs) * amnt_regs);
+    
+    fseek(bin, L_HEADER_SIZE, SEEK_SET);
+    
+    long offset;
+    for (int i = 0; (offset = ftell(bin)) < end_of_file;) {
+        _reg_update_t *reg_header = _g_read_reg_header(bin);
+
+        /* Error and removed regs handling */
+        if (!reg_header) continue;
+        if (reg_header->is_removed == RMV) {
+            fseek(bin, reg_header->reg_size, SEEK_CUR);
+            free(reg_header);
+            
+            continue;
+        }
+
+        regs[i++] = _l_read_reg_data(bin);
+        free(reg_header);
+    }
+    
+
+    return regs;
+}
+
+/*
+    Frees all read dataregs 
+*/
+void l_free_all_regs(line **regs, int amnt_regs) {
+    for (int i = 0; i < amnt_regs; i++) _l_free_reg_data(regs[i]);
+    free(regs);
+}
+
+/*
+    Initializes all ' only' info of a line header
 */
 void l_header_init(files_t *files) {
     /* Gets the header line of the csv */
@@ -200,7 +275,7 @@ boolean l_select(FILE *bin, int last_byte) {
 
         has_reg = True; // If there is at leat 1 valid reg
         line *data = _l_read_reg_data(bin);
-        _l_print_reg_data(data);
+        l_print_reg_data(data);
         
         _l_free_reg_data(data);
         free(reg_header);
@@ -224,7 +299,7 @@ boolean l_select_where(FILE *bin, string field, string value, long end_of_file) 
         line *data = _l_get_selected_reg(bin, offset, field, value);
 
         if (data) {
-            _l_print_reg_data(data);
+            l_print_reg_data(data);
             _l_free_reg_data(data);
             has_reg = True; // If at least 1 valid field is given
         }
@@ -277,7 +352,67 @@ void l_get_reg(FILE *bin, long offset) {
     fseek(bin, offset + G_CONST_REG_SIZE, SEEK_SET);
     
     line *data = _l_read_reg_data(bin);
-    _l_print_reg_data(data);
+    l_print_reg_data(data);
   
     _l_free_reg_data(data);
+}
+
+
+line  **l_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs) {
+    int sort_field = _l_which_selected_field(field);
+    if (sort_field == -1) return NULL;
+
+    line **regs = l_read_all_regs(original, end_of_file, amnt_regs);
+
+    switch (sort_field) {
+        case CODE:
+            qsort(regs, amnt_regs, sizeof(line*), _l_code_field_comparator);
+            break;
+        case CARD:
+            qsort(regs, amnt_regs, sizeof(line*), _l_card_field_comparator);
+            break;
+        case NAME:
+            qsort(regs, amnt_regs, sizeof(line*), _l_name_field_comparator); 
+            break;
+        case COLOR:
+            qsort(regs, amnt_regs, sizeof(line*), _l_color_field_comparator); 
+            break;
+    }
+
+    return regs;
+}
+
+void l_copy_header(FILE *original, FILE *copy) {
+    char stats;
+    long next_reg;
+    int amnt_reg;
+    int amnt_rmv;
+    char code_desc[15];
+    char card_desc[13];
+    char name_desc[13];
+    char color_desc[24];
+
+    fseek(original, 0, SEEK_SET);
+    file_read(&stats, sizeof(char), 1, original);
+    file_read(&next_reg, sizeof(long), 1, original);
+    file_read(&amnt_reg, sizeof(int), 1, original);
+    file_read(&amnt_rmv, sizeof(int), 1, original);
+
+    file_read(code_desc, sizeof(char), 15, original);
+    file_read(card_desc, sizeof(char), 13, original);
+    file_read(name_desc, sizeof(char), 13, original);
+    file_read(color_desc, sizeof(char), 24, original);
+
+    fseek(copy, 0, SEEK_SET);
+    file_write(&stats, sizeof(char), 1, copy);
+    file_write(&next_reg, sizeof(long), 1, copy);
+    file_write(&amnt_reg, sizeof(int), 1, copy);
+
+    amnt_rmv = 0;
+    file_write(&amnt_rmv, sizeof(int), 1, copy);
+
+    file_write(code_desc, sizeof(char), 15, copy);
+    file_write(card_desc, sizeof(char), 13, copy);
+    file_write(name_desc, sizeof(char), 13, copy);
+    file_write(color_desc, sizeof(char), 24, copy);
 }
