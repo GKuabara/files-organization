@@ -192,7 +192,9 @@ static boolean _select_index(FILE *reg_bin, FILE *index, int c, void (*load_func
     return has_reg;
 }
 
-
+/*
+    Gets sorted all registers from both files and print if they match their v_field
+*/
 static boolean _match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, string l_field) {
     long v_end_of_file = _get_end_of_file(vehicle_bin);
     int v_amnt_regs = g_header_read_amnt_regs(vehicle_bin);
@@ -474,7 +476,9 @@ boolean line_create_index(string bin_name, string index_name) {
     return True;
 }
 
-
+/*
+    Seventeenth Functionality: from a binary vehicle file, creates a sorted one
+*/
 boolean vehicle_create_sorted_file(string original_name, string sorted_name, string field) {
     FILE *original = file_open(original_name, "rb");
     FILE *sorted = file_open(sorted_name, "w+b");
@@ -488,24 +492,28 @@ boolean vehicle_create_sorted_file(string original_name, string sorted_name, str
     long end_of_file = _get_end_of_file(original);
     int amnt_regs = g_header_read_amnt_regs(original);
 
+    // Error handling
     if (amnt_regs == 0  || end_of_file < V_HEADER_SIZE) {
         files_close(2, original, sorted);
         return False;
     }
 
+    // Treating header of new file
     v_copy_header(original, sorted);
     g_header_update(sorted, INC_STAT, -1, -1);
     
+    // Loading to RAM and sorting all registers
     vehicle **regs = v_sort_by_field(original, field, end_of_file, amnt_regs);
     
+    // Error handling
     if (!regs) {
         files_close(2, original, sorted);
         return False;
     }
 
+    // Writing all register in the binary file
     v_write_all_regs(sorted, regs, amnt_regs);
     v_free_all_regs(regs, amnt_regs);
-
 
     g_header_update(sorted, CON_STAT, -1, -1);
 
@@ -513,6 +521,9 @@ boolean vehicle_create_sorted_file(string original_name, string sorted_name, str
     return True;
 }
 
+/*
+    Eighteenth Functionality: from a binary line file, creates a sorted one
+*/
 boolean line_create_sorted_file(string original_name, string sorted_name, string field) {
     FILE *original = file_open(original_name, "rb");
     FILE *sorted = file_open(sorted_name, "w+b");
@@ -526,29 +537,38 @@ boolean line_create_sorted_file(string original_name, string sorted_name, string
     long end_of_file = _get_end_of_file(original);
     int amnt_regs = g_header_read_amnt_regs(original);
 
+    // Error handling
     if (amnt_regs == 0  || end_of_file < L_HEADER_SIZE) {
         files_close(2, original, sorted);
         return False;
     }
 
+    // Treating header of new file
     l_copy_header(original, sorted);
     g_header_update(sorted, INC_STAT, -1, -1);
     
+    // Loading to RAM and sorting all registers
     line **regs = l_sort_by_field(original, field, end_of_file, amnt_regs);
 
+    // Error handling
     if (!regs) {
         files_close(2, original, sorted);
         return False;
     }
     
+    // Writing all register in the binary file
     l_write_all_regs(sorted, regs, amnt_regs);
     l_free_all_regs(regs, amnt_regs);
+
     g_header_update(sorted, CON_STAT, -1, -1);
 
     files_close(2, original, sorted);
     return True;
 }
 
+/* 
+    Nineteenth Functionality: From both binary files, sorts and merge them if they match the field
+*/
 boolean merge_files_by_field(string v_name, string l_name, string v_field, string l_field) {
     FILE *v_file = file_open(v_name, "rb");
     FILE *l_file = file_open(l_name, "rb");

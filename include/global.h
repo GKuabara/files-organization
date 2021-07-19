@@ -93,7 +93,9 @@ boolean check_consistency(FILE *bin);
 */
 boolean check_terminal_parameters(string field, string value);
 
-
+/*
+    Gets the amount of register in a binary file
+*/
 int g_header_read_amnt_regs(FILE *bin);
 
 #endif

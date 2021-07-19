@@ -166,7 +166,9 @@ static line *_l_get_selected_reg(FILE *bin, int offset, string field, string val
     return NULL;
 }
 
-
+/*
+    Write in the 'bin' file, all line registers
+*/
 long l_write_all_regs(FILE *bin, line **regs, int amnt_regs) {
     fseek(bin, L_HEADER_SIZE, SEEK_SET);
 
@@ -357,7 +359,9 @@ void l_get_reg(FILE *bin, long offset) {
     _l_free_reg_data(data);
 }
 
-
+/*
+    Selects whar field we want to use to sort the file
+*/
 line  **l_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs) {
     int sort_field = _l_which_selected_field(field);
     if (sort_field == -1) return NULL;
@@ -382,6 +386,9 @@ line  **l_sort_by_field(FILE *original, string field, long end_of_file, int amnt
     return regs;
 }
 
+/*
+    Copy the header of the "original" to a new file
+*/
 void l_copy_header(FILE *original, FILE *copy) {
     char stats;
     long next_reg;

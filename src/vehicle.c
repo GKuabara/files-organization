@@ -232,6 +232,9 @@ static vehicle *_v_get_selected_reg(FILE *bin, int offset, string field, string 
     return NULL;
 }
 
+/*
+    Write in the 'bin' file, all vehicle registers
+*/
 long v_write_all_regs(FILE *bin, vehicle **regs, int amnt_regs) {
     fseek(bin, V_HEADER_SIZE, SEEK_SET);
 
@@ -432,6 +435,9 @@ void v_get_reg(FILE *bin, long offset) {
     _v_free_reg_data(data);
 }
 
+/*
+    Selects whar field we want to use to sort the file
+*/
 vehicle **v_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs) {
     int sort_field = _v_which_selected_field(field);
     if (sort_field == -1) False;
@@ -462,6 +468,9 @@ vehicle **v_sort_by_field(FILE *original, string field, long end_of_file, int am
     return regs;
 }
 
+/*
+    Copy the header of the "original" to a new file
+*/
 void v_copy_header(FILE *original, FILE *copy) {
     char stats;
     long next_reg;

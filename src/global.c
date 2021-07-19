@@ -127,6 +127,9 @@ string g_read_str_field(FILE *fp, int field_size) {
     return str;
 }
 
+/*
+    Gets the amount of register in a binary file
+*/
 int g_header_read_amnt_regs(FILE *bin) {
     fseek(bin, sizeof(char) + sizeof(long), SEEK_SET);
 
