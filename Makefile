@@ -20,7 +20,7 @@ DBFLAGS = --leak-check=full --show-leak-kinds=all\
 TEST_CASE = ./casos3/in/5.in
 
 clean: $(MAIN)
-$(MAIN): main.o stream.o file_handler.o global.o btree.o vehicle.o line.o operations.o funcao_fornecida.o
+$(MAIN): main.o stream.o file_handler.o global.o fieldcmp.o btree.o vehicle.o line.o aux.o operations.o funcao_fornecida.o
 
 all: $(MAIN)
 

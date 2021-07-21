@@ -18,18 +18,6 @@ typedef struct  {
     int reg_size;
 } _reg_update_t;
 
-/* Contains the header of the binary files, including two pointers to function */
-struct _finfo {
-    int amnt_const;
-    int const_size;
-    long header_size;
-    long next_reg_offset;
-    int amnt_reg;
-    int amnt_rmv;
-    void (*insert_funct)(FILE *, string *);
-    void (*header_funct)(files_t *);
-};
-
 /* Boolean type */
 #define boolean int
 #define True 1
@@ -48,6 +36,7 @@ struct _finfo {
 #define LINE_FILE 2
 
 #define G_CONST_REG_SIZE 5 
+#define G_HEADER_SIZE 17
 
 /* Check is field is null and removed */
 #define _g_is_null(token) (strcmp(token, "NULO") == 0 ? 1 : 0)
@@ -83,15 +72,6 @@ _reg_update_t *_g_read_reg_header(FILE *fp);
 */
 string g_read_str_field(FILE *fp, int field_size);
 
-/*
-    Checks if file is consistent or not
-*/
-boolean check_consistency(FILE *bin);
-
-/*
-    Checks of parameters from terminal are correctly formatted 
-*/
-boolean check_terminal_parameters(string field, string value);
 
 /*
     Gets the amount of register in a binary file
@@ -99,8 +79,8 @@ boolean check_terminal_parameters(string field, string value);
 int g_header_read_amnt_regs(FILE *bin);
 
 /*
-    Check if strings from terminal are "codLinha"
+    Checks if file is consistent or not
 */
-boolean check_field_parameters(string v_field, string l_field);
+boolean g_check_consistency(FILE *bin);
 
 #endif

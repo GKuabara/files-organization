@@ -8,53 +8,81 @@
 #include "vehicle.h"
 #include "line.h"
 #include "btree.h"
+#include "aux.h"
 #include "funcao_fornecida.h"
 
 /*
-    First and Second Functionalities
+    First functionality: creates a vehicle table.
 */
-boolean vehicle_create_table(string csv_name, string bin_name);
-boolean line_create_table(string csv_name, string bin_name);
+boolean vehicle_create_table(string _csv, string _bin);
 
 /*
-    Third and Fourth Functionalities
+    Second functionality: creates a line table
 */
-boolean vehicle_select(string bin_name);
-boolean line_select(string bin_name);
+boolean line_create_table(string _csv, string _bin);
 
 /*
-    Fifth and Sixth Functionalities
+    Third functionality: prints all dataregs from a vehicle file
 */
-boolean vehicle_select_where(string bin_name, string index_file, string field, string value);
-boolean line_select_where(string bin_name, string index_file, string field, string value);
+void vehicle_select(string _bin);
 
 /*
-    Seventh and Eigth Functionalities
+    Forth functionality: prints all dataregs from a line file
 */
-boolean vehicle_insert_into(string reg_file, string index_file, int amnt_regs);
-boolean line_insert_into(string bin_name, string index_file, int amnt_regs);
+void line_select(string _bin);
 
 /*
-    Ninth and Tenth Functionalities
+    Fifth | Eleventh funcionality: "SELECT WHERE" for vehicle files. Has been adapted suport a index file based selection.  
 */
-boolean vehicle_create_index(string bin_name, string index_name);
-boolean line_create_index(string bin_name, string index_name);
+void vehicle_select_where(string _reg, string _index, string field, string value);
 
 /*
-    Fifteenth and sixteenth Functionalities
+    Sixth | Twelfth funcionality: "SELECT WHERE" for line files.
+    Has been adapted suport a index file based selection.
 */
-boolean select_from(string vehicle_file, string line_file, string index_file, string v_field, string l_field);
+void line_select_where(string _reg, string _index, string field, string value);
 
 /*
-    Seventeenth and Eighteenth Functionalities
+    Seventh | Tirteenth functionality: inserts new reg into vehicle binary 
+    file. Has been adapted suport a index file based selection.
 */
-boolean vehicle_create_sorted_file(string original_name, string sorted_name, string field);
-boolean line_create_sorted_file(string original_name, string sorted_name, string field);
+boolean vehicle_insert_into(string _reg, string _index, int amnt_regs);
+
+/*
+    Eighth | Fourteenth functionality: inserts new reg into line binary file.
+    Has been adapted suport a index file based selection.
+*/
+boolean line_insert_into(string _bin, string _index, int amnt_regs);
+
+/*
+    Ninth functionality: creates an index file (B-Tree) from 
+    vehicle bin
+*/
+boolean vehicle_create_index(string _bin, string _index);
+
+/*
+    Tenth functionality: creates Index File (B-Tree) from line Data File
+*/
+boolean line_create_index(string _bin, string _index);
+
+/*
+    Fifteenth | Sixteenth Functionality: selects and prints registers that matches line field. Has been adapted suport a index file based selection.
+*/
+void select_from(string _vehicle, string _line, string v_field, string l_field, string _index);
+
+/*
+    Seventeenth Functionality: from a binary vehicle file, creates a sorted one
+*/
+boolean vehicle_create_sorted_file(string _original, string _sorted, string field);
+
+/*
+    Eighteenth Functionality: from a binary line file, creates a sorted one
+*/
+boolean line_create_sorted_file(string _original, string _sorted, string field);
 
 /* 
-    Nineteenth Functionality
+    Nineteenth Functionality: Matches and prints the data from bin files given a target field.
 */
-boolean merge_files_by_field(string v_name, string l_name, string v_field, string l_field);
-
+void match_files(string _vehicle, string _line, string v_field, string l_field);
 
 #endif

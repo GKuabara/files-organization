@@ -6,8 +6,8 @@
 #include "stream.h"
 #include "global.h"
 #include "btree.h"
-#include "funcao_fornecida.h"
 #include "file_handler.h"
+#include "fieldcmp.h"
 
 /* LINE BINARY CONST CHAR FIELDS */
 #define l_code_desc_t char[15]
@@ -46,14 +46,24 @@ typedef struct{
 } line;
 
 /*
-    Inserts all 'line only' info of a new line datareg
-*/
-void l_insert_datareg(FILE *bin, string *tokens);
-
-/*
-    Initializes all ' only' info of a vehicle header
+    Initializes all ' only' info of a line header
 */
 void l_header_init(files_t *files);
+
+/*
+    Inserts all 'line only' info of a new line datareg
+*/
+void l_store_reg(FILE *bin, string *tokens);
+    
+/*
+    Reads/Loads to memory the reg content to struct
+*/
+line *l_load_reg_data(FILE *fp);
+
+/*
+    Print reg information from struct
+*/
+void l_print_reg_data(line *data);
 
 /* 
     Free struct and its elements
@@ -61,58 +71,48 @@ void l_header_init(files_t *files);
 void l_free_reg_data(line *data);
 
 /*
-    Reads/Loads to memory the reg content to struct
+    Prints every valid reg from a vehicle reg file
 */
-line *l_read_reg_data(FILE *fp);
-
-/*
-    Print reg information from struct
-*/
-void l_print_reg_data(line *data);
-
-/*
-    Fourth functionality, prints every valid register
-*/
-boolean l_select(FILE *fp, int last_byte);
+boolean l_select_regs(FILE *bin, long eof);
 
 /*
     Print registers containing 'value' in the requested 'field'
 */
-boolean l_select_where(FILE *bin, string field, string value, long end_of_file);
+boolean l_select_regs_where(FILE *bin, string field, string value, long end_of_file);  
 
 /*
-    Create Index File from the Line Data File
+    Creates/Initializes index file from the line bin file
 */
-void l_create_index_file(FILE *reg_bin, FILE *index, long end_of_file);
+void l_index_file_init(FILE *reg_bin, FILE *index, long end_of_file);
+
+/*
+    Selects whar field we want to use to sort the file
+*/
+line  **l_sort_regs_by_field(FILE *original, string field, long end_of_file, int amnt_regs);
+
+/*
+    Reads all data regs from the line bin file
+*/
+line **l_load_regs(FILE *bin, long end_of_file, int amnt_regs);
+
+/*
+    Write in the 'bin' file, all line registers
+*/
+long l_store_regs(FILE *bin, line **regs, int amnt_regs);
+
+/*
+    Frees all read dataregs 
+*/
+void l_free_regs_data(line **regs, int amnt_regs);
 
 /*
     Loads and print a register from Line Data File given its offset
 */
-void l_get_reg(FILE *bin, long offset);
+void l_print_reg_from_offset(FILE *bin, long offset);
 
 /*
     Copy the header of the "original" to a new file
 */
 void l_copy_header(FILE *original, FILE *copy);
-
-/*
-    Selects whar field we want to use to sort the file
-*/
-line  **l_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs);
-
-/*
-    Frees all read dataregs 
-*/
-void l_free_all_regs(line **regs, int amnt_regs);
-
-/*
-    Write in the 'bin' file, all line registers
-*/
-long l_write_all_regs(FILE *bin, line **regs, int amnt_regs);
-
-/*
-    Reads all data regs from the line bin file
-*/
-line **l_read_all_regs(FILE *bin, long end_of_file, int amnt_regs);
 
 #endif

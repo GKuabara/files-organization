@@ -14,14 +14,14 @@
 #include "global.h"
 
 
-static int _g_reg_get_size(string *var_fields, int const_size);
+static int _g_get_reg_size(string *var_fields, int const_size);
 static void _g_update_amnt_reg(FILE *bin, int new_regs);
 
 
 /*
     Gets the size of the new reg to be inserted
 */
-static int _g_reg_get_size(string *var_fields, int const_size) {
+static int _g_get_reg_size(string *var_fields, int const_size) {
     int size = 0;
     for (string *aux = var_fields; *aux; ++aux)  
         size += _g_is_null(*aux) ? 0 : strlen(*aux);
@@ -54,7 +54,7 @@ void g_header_init(FILE *bin, long header_size) {
     int amnt_rmv = 0;
 
     /* fwrite & Error handling */
-    file_write(&stats, sizeof(char), 1, bin);
+    file_write(&stats, sizeof(char), 1, bin); 
     file_write(&header_size, sizeof(long), 1, bin);
     file_write(&amnt_reg, sizeof(int), 1, bin);
     file_write(&amnt_rmv, sizeof(int), 1, bin);
@@ -86,7 +86,7 @@ _reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const
     assert(update);
     
     update->is_removed = _g_is_rmv((*tokens));
-    update->reg_size = _g_reg_get_size(tokens + amnt_const, const_size);
+    update->reg_size = _g_get_reg_size(tokens + amnt_const, const_size);
 
     /* fwrite & Error Handling */
     file_write(&(update->is_removed), sizeof(char), 1, bin);
@@ -142,7 +142,7 @@ int g_header_read_amnt_regs(FILE *bin) {
 /*
     Checks if file is consistent or not
 */
-boolean check_consistency(FILE *bin) {
+boolean g_check_consistency(FILE *bin) {
     if (!bin) return False;
    
     char status;
@@ -150,32 +150,4 @@ boolean check_consistency(FILE *bin) {
     file_read(&status, sizeof(char), 1, bin);
 
     return (status == CON_STAT) ? True : False;
-}
-
-/*
-    Checks of parameters from terminal are correctly formatted 
-*/
-boolean check_terminal_parameters(string field, string value) {
-    if (!field || !value) {
-        printf("Quantidade de parâmetros inválida\n");
-        return False;
-    }
-
-    return True;
-}
-
-/*
-    Check if strings from terminal are "codLinha"
-*/
-boolean check_field_parameters(string v_field, string l_field) {
-    if (!v_field || !l_field) {
-        printf("Quantidade de parâmetros inválida\n");
-        return False;
-    }
-
-    if (strcmp(v_field, "codLinha") != 0 || strcmp(l_field, "codLinha") != 0) {
-        printf("Campo inválido\n");
-        return False;
-    }
-    return True;
 }

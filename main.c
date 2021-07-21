@@ -55,10 +55,10 @@ void select_funcionality(string *tokens) {
         if (is_correct == True) binarioNaTela(tokens[2]);
     } 
     else if(num == 11) {
-        is_correct = vehicle_select_where(tokens[1], tokens[2], tokens[3], tokens[4]);
+        vehicle_select_where(tokens[1], tokens[2], tokens[3], tokens[4]);
     }
     else if(num == 12) {
-        is_correct = line_select_where(tokens[1], tokens[2], tokens[3], tokens[4]);
+        line_select_where(tokens[1], tokens[2], tokens[3], tokens[4]);
     }
     else if(num == 13) {
         is_correct = vehicle_insert_into(tokens[1], tokens[2], atoi(tokens[3]));
@@ -83,7 +83,7 @@ void select_funcionality(string *tokens) {
         if (is_correct == True) binarioNaTela(tokens[2]);
     }
     else if(num == 19) {
-        merge_files_by_field(tokens[1], tokens[2], tokens[3], tokens[4]);
+        match_files(tokens[1], tokens[2], tokens[3], tokens[4]);
     }
 
     else {

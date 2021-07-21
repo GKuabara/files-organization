@@ -14,7 +14,7 @@
 static int _file_error(FILE *stream, string format, ...);
 
 /*
-    Error handling. 
+    Prints and reports the error handling. 
 */
 int _file_error(FILE *stream, string format, ...) {
     int ferr = stream ? ferror(stream) : -1;
@@ -57,7 +57,6 @@ void files_close(int n, ...) {
 }   
 
 #ifndef IGNORE_WANDR_ERRORS
-
 /*
     `fwrite()` + error handling.
 */

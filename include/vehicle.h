@@ -6,6 +6,7 @@
 #include "stream.h"
 #include "global.h"
 #include "btree.h"
+#include "fieldcmp.h"
 #include "file_handler.h"
 #include "funcao_fornecida.h"
 
@@ -60,19 +61,14 @@ typedef struct{
 void v_header_init(files_t *files);
 
 /*
-    Free reg struct pointers
-*/
-void v_free_reg_data(vehicle *data);
-
-/*
     Inserts all 'vehicle only' info of a new vehicle datareg
 */
-void v_insert_datareg(FILE *bin, string *tokens);
+void v_store_reg(FILE *bin, string *tokens);
 
 /*
     Reads/Loads to memory a vehicle reg
 */
-vehicle *v_read_reg_data(FILE *bin);
+vehicle *v_load_reg_data(FILE *bin);
 
 /*
     Print reg information from struct
@@ -82,46 +78,51 @@ void v_print_reg_data(vehicle *data);
 /*
     Selects/prints all non removed vehicle regs from a bin file
 */
-boolean v_select(FILE *fp, int last_byte);
+boolean v_select_regs(FILE *bin, long eof);
 
 /*
-    Print registers containing 'value' in the requested 'field'
+    Selects/prints all non removed vehicle regs from a bin file
 */
-boolean v_select_where(FILE *bin, string field, string value, long end_of_file);
+boolean v_select_regs_where(FILE *bin, string field, string value, long eof);
 
 /*
     Create Index File from the Vehicle Data File
 */
-void v_create_index_file(FILE *bin, FILE *index, long end_of_file);
+void v_index_file_init(FILE *reg_bin, FILE *index, long eof);
+
+/*
+    Selects which field we want to use to sort the file
+*/
+vehicle **v_sort_regs_by_field(FILE *original, string field, long eof, int amnt_regs);
+
+/*
+    Reads all data regs from the vehicle bin file
+*/
+vehicle **v_load_regs(FILE *bin, long eof, int amnt_regs);
+
+/*
+    Frees all read dataregs 
+*/
+void v_free_regs_data(vehicle **regs, int amnt_regs);
+
+/*
+    Write in the 'bin' file, all vehicle registers
+*/
+long v_store_regs(FILE *bin, vehicle **regs, int amnt_regs);
+
+/*
+    Free reg struct pointers
+*/
+void v_free_reg_data(vehicle *data);
 
 /*
     Loads and print a register from Vehicle Data File given its offset
 */
-void v_get_reg(FILE *bin, long offset);
+void v_print_reg_from_offset(FILE *bin, long offset);
 
 /*
     Copy the header of the "original" to a new file
 */
 void v_copy_header(FILE *original, FILE *copy);
-
-/*
-    Selects whar field we want to use to sort the file
-*/
-vehicle **v_sort_by_field(FILE *original, string field, long end_of_file, int amnt_regs);
-
-/*
-    Write in the 'bin' file, all vehicle registers
-*/
-long v_write_all_regs(FILE *bin, vehicle **regs, int amnt_regs);
-
-/*
-    Reads all data regs from the vehicle bin file
-*/
-vehicle **v_read_all_regs(FILE *bin, long end_of_file, int amnt_regs);
-
-/*
-    Frees all read dataregs 
-*/
-void v_free_all_regs(vehicle **regs, int amnt_regs);
 
 #endif

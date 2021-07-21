@@ -170,7 +170,6 @@ static bt_node_t *_bt_split_child(bt_header_t *header, bt_node_t *parent, bt_nod
         child->p[i + BT_SPLITED_KEYS + 1] = -1;
     } 
 
-
     // Promotes the middle bt_key_t 
     int promotion_pos = _bt_node_insert_key(parent, child->keys[BT_SPLITED_KEYS]);
     child->keys[BT_SPLITED_KEYS] = NULL; 
