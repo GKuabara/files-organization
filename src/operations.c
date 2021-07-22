@@ -344,7 +344,7 @@ boolean line_create_sorted_file(string _original, string _sorted, string field) 
     FILE *original = file_open(_original, "rb");
     FILE *sorted = file_open(_sorted, "w+b");
 
-    // Error handling
+    /* Error handling */
     if (!original || !sorted || aux_check_consistency_in_files(1, original) == False ) {
         files_close(2, original, sorted);
         return False;
@@ -353,7 +353,7 @@ boolean line_create_sorted_file(string _original, string _sorted, string field) 
     long eof = aux_get_end_of_file(original);
     int amnt_regs = g_header_read_amnt_regs(original);
 
-    // Error handling
+    /* More error handling in case the are no regs */
     if (amnt_regs == 0  || eof < L_HEADER_SIZE) {
         files_close(2, original, sorted);
         return False;
@@ -379,12 +379,13 @@ void match_files(string _vehicle, string _line, string v_field, string l_field) 
     FILE *v_file = file_open(_vehicle, "rb");
     FILE *l_file = file_open(_line, "rb");
 
-    // Error handling
+    /* Error handling */
     if (!v_file || !l_file || aux_check_consistency_in_files(2, v_file, l_file) == False ) {
         files_close(2, v_file, l_file);
         return;
     }
 
+    /* If there are matching files */
     if (!aux_match_files(v_file, l_file, v_field, l_field))
         printf("Registro inexistente.\n");
 

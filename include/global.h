@@ -5,13 +5,6 @@
 #include "stream.h"
 #include "file_handler.h"
 
-
-/* TODO: Maybe put in a file handler (?) */
-typedef struct { 
-    FILE *bin;
-    FILE *csv;
-} files_t;
-
 /* Contains the firsts two fields of both vehicle and line data registers */
 typedef struct  {
     char is_removed;
@@ -57,7 +50,7 @@ void g_header_init(FILE *bin, long header_size);
 void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv);
 
 /*
-    Global part of a new datareg insertion (remotion and reg size). Can be user for both vehicle and line files given `finfo`.
+    Global part of a new regs insertion (remotion and reg size). Can be user for both vehicle and line files given `finfo`.
 */
 _reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const, int const_size);
 
@@ -74,7 +67,7 @@ string g_read_str_field(FILE *fp, int field_size);
 
 
 /*
-    Gets the amount of register in a binary file
+    Reads the amount of register in a binary file
 */
 int g_header_read_amnt_regs(FILE *bin);
 

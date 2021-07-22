@@ -79,7 +79,7 @@ void g_header_update(FILE *bin, char stats, int amnt_reg, int amnt_rmv) {
 }
 
 /*
-    Global part of a new datareg insertion (remotion and reg size). Can be user for both vehicle and line files given `finfo`.
+    Global part of a new reg insertion (remotion and reg size). Can be user for both vehicle and line files given `finfo`.
 */
 _reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const, int const_size) {
     _reg_update_t *update = malloc(sizeof(*update));
@@ -97,12 +97,11 @@ _reg_update_t *g_insert_datareg_header(FILE *bin, string *tokens, int amnt_const
 
 
 /*
-    Reads first two fields of a register that starts at position pointed by fp
+    Reads first two fields of a reg that starts at position pointed by fp
 */
 _reg_update_t *_g_read_reg_header(FILE *fp) {
     _reg_update_t *reg_header = malloc(sizeof(*reg_header));
 
-    
     file_read(&reg_header->is_removed, sizeof(char), 1, fp);
     file_read(&reg_header->reg_size, sizeof(int), 1, fp);
         
@@ -128,7 +127,7 @@ string g_read_str_field(FILE *fp, int field_size) {
 }
 
 /*
-    Gets the amount of register in a binary file
+    Reads the amount of reg in a binary file
 */
 int g_header_read_amnt_regs(FILE *bin) {
     fseek(bin, sizeof(char) + sizeof(long), SEEK_SET);

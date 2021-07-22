@@ -15,40 +15,41 @@
 long aux_get_end_of_file(FILE *bin);
 
 /*
-    Check files consistency
+    Checks the consistency/status of multiple files.
 */
 boolean aux_check_consistency_in_files(int n, ...);
 
 /*
-    Checks of parameters from terminal are correctly formatted 
+    Checks if parameters from terminal are correctly formatted .
 */
 boolean aux_check_terminal_parameters(string field, string value);
 
 /*
-    Check if strings from terminal are "codLinha"
+    Check if strings from terminal are "codLinha".
 */
 boolean aux_check_field_parameters(string v_field, string l_field);
 
 /*
     Initializes a binary header. Can be used for both line and vehicle files
-    given their respective `header_funct` via `finfo`. 
+    given their respective `header_funct`.
 */
 void aux_header_init(files_t *files, long h_size, void (*header_funct)(files_t *));
 
 /*
     Reads a csv file and inserts all dataregs from it. Can be used for both
-    line and vehicle files given their respective `insert_funct` via `finfo`.
+    line and vehicle files given their respective `insert_funct`.
 */
 void aux_insert_regs_from_csv(files_t *files, void (*insert_funct)(FILE *, string *), long h_size, int amnt_const, int const_size);
 
 /*
-    Reads new regs from terminal to insert in the end of the binary files
+    Reads new regs from terminal and appends them to the bin file.
 */
 void aux_insert_dataregs_from_terminal(FILE *bin, FILE *index, int amnt_regs, void (*insert_funct)(FILE *, string *), long offset, int amnt_const, int const_size);
 
 /*
-    Given a key c, searches this key in the index file and
-    get the byte offset of a register to print through a pointer to function
+    Searches for an given reg in the index file given its key and
+    prints if found. Returns True if the operations was sucessfull
+    and False otherwise.
 */
 boolean aux_select_index(FILE *bin, FILE *index, int c, void (*print_from_offset)(FILE*, long));
 

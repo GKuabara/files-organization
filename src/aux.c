@@ -20,8 +20,8 @@ static boolean aux_compare_regs_index(FILE *l_file, FILE *index, vehicle *v_data
 
 
 /* 
-    Inserts a new datareg. Can be used for both line and vehicle files given
-    their respective `insert_funct` via `finfo` 
+    Inserts a new reg. Can be used for both line and vehicle files given
+    their respective `insert_funct`.
 */
 static _reg_update_t *aux_insert_reg(FILE *bin, string *tokens,  void (*insert_funct)(FILE *, string *), long next_reg, int amnt_const, int const_size) {
     fseek(bin, next_reg, SEEK_SET);
@@ -31,9 +31,8 @@ static _reg_update_t *aux_insert_reg(FILE *bin, string *tokens,  void (*insert_f
     return update;
 }
 
-
 /*
-    Inserts a new key in a index file.
+    Creates a new key pair and inserts it in the index file.
 */
 static void _insert_index(FILE *index, bt_header_t *header, int c, long p_r) {
     if (!index || !header || c == -1) return;
@@ -68,8 +67,8 @@ static void _index_header_update(FILE *index, bt_header_t *header) {
 }
 
 /*
-    Iterates through all line file registers comparing if any register code
-    matches the line field in vehicle register
+    Iterates through all line file regs checking if any reg code
+    matches the line field in vehicle reg.
 */
 static boolean aux_compare_regs(FILE *l_file, long l_eof, vehicle *v_data) {
     fseek(l_file, L_HEADER_SIZE, SEEK_SET);
@@ -88,7 +87,7 @@ static boolean aux_compare_regs(FILE *l_file, long l_eof, vehicle *v_data) {
 
         line *l_data = l_load_reg_data(l_file);
 
-        // checks if a register from line file matches the vehicle register
+        /* If the reg from line file matches the vehicle reg */
         if (v_data->line == l_data->code){
             v_print_reg_data(v_data);
             l_print_reg_data(l_data);
@@ -106,25 +105,25 @@ static boolean aux_compare_regs(FILE *l_file, long l_eof, vehicle *v_data) {
 }
 
 /*
-    Using the btree, it searches for a match between a vehicle register
-    and a line register through fields Line and codLinha, respectively
+    Searches for a match between a vehicle reg
+    and a line reg through fields Line and codLinha, respectively, using a btree.
 */
 static boolean aux_compare_regs_index(FILE *l_file, FILE *index, vehicle *v_data) {
     fseek(index, 0, SEEK_SET);
 
     bt_header_t *index_header = bt_header_load(index);
 
-    // searches for a line register with codLinha field 
-    // that matches field line of vehicle register
+    /* Searches for a line reg with codLinha field 
+       that matches field line of vehicle reg */
     long reg_byteoff_set = bt_search_key(index, index_header, v_data->line);
 
-    // any register found
-    if (reg_byteoff_set == -1) {
+    /* In case no reg is found */
+    if (reg_byteoff_set == -1) { 
         free(index_header);
         return False; 
     }
 
-    // printing vehicle and line registers
+    /* Prints vehicle and line regs */
     v_print_reg_data(v_data);
     l_print_reg_from_offset(l_file, reg_byteoff_set);
     
@@ -144,7 +143,7 @@ long aux_get_end_of_file(FILE *bin) {
 } 
 
 /*
-    Check files consistency
+    Checks the consistency/status of multiple files.
 */
 boolean aux_check_consistency_in_files(int n, ...) {
     va_list fps;
@@ -164,7 +163,7 @@ boolean aux_check_consistency_in_files(int n, ...) {
 }
 
 /*
-    Checks of parameters from terminal are correctly formatted 
+    Checks if parameters from terminal are correctly formatted .
 */
 boolean aux_check_terminal_parameters(string field, string value) {
     if (!field || !value) {
@@ -176,7 +175,7 @@ boolean aux_check_terminal_parameters(string field, string value) {
 }
 
 /*
-    Check if strings from terminal are "codLinha"
+    Check if strings from terminal are "codLinha".
 */
 boolean aux_check_field_parameters(string v_field, string l_field) {
     if (!v_field || !l_field) {
@@ -193,7 +192,7 @@ boolean aux_check_field_parameters(string v_field, string l_field) {
 
 /*
     Initializes a binary header. Can be used for both line and vehicle files
-    given their respective `header_funct` via `finfo`. 
+    given their respective `header_funct`.
 */
 void aux_header_init(files_t *files, long h_size, void (*header_funct)(files_t *)) {
     g_header_init(files->bin, h_size);
@@ -202,7 +201,7 @@ void aux_header_init(files_t *files, long h_size, void (*header_funct)(files_t *
 
 /*
     Reads a csv file and inserts all dataregs from it. Can be used for both
-    line and vehicle files given their respective `insert_funct` via `finfo`.
+    line and vehicle files given their respective `insert_funct`.
 */
 void aux_insert_regs_from_csv(files_t *files, void (*insert_funct)(FILE *, string *), long h_size, int amnt_const, int const_size) {
     g_header_update(files->bin, INC_STAT, 0, 0); // Makes the file inconsistent at the start
@@ -229,8 +228,9 @@ void aux_insert_regs_from_csv(files_t *files, void (*insert_funct)(FILE *, strin
 
     g_header_update(files->bin, CON_STAT, amnt_reg, amnt_rmv); // Update status only
 }
+
 /*
-    Reads new regs from terminal to insert in the end of the binary files
+    Reads new regs from terminal and appends them to the bin file.
 */
 void aux_insert_dataregs_from_terminal(FILE *bin, FILE *index, int amnt_regs, void (*insert_funct)(FILE *, string *), long offset, int amnt_const, int const_size) {
     g_header_update(bin, INC_STAT, 0, 0); // Makes the file inconsistent at the start
@@ -267,8 +267,9 @@ void aux_insert_dataregs_from_terminal(FILE *bin, FILE *index, int amnt_regs, vo
 }
 
 /*
-    Given a key c, searches this key in the index file and
-    get the byte offset of a register to print through a pointer to function
+    Searches for an given reg in the index file given its key and
+    prints if found. Returns True if the operations was sucessfull
+    and False otherwise.
 */
 boolean aux_select_index(FILE *bin, FILE *index, int c, void (*print_from_offset)(FILE*, long)) {
     boolean has_reg = False;
@@ -276,6 +277,7 @@ boolean aux_select_index(FILE *bin, FILE *index, int c, void (*print_from_offset
     bt_header_t *header = bt_header_load(index);
     long p_r = bt_search_key(index, header, c); 
     
+    /* In case the key was not found in the index file */
     if (p_r != -1) {
         print_from_offset(bin, p_r);
         has_reg = True;
@@ -286,8 +288,8 @@ boolean aux_select_index(FILE *bin, FILE *index, int c, void (*print_from_offset
 }
 
 /*
-    For each register in the vehicle file, searches for 
-    registers with the same field (parameter) value in the line file
+    For each reg in the vehicle file, searches for 
+    regs with the same field (parameter) value in the line file
 */
 boolean aux_select_from(FILE *v_file, FILE *l_file, long v_eof, long l_eof) {
     fseek(v_file, V_HEADER_SIZE, SEEK_SET); // Goes to te first reg
@@ -308,7 +310,7 @@ boolean aux_select_from(FILE *v_file, FILE *l_file, long v_eof, long l_eof) {
 
         vehicle *v_data = v_load_reg_data(v_file);
 
-        // Compare vehicle register with all register of the line file
+        /* Compare vehicle reg with all reg of the line file */
         boolean temp = aux_compare_regs(l_file, l_eof, v_data);
 
         if (!has_reg && temp) has_reg = True;
@@ -321,8 +323,8 @@ boolean aux_select_from(FILE *v_file, FILE *l_file, long v_eof, long l_eof) {
 }
 
 /*
-    For each register in the vehicle file, searches for 
-    registers with the same field (parameter) value in the line file
+    For each reg in the vehicle file, searches for 
+    regs with the same field (parameter) value in the line file
     using index the btree file
 */
 boolean aux_select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_end_of_file) {
@@ -343,7 +345,7 @@ boolean aux_select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_en
         
         vehicle *v_data = v_load_reg_data(v_file);
         
-        // Compare vehicle register with all register of the line file
+        /* Compare vehicle reg with all reg of the line file */
         boolean temp = aux_compare_regs_index(l_file, index, v_data);
 
         if (temp) has_reg = True;
@@ -356,9 +358,10 @@ boolean aux_select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_en
 }
 
 /*
-    Reads and sorts all regs from both files and print if they match their v_field
+    Sorts all regs from both files and prints any matches. Returns True if there was at least 1 match and False otherwise.
 */
 boolean aux_match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, string l_field) {
+    /* Reads and sorts all regs from both files */
     long v_eof = aux_get_end_of_file(vehicle_bin);
     int v_amnt_regs = g_header_read_amnt_regs(vehicle_bin);
     vehicle **v_regs = v_sort_regs_by_field(vehicle_bin, v_field, v_eof, v_amnt_regs);
@@ -367,10 +370,9 @@ boolean aux_match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, strin
     int l_amnt_regs = g_header_read_amnt_regs(line_bin);
     line **l_regs = l_sort_regs_by_field(line_bin, l_field, l_eof, l_amnt_regs);
 
-    int i = 0;
-    int j  = 0;
+    /* Matching algorithm */
     boolean has_reg = False;
-    while (i < v_amnt_regs && j < l_amnt_regs) {
+    for (int i = 0, j = 0; i < v_amnt_regs && j < l_amnt_regs; ) {
         if (v_regs[i]->line == l_regs[j]->code) {
             has_reg = True;
             v_print_reg_data(v_regs[i]);

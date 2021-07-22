@@ -275,7 +275,7 @@ boolean v_select_regs(FILE *bin, long eof) {
 
         vehicle *data = v_load_reg_data(bin);
         v_print_reg_data(data);
-        //printf("\n");
+        printf("\n");
         has_reg = True; // If the is at leat 1 valid reg in the file
   
         v_free_reg_data(data);
@@ -300,8 +300,8 @@ boolean v_select_regs_where(FILE *bin, string field, string value, long eof) {
 
         if (data) {
             v_print_reg_data(data);
+            printf("\n");
             v_free_reg_data(data);
-            //printf("\n");
             has_reg = True; // If the is at leat 1 valid reg in the file
         }
     }
@@ -317,7 +317,7 @@ void v_index_file_init(FILE *reg_bin, FILE *index, long eof) {
 
     bt_header_t *header = bt_header_init(index); 
    
-   // Loops through every reg in the vehicle file
+   /* Loops through every reg in the vehicle file */
     long p_r = -1;
     while ((p_r = ftell(reg_bin)) < eof) { 
         _reg_update_t *reg_header = _g_read_reg_header(reg_bin);
@@ -333,7 +333,7 @@ void v_index_file_init(FILE *reg_bin, FILE *index, long eof) {
 
         vehicle *data = v_load_reg_data(reg_bin);
         
-        // Creates a new bt_key_t to be inserted in the btree
+        /* Creates a new bt_key_t to be inserted in the btree */
         bt_key_t *new_key = bt_node_key_init(convertePrefixo(data->prefix), p_r);
         bt_insert_key(index, header, new_key);
   
@@ -355,6 +355,7 @@ vehicle **v_sort_regs_by_field(FILE *original, string field, long eof, int amnt_
 
     vehicle **regs = v_load_regs(original, eof, amnt_regs);
 
+    /* qsort with proper comparator function given the field */
     switch (sort_field) {
         case PREFIX:
             qsort(regs, amnt_regs, sizeof(vehicle*), v_prefix_field_comparator);

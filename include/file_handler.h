@@ -9,6 +9,11 @@
 #define ERROR_MESSAGE "Falha no processamento do arquivo.\n"
 #endif
 
+typedef struct { 
+    FILE *bin;
+    FILE *csv;
+} files_t;
+
 /*
     `fopen()` + error handling
 */

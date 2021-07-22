@@ -1,3 +1,10 @@
+/*
+** Comparator functions module for qsort and matching (not implemented yet).
+
+**  Gabriel Alves Kuabara - nUSP 11275043 - email: gabrielalveskuabara@usp.br
+**  Milena Correa da Silva - nUSP 11795401 - email: milenacorreasilva@usp.br 
+*/
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
