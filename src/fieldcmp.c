@@ -1,5 +1,5 @@
 /*
-** Comparator functions module for qsort and matching (not implemented yet).
+** Comparator functions module for qsort and matching.
 
 **  Gabriel Alves Kuabara - nUSP 11275043 - email: gabrielalveskuabara@usp.br
 **  Milena Correa da Silva - nUSP 11795401 - email: milenacorreasilva@usp.br 

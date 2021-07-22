@@ -13,7 +13,7 @@ Milena Corrêa da Silva - nUSP 11795401 - milenacorreasilva@usp.br
 
 # Introdução
 
-Basicamente, nosso programa consiste em funcionalidades da linguagem SQL construídas em C. Neste projeto, há 14 funcionalidades que funcionam com arquivos de dados csv e binários, e arquivos de índices árvore-B. Metade desses arquivos contém informações sobre a frota de ônibus da cidade de Curitiba e a outra metade contém informações sobre as linhas com as quais cada um desses ônibus está relacionado.
+Basicamente, nosso programa consiste em funcionalidades da linguagem SQL construídas em C. Neste projeto, há 19 funcionalidades que funcionam com arquivos de dados csv e binários, e arquivos de índices árvore-B. Metade desses arquivos contém informações sobre a frota de ônibus da cidade de Curitiba e a outra metade contém informações sobre as linhas com as quais cada um desses ônibus está relacionado.
 
 Os arquivos csv e binários têm um cabeçalho contendo informações gerais sobre o arquivo, sobre registros e nomes de cada campo além de registros com o conteúdo dos veículos e linhas. Em resumo, eles estão estruturados de acordo com as seguintes imagens:
 
@@ -39,7 +39,7 @@ Neste projeto, priorizamos o uso de memória em disco, não de memória RAM. Ass
 
 ## Modularização do código
 
-Distribuímos nossas funcionalidades em oito arquivos C. O arquivo **operantions.c** contém as principais funções de cada funcionalidade de nosso programa, em outras palavras, ele contém o "macro" de nosso programa. No arquivo **vehicle.c**, temos as funções relacionadas apenas com a estrutura dos arquivos do veículo. No **line.c**, temos as funções relacionadas apenas com a estrutura dos arquivos de linha. Portanto, no **global.c**, temos as funções que podem ser usadas tanto pelos arquivos de veículo quanto pelos arquivos de linha. Estas são principalmente funções que tratam partes comuns de ambas as estruturas de arquivos como os identificadores da remoção lógica e do tamanho do registro no início de cada registro de dados. Além disso, o **stream.c** trata principalmente da divisão de strings e leitura de dados do terminal. O arquivo **file_handler.c** cuida do tratamento de arquivos. O arquivo **funcao-fornecida.c** tem três funções oferecidas pelos instrutores da disciplina. A primeira é usada para verificar se o arquivo binário foi escrito corretamente, a segunda é usado para ler uma entrada com aspas no terminal e a terceira para converter uma chave de formato "string" em formato númerico. Por fim, o arquivo **btree.c** contém as funções relacionadas a tal estrutura de dados.
+Distribuímos nossas funcionalidades em dez arquivos C. O arquivo **operantions.c** contém as principais funções de cada funcionalidade de nosso programa, em outras palavras, ele contém o "macro" de nosso programa. O arquivo **aux.c** contém as funções auxiliares das funções principais de cada funcionalidade presente em operations.c. No arquivo **vehicle.c**, temos as funções relacionadas apenas com a estrutura dos arquivos do veículo. No **line.c**, temos as funções relacionadas apenas com a estrutura dos arquivos de linha. Portanto, no **global.c**, temos as funções que podem ser usadas tanto pelos arquivos de veículo quanto pelos arquivos de linha. Estas são principalmente funções que tratam partes comuns de ambas as estruturas de arquivos como os identificadores da remoção lógica e do tamanho do registro no início de cada registro de dados. Além disso, o **stream.c** trata principalmente da divisão de strings e leitura de dados do terminal. O arquivo **file_handler.c** cuida do tratamento de arquivos. O arquivo **funcao-fornecida.c** tem três funções oferecidas pelos instrutores da disciplina. A primeira é usada para verificar se o arquivo binário foi escrito corretamente, a segunda é usado para ler uma entrada com aspas no terminal e a terceira para converter uma chave de formato "string" em formato númerico. O arquivo **btree.c** contém as funções relacionadas a tal estrutura de dados. Por fim, o arquivo **fieldcmp.c** contém as funções de comparação que são usadas para ordenação dos registro usando qsort.
 
 ## Funcionalidades
 
@@ -91,13 +91,33 @@ Do arquivo de índice veículo, faz-se uma busca pela árvore-B por uma chave, n
 
 Do arquivo de índice linha, faz-se uma busca pela árvore-B por uma chave, no caso dos arquivos referentes ao linha, essa chave é o campo prefixo (unicamente identificado). Após a busca, caso existir a requisitada chave na árvore, temos em mãos o offset para o registro no arquivo de dados. Então, acessamos o arquivos e imprimimos as informações do registro.
 
-### 13. Veículo Insert Key
+### 13. Vehicle Insert Key
 
 Extensão da Funcionalidade 7, após a inserção de algum registro no arquivos de dados, devemos fazer a inserção da chave que identifica esse registro (prefixo) no arquivo de índice também.
 
-### 14. Linha Insert Key
+### 14. Line Insert Key
 
 Extensão da Funcionalidade 8, após a inserção de algum registro no arquivos de dados, devemos fazer a inserção da chave que identifica esse registro (codLinha) no arquivo de índice também.
+
+### 15. Select From
+
+A partir dos arquivos binários contendo os registros, tem-se um loop pelo arquivo de veiculo comparando cada um dos seus registros com cada registro do arquivo de linha, verificando se o campo "linha" bate com o campo "codLinha". Caso bater, então imprime as informações do registro de veiculo e linha, respectivamente.
+
+### 16. Select From Index
+
+A partir do arquivo binário de veículo, faz-se um loop por cada registro, no qual usa-se o campo "linha" para procurar um valor igual no arquivo de índice linha árvore-B, indicando que há um registro no arquivo linha com o mesmo valor. Então, carrega-se esse registro linha para memória e imprime o registro veículo e linha, respectivamente.
+
+### 17. Vehicle Sort File
+
+Carrega-se para memória, todos os registros do arquivo binário veículo, fazendo a ordenação com o **qsort**. Depois, escrevemos todos os registros ordenados num novo arquivo.
+
+### 18. Line Sort File
+
+Carrega-se para memória, todos os registros do arquivo binário linha, fazendo a ordenação com o **qsort**. Depois, escrevemos todos os registros ordenados num novo arquivo.
+
+### 19. Merge Files
+
+Tendo ambos arquivos binários ordenados, faz-se uma junção de ambos, atráves da impressão dos registros que combinam os campos "linha"(veículo) e "codLinha"(linha).
 
 # Instruções de uso
 
@@ -131,6 +151,18 @@ Para executar nosso programa, usamos um makefile. Usando o comando "Make" compil
 ![](https://i.imgur.com/XEAl7gw.png)<br/>
 ![](https://i.imgur.com/B1m3pa9.png)
 
+- A funcionalidade 15 recebe os nomes dos árquivos binários e os campos que serão usados para comparação, no caso somente o "codLinha" é válido neste trabalho:<br/>
+![](https://i.imgur.com/a7iWofC.png)
+
+- A funcionalidade 16 recebe os nomes dos árquivos binários, os campos que serão usados para comparação, e o nome do arquivo de índice, no caso somente o campo "codLinha" é válido neste trabalho:<br/>
+![](https://i.imgur.com/Zqd5udo.png)
+
+- A funcionalidade 17 e 18 recebem o nome do árquivo binário, o nome do arquivo a ser criado com registros ordenados e o campo que deve ser usado para fazer a comparação na ordenação:<br/>
+![](https://i.imgur.com/lZb7kAD.png)
+![](https://i.imgur.com/hJJmpCP.png)
+
+- A funcionalidade 19 recebe os nomes dos arquivos binários ordenados e os campos que devem ser usados para comparação:<br/>
+![](https://i.imgur.com/j0PT0Zj.png)
 
 _____________________________________________________________________________________________________________________
 
@@ -150,7 +182,7 @@ Milena Corrêa da Silva - nUSP 11795401 - milenacorreasilva@usp.br
 
 # Introduction
 
-Basically, our program consists of SQL language functionalities built in C. In this project there are 14 functionalities that work with csv and binary data files, and B-tree index files. Half of these files contain information about the bus fleet of the city of Curitiba, and the other half contain information about the lines to which each of these buses is related.
+Basically, our program consists of SQL language functionalities built in C. In this project there are 19 functionalities that work with csv and binary data files, and B-tree index files. Half of these files contain information about the bus fleet of the city of Curitiba, and the other half contain information about the lines to which each of these buses is related.
 
 The csv and binary files have a header containing general information about the file, about registers, and names of each field besides registers with the content of vehicles and lines. In summary, they are structured in according with the following images:
 
@@ -177,7 +209,7 @@ In this project, we may prioritize the use of disk memory, not of RAM memory. So
 
 ## Code Modularization
 
-We have distributed our functionality into eight C-files. The file **operations.c** contains the main functions of each functionality of our program, in other words, it contains the "macro" of our program. In the **vehicle.c** file, we have the functions related only to the structure of the vehicle files. In the **line.c**, we have the functions related only to the structure of the line files. So in **global.c**, we have the functions that can be used by both the vehicle files and the line files. These are mainly functions that handle common parts of both file structures such as the logical removal and record size identifiers at the beginning of each data record. In addition, **stream.c** mainly handles string splitting and reading data from the terminal. The **file_handler.c** file takes care of file handling. The file **funcao_fornecida.c** has three functions provided by the discipline instructors. The first is used to check that the binary file has been written correctly, the second is used to read a quoted input in the terminal and the third to convert a key from string format to number format. Finally, the file **btree.c** contains the functions related to that data structure.
+We have distributed our functionality into ten C-files. The file **operations.c** contains the main functions of each functionality of our program, in other words, it contains the "macro" of our program. The file **aux.c** contains the auxiliary functions for the main functions of each feature present in operations.c. In the **vehicle.c** file, we have the functions related only to the structure of the vehicle files. In the **line.c**, we have the functions related only to the structure of the line files. So in **global.c**, we have the functions that can be used by both the vehicle files and the line files. These are mainly functions that handle common parts of both file structures such as the logical removal and record size identifiers at the beginning of each data record. In addition, **stream.c** mainly handles string splitting and reading data from the terminal. The **file_handler.c** file takes care of file handling. The file **funcao_fornecida.c** has three functions provided by the discipline instructors. The first is used to check that the binary file has been written correctly, the second is used to read a quoted input in the terminal and the third to convert a key from string format to number format. The file **btree.c** contains the functions related to that data structure. Finally, the **fieldcmp.c** file contains the comparison functions that are used for sorting the records using qsort.
 
 ## Functionalities
 
@@ -237,6 +269,27 @@ Extends functionality 7, after inserting some register in the data file, we must
 
 Extends functionality 8, after inserting some register in the data file, we must insert the key that identifies this register (codLinha) in the index file as well.
 
+### 15. select from
+
+From the binary files containing the records, there is a loop through the vehicle file comparing each of its records with each record in the line file, checking if the "line" field matches the "codLinha" field. If it matches, then prints the information of the vehicle and line records, respectively.
+
+### 16. Select From Index
+
+From the vehicle binary file, it loops through each record, in which it's used the "line" field to look for a matching value in the B-tree line index file, indicating that there is a record in the line file with the same value. It then loads that line record into memory and prints the vehicle and line record, respectively.
+
+### 17. Vehicle Sort File
+
+We load into memory all the records in the binary vehicle file, sorting them with the **qsort**. Then, we write all the sorted records to a new file.
+
+### 18. Line Sort File
+
+We load into memory, all the records of the binary line file, sorting them with the **qsort**. Then, we write all the sorted records to a new file.
+
+### 19. Merge Files
+
+Having both binary files sorted, we merge them by printing the records that match the "line"(vehicle) and "codLinha"(line) fields.
+
+
 # Use Instructions
 
 To execute our program we use a makefile. By using command "Make" we compile and clean object files, then we can execute our program through the executable main file "./main". Then, the user need to type the funcionality number and the parameters of each one separeted by spaces. 
@@ -268,3 +321,16 @@ To execute our program we use a makefile. By using command "Make" we compile and
 - Functionalities 13 and 14 receives the binary file name, the index file name, and the number of registers to be inserted into the data file. Then, the information for each register to be inserted is typed:<br/>
 ![](https://i.imgur.com/XEAl7gw.png)<br/>
 ![](https://i.imgur.com/B1m3pa9.png)
+
+- Functionality 15 receives the binary files names and the fields that will be used to check if their content are equal, in this case only the "codLinha" is valid in this work:<br/>
+![](https://i.imgur.com/a7iWofC.png)
+
+- Functionality 16 receives the binary files names, the fields that will be used to check if their content are equal, and the name of the index file, in this case only the field "codLinha" is valid in this work:<br/>
+![](https://i.imgur.com/Zqd5udo.png)
+
+- Functionalities 17 and 18 are given the binary files names, the name of the file to be created with sorted records, and the field to be used to compare values in the sorting:<br/>
+![](https://i.imgur.com/lZb7kAD.png)
+![](https://i.imgur.com/hJJmpCP.png)
+
+- Functionality 19 receives the names of the sorted binary files and the fields that are to be used to check if their content are equal:<br/>
+![](https://i.imgur.com/j0PT0Zj.png)
