@@ -361,28 +361,56 @@ boolean aux_select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_en
     Sorts all regs from both files and prints any matches. Returns True if there was at least 1 match and False otherwise.
 */
 boolean aux_match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, string l_field) {
-    /* Reads and sorts all regs from both files */
-    long v_eof = aux_get_end_of_file(vehicle_bin);
+    // Gets the amount of register of each file
     int v_amnt_regs = g_header_read_amnt_regs(vehicle_bin);
-    vehicle **v_regs = v_sort_regs_by_field(vehicle_bin, v_field, v_eof, v_amnt_regs);
-
-    long l_eof = aux_get_end_of_file(line_bin);
     int l_amnt_regs = g_header_read_amnt_regs(line_bin);
-    line **l_regs = l_sort_regs_by_field(line_bin, l_field, l_eof, l_amnt_regs);
+
+    fseek(vehicle_bin, V_HEADER_SIZE, SEEK_SET);
+    fseek(line_bin, L_HEADER_SIZE, SEEK_SET);
 
     /* Matching algorithm */
+    vehicle *v_reg = NULL;
+    line *l_reg = NULL;
+    
     boolean has_reg = False;
+    boolean v_inc = True, l_inc = True; // Increment flags
     for (int i = 0, j = 0; i < v_amnt_regs && j < l_amnt_regs; ) {
-        if (v_regs[i]->line == l_regs[j]->code) {
-            has_reg = True;
-            v_print_reg_data(v_regs[i]);
-            l_print_reg_data(l_regs[j]);
+        
+        // Selects the file we will go ahead to get another register
+        if (v_inc) {
+            fseek(vehicle_bin, G_CONST_REG_SIZE, SEEK_CUR);
+            v_reg = v_load_reg_data(vehicle_bin);
         }
-        (v_regs[i]->line <= l_regs[j]->code)? i++ : j++;
+        if (l_inc) {
+            fseek(line_bin, G_CONST_REG_SIZE, SEEK_CUR);
+            l_reg = l_load_reg_data(line_bin);
+        }
+
+        // Compare fields "line" and "codLinha"
+        if (v_reg->line == l_reg->code) {
+            has_reg = True;
+            v_print_reg_data(v_reg);
+            l_print_reg_data(l_reg);
+        }
+        
+        // Prepare our next move through the files
+        if (v_reg->line <= l_reg->code) {
+            v_free_reg_data(v_reg);
+            v_reg = NULL;
+            v_inc = True;
+            l_inc = False;
+            i++;
+        }
+        else {
+            l_free_reg_data(l_reg);
+            l_reg = NULL;
+            v_inc = False;
+            l_inc = True;
+            j++;
+        }
     }
 
-    v_free_regs_data(v_regs, v_amnt_regs);
-    l_free_regs_data(l_regs, l_amnt_regs);
-    
+    if (v_reg) v_free_reg_data(v_reg);
+    if (l_reg) l_free_reg_data(l_reg);
     return has_reg;
 }

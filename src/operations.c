@@ -376,8 +376,11 @@ boolean line_create_sorted_file(string _original, string _sorted, string field) 
     Nineteenth Functionality: Matches and prints the data from bin files given a target field.
 */
 void match_files(string _vehicle, string _line, string v_field, string l_field) {
-    FILE *v_file = file_open(_vehicle, "rb");
-    FILE *l_file = file_open(_line, "rb");
+    vehicle_create_sorted_file(_vehicle, "vehicle_sorted", v_field);
+    line_create_sorted_file(_line, "line_sorted", l_field);
+
+    FILE *v_file = file_open("vehicle_sorted", "rb");
+    FILE *l_file = file_open("line_sorted", "rb");
 
     /* Error handling */
     if (!v_file || !l_file || aux_check_consistency_in_files(2, v_file, l_file) == False ) {
