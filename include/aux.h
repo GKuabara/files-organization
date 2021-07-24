@@ -67,7 +67,7 @@ boolean aux_select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_en
 boolean aux_select_from(FILE *v_file, FILE *l_file, long v_eof, long l_eof);
 
 /*
-    Reads and sorts all regs from both files and print if they match their v_field
+    Given sorted files, returns True if there was at least a pair of regs match and False otherwise.
 */
 boolean aux_match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, string l_field);
 

@@ -117,7 +117,7 @@ Carrega-se para memória, todos os registros do arquivo binário linha, fazendo 
 
 ### 19. Merge Files
 
-Tendo ambos arquivos binários ordenados, faz-se uma junção de ambos, atráves da impressão dos registros que combinam os campos "linha"(veículo) e "codLinha"(linha).
+Tendo ambos arquivos binários ordenados atráves das chamadas das funcionalidades 17 e 18, faz-se uma junção de ambos, atráves da impressão dos registros que combinam os campos "linha"(veículo) e "codLinha"(linha).
 
 # Instruções de uso
 
@@ -161,7 +161,7 @@ Para executar nosso programa, usamos um makefile. Usando o comando "Make" compil
 ![](https://i.imgur.com/lZb7kAD.png)
 ![](https://i.imgur.com/hJJmpCP.png)
 
-- A funcionalidade 19 recebe os nomes dos arquivos binários ordenados e os campos que devem ser usados para comparação:<br/>
+- A funcionalidade 19 recebe os nomes dos arquivos binários e os campos que devem ser usados para comparação:<br/>
 ![](https://i.imgur.com/j0PT0Zj.png)
 
 _____________________________________________________________________________________________________________________
@@ -287,7 +287,7 @@ We load into memory, all the records of the binary line file, sorting them with 
 
 ### 19. Merge Files
 
-Having both binary files sorted, we merge them by printing the records that match the "line"(vehicle) and "codLinha"(line) fields.
+Having both binary files sorted by calling functionalities 17 and 18, we merge them by printing the records that match the "line"(vehicle) and "codLinha"(line) fields.
 
 
 # Use Instructions
@@ -332,5 +332,5 @@ To execute our program we use a makefile. By using command "Make" we compile and
 ![](https://i.imgur.com/lZb7kAD.png)
 ![](https://i.imgur.com/hJJmpCP.png)
 
-- Functionality 19 receives the names of the sorted binary files and the fields that are to be used to check if their content are equal:<br/>
+- Functionality 19 receives the names of the binary files and the fields that are to be used to check if their content are equal:<br/>
 ![](https://i.imgur.com/j0PT0Zj.png)

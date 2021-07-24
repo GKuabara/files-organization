@@ -358,7 +358,7 @@ boolean aux_select_from_index(FILE *v_file, FILE *l_file, FILE *index, long v_en
 }
 
 /*
-    Sorts all regs from both files and prints any matches. Returns True if there was at least 1 match and False otherwise.
+    Given sorted files, returns True if there was at least a pair of regs match and False otherwise.
 */
 boolean aux_match_files(FILE *vehicle_bin, FILE *line_bin, string v_field, string l_field) {
     // Gets the amount of register of each file
